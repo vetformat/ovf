@@ -1,0 +1,14 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Luna",
+    "species": "dog"
+  }
+}

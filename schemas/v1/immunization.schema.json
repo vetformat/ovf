@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/immunization.schema.json",
+  "title": "Immunization",
+  "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
+  "additionalProperties": true,
+  "$defs": {
+    "vaccine_code": {
+      "type": "object",
+      "description": "Coded representation of the vaccine product.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system for the vaccine (e.g., ATC-vet, CVX, internal).",
+          "examples": ["atc-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The vaccine code within the specified system.",
+          "examples": ["QI07AA01"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
+    "dose_quantity": {
+      "type": "object",
+      "description": "The dosage amount administered.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Numeric dose value.",
+          "examples": [1.0]
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the dose (e.g., mL, dose).",
+          "examples": ["mL"]
+        }
+      },
+      "required": ["value", "unit"],
+      "additionalProperties": true
+    },
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner who administered the vaccination.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": ["Dr. Anna Nowak"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-12345"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Immunization",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Immunization"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the immunization record. UUID recommended.",
+      "examples": ["imm-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient who received the vaccination.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the vaccination was administered.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "vaccine_name": {
+      "type": "string",
+      "description": "Name of the vaccine product administered.",
+      "examples": ["Nobivac DHPPi"]
+    },
+    "vaccine_code": {
+      "$ref": "#/$defs/vaccine_code"
+    },
+    "occurrence_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the vaccination was administered in ISO 8601 format.",
+      "examples": ["2025-06-15"]
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the vaccine protection is expected to expire.",
+      "examples": ["2026-06-15"]
+    },
+    "next_dose_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Recommended date for the next booster or dose.",
+      "examples": ["2025-07-15"]
+    },
+    "lot_number": {
+      "type": "string",
+      "description": "Manufacturer lot or batch number of the vaccine.",
+      "examples": ["A123B456"]
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Name of the vaccine manufacturer.",
+      "examples": ["MSD Animal Health"]
+    },
+    "route": {
+      "type": "string",
+      "enum": ["intramuscular", "subcutaneous", "oral", "intranasal", "other"],
+      "description": "Route of administration for the vaccine.",
+      "examples": ["subcutaneous"]
+    },
+    "site": {
+      "type": "string",
+      "description": "Anatomical site where the vaccine was administered.",
+      "examples": ["Right shoulder"]
+    },
+    "dose_quantity": {
+      "$ref": "#/$defs/dose_quantity"
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "is_primary_course": {
+      "type": "boolean",
+      "description": "Whether this vaccination is part of the initial primary immunization course rather than a booster.",
+      "examples": [true]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the vaccination event.",
+      "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
+    }
+  }
+}

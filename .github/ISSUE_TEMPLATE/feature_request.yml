@@ -1,0 +1,36 @@
+name: Feature Request
+description: Propose a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Describe the use case this feature would enable
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_change
+    attributes:
+      label: Proposed Change
+      description: Describe the change you'd like to see
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other approaches you've considered
+
+  - type: dropdown
+    id: breaking_change
+    attributes:
+      label: Breaking Change?
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true

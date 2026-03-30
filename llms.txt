@@ -1,0 +1,68 @@
+# VetNote Open Vet Format (OVF)
+
+> FHIR-inspired JSON Schema standard for veterinary medical record exchange. Designed for the Polish and Central European veterinary market. JSON-based, minimal, extensible.
+
+## Overview
+
+OVF defines a JSON format for exporting and exchanging pet medical records between veterinary clinics, pet owners, and software systems. It uses JSON Schema draft 2020-12 for validation.
+
+A valid OVF document contains:
+- `format_version` — schema version (currently "1.0.0")
+- `exported_at` — ISO 8601 timestamp
+- `patient` — the pet (required)
+- Resource arrays: encounters, conditions, observations, immunizations, procedures, allergy_intolerances, medication_statements, document_references
+
+## Resource Types
+
+- **Patient** — pet identity: name, species, breed, microchip, EU passport, owner
+- **Encounter** — veterinary visit: date, type, practitioner, reason
+- **Condition** — diagnosis: name, status (active/resolved), severity
+- **Observation** — lab result or vital sign: value, unit, reference range, interpretation
+- **Immunization** — vaccination: vaccine, date, lot number, next dose, route
+- **Procedure** — surgery/dental/therapeutic: status, anesthesia, outcome
+- **AllergyIntolerance** — allergy or intolerance: substance, category, reaction
+- **MedicationStatement** — prescribed medication: dosage, frequency, status
+- **DocumentReference** — attached file: type, URL or base64 data
+
+## Docs
+
+- [Specification](docs/specification.md): Formal spec with RFC 2119 language, field tables, controlled vocabularies
+- [Getting Started](docs/getting-started.md): 5-minute quickstart with TypeScript and Python examples
+- [FHIR Mapping](docs/fhir-mapping.md): How OVF maps to HL7 FHIR resources
+- [Polish Extensions](docs/polish-extensions.md): SAFE-ANIMAL, EU Pet Passport, FCI breed codes, ISO 11784/11785
+
+## Schemas
+
+All schemas are in `schemas/v1/` and use JSON Schema draft 2020-12:
+- [ovf.schema.json](schemas/v1/ovf.schema.json) — root export format
+- [patient.schema.json](schemas/v1/patient.schema.json)
+- [encounter.schema.json](schemas/v1/encounter.schema.json)
+- [condition.schema.json](schemas/v1/condition.schema.json)
+- [observation.schema.json](schemas/v1/observation.schema.json)
+- [immunization.schema.json](schemas/v1/immunization.schema.json)
+- [procedure.schema.json](schemas/v1/procedure.schema.json)
+- [allergy-intolerance.schema.json](schemas/v1/allergy-intolerance.schema.json)
+- [medication-statement.schema.json](schemas/v1/medication-statement.schema.json)
+- [document-reference.schema.json](schemas/v1/document-reference.schema.json)
+
+## Examples
+
+- [minimal.json](examples/minimal.json) — bare minimum valid document
+- [complete-dog.json](examples/complete-dog.json) — full 2-year history for a French Bulldog
+- [complete-cat.json](examples/complete-cat.json) — indoor cat with chronic kidney disease
+- [vaccination-only.json](examples/vaccination-only.json) — EU pet passport export
+- [lab-results.json](examples/lab-results.json) — complete blood panel with reference ranges
+
+## Key Design Decisions
+
+- `additionalProperties: true` everywhere — extensibility over strictness
+- Custom fields use `x_` prefix
+- Species enum covers common companion animals + horse + other
+- Identifier system supports ISO microchip, EU passport, SAFE-ANIMAL, EUROPETNET
+- Dates are ISO 8601 (`format: "date"` or `format: "date-time"`)
+- All resource arrays are optional — export only what you have
+
+## License
+
+- Schemas and code: Apache-2.0
+- Documentation: CC-BY-4.0

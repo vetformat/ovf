@@ -1,0 +1,106 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-multi-001",
+    "name": "Puszek",
+    "species": "cat",
+    "breed": "Persian",
+    "date_of_birth": "2016-09-20",
+    "sex": "male",
+    "gender_status": "neutered",
+    "weight": {
+      "value": 5.5,
+      "unit": "kg"
+    }
+  },
+  "conditions": [
+    {
+      "resource_type": "Condition",
+      "id": "cond-multi-001",
+      "patient_id": "pat-multi-001",
+      "name": "Chronic Kidney Disease — IRIS Stage 3",
+      "clinical_status": "active",
+      "severity": "severe",
+      "onset_date": "2024-01-15"
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-multi-002",
+      "patient_id": "pat-multi-001",
+      "name": "Hyperthyroidism",
+      "clinical_status": "active",
+      "severity": "moderate",
+      "onset_date": "2024-06-10",
+      "notes": "Managed with methimazole"
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-multi-003",
+      "patient_id": "pat-multi-001",
+      "name": "Dental disease — Grade III periodontal",
+      "clinical_status": "active",
+      "severity": "moderate",
+      "onset_date": "2023-11-01",
+      "notes": "Dental extraction recommended but delayed due to renal status"
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-multi-004",
+      "patient_id": "pat-multi-001",
+      "name": "Feline lower urinary tract disease (FLUTD)",
+      "clinical_status": "resolved",
+      "severity": "moderate",
+      "onset_date": "2022-03-15",
+      "abatement_date": "2022-04-20",
+      "notes": "Single episode. Resolved with diet change and stress management."
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-multi-005",
+      "patient_id": "pat-multi-001",
+      "name": "Upper respiratory infection",
+      "clinical_status": "resolved",
+      "severity": "mild",
+      "onset_date": "2020-12-01",
+      "abatement_date": "2020-12-14"
+    }
+  ],
+  "medication_statements": [
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-multi-001",
+      "patient_id": "pat-multi-001",
+      "medication_name": "Methimazole (Felimazole)",
+      "status": "active",
+      "date_started": "2024-06-15",
+      "dosage": {
+        "value": 2.5,
+        "unit": "mg",
+        "frequency": "Twice daily",
+        "route": "oral"
+      },
+      "reason": "Hyperthyroidism management"
+    },
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-multi-002",
+      "patient_id": "pat-multi-001",
+      "medication_name": "Semintra (telmisartan)",
+      "status": "active",
+      "date_started": "2024-02-01",
+      "dosage": {
+        "value": 1.0,
+        "unit": "mg/kg",
+        "frequency": "Once daily",
+        "route": "oral"
+      },
+      "reason": "CKD — proteinuria management and renoprotection"
+    }
+  ]
+}

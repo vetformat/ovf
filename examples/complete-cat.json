@@ -1,0 +1,259 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T16:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-cat-001",
+    "name": "Mruczka",
+    "species": "cat",
+    "breed": "British Shorthair",
+    "breed_code": {
+      "system": "fife",
+      "value": "BRI"
+    },
+    "date_of_birth": "2018-04-12",
+    "sex": "female",
+    "gender_status": "spayed",
+    "color": "Blue (solid)",
+    "weight": {
+      "value": 4.8,
+      "unit": "kg"
+    },
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616098100445566"
+      },
+      {
+        "system": "safe-animal",
+        "value": "SA-2018-00445566"
+      }
+    ],
+    "owner": {
+      "name": "Katarzyna Zielińska",
+      "phone": "+48 501 234 567",
+      "email": "kasia.z@example.com"
+    },
+    "is_active": true,
+    "is_deceased": false,
+    "notes": "Indoor-only cat. Calm temperament. Prefers feliway diffuser during visits."
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-cat-001",
+      "patient_id": "pat-cat-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2025-04-10T10:00:00Z",
+      "reason": "Annual checkup",
+      "practitioner": {
+        "name": "Dr. Ewa Majewska",
+        "license_number": "PL-VET-33333",
+        "clinic": "Felis Veterinary Clinic"
+      },
+      "diagnoses": ["cond-cat-001"],
+      "notes": "Routine exam. Weight slightly increased. Blood panel ordered — elevated creatinine."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-cat-002",
+      "patient_id": "pat-cat-001",
+      "status": "completed",
+      "type": "follow-up",
+      "date": "2025-05-15T10:00:00Z",
+      "reason": "Renal values follow-up — repeat blood panel",
+      "practitioner": {
+        "name": "Dr. Ewa Majewska",
+        "license_number": "PL-VET-33333",
+        "clinic": "Felis Veterinary Clinic"
+      },
+      "notes": "Creatinine stable. SDMA elevated. IRIS Stage 2 CKD confirmed. Started renal diet."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-cat-003",
+      "patient_id": "pat-cat-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2026-01-20T09:00:00Z",
+      "reason": "Annual vaccination",
+      "practitioner": {
+        "name": "Dr. Ewa Majewska",
+        "license_number": "PL-VET-33333",
+        "clinic": "Felis Veterinary Clinic"
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "resource_type": "Condition",
+      "id": "cond-cat-001",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-001",
+      "name": "Chronic Kidney Disease — IRIS Stage 2",
+      "code": {
+        "system": "icd-10-vet",
+        "value": "N18.2",
+        "display": "Chronic kidney disease, stage 2"
+      },
+      "clinical_status": "active",
+      "severity": "moderate",
+      "onset_date": "2025-04-10",
+      "notes": "Early CKD detected on routine screening. Creatinine 2.1 mg/dL, SDMA 18 µg/dL. Urine SG 1.025. Non-proteinuric. IRIS Stage 2 based on creatinine + SDMA."
+    }
+  ],
+  "observations": [
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-001",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-001",
+      "category": "laboratory",
+      "name": "Creatinine",
+      "effective_date": "2025-04-10T12:00:00Z",
+      "value": 2.1,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 0.8,
+        "high": 1.8,
+        "text": "0.8-1.8 mg/dL"
+      },
+      "interpretation": "high",
+      "notes": "Mildly elevated — repeat in 4 weeks"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-002",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-001",
+      "category": "laboratory",
+      "name": "SDMA",
+      "effective_date": "2025-04-10T12:00:00Z",
+      "value": 18,
+      "unit": "µg/dL",
+      "reference_range": {
+        "low": 0,
+        "high": 14,
+        "text": "0-14 µg/dL"
+      },
+      "interpretation": "high",
+      "notes": "Elevated — supports early CKD diagnosis"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-003",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-001",
+      "category": "laboratory",
+      "name": "BUN",
+      "effective_date": "2025-04-10T12:00:00Z",
+      "value": 35,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 16,
+        "high": 36,
+        "text": "16-36 mg/dL"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-004",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-001",
+      "category": "laboratory",
+      "name": "Urine Specific Gravity",
+      "effective_date": "2025-04-10T12:00:00Z",
+      "value": 1.025,
+      "unit": "SG",
+      "reference_range": {
+        "low": 1.035,
+        "high": 1.060,
+        "text": "1.035-1.060 (cat)"
+      },
+      "interpretation": "low",
+      "notes": "Inadequate concentrating ability for a cat — supports CKD"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-005",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-002",
+      "category": "laboratory",
+      "name": "Creatinine (follow-up)",
+      "effective_date": "2025-05-15T12:00:00Z",
+      "value": 2.0,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 0.8,
+        "high": 1.8,
+        "text": "0.8-1.8 mg/dL"
+      },
+      "interpretation": "high",
+      "notes": "Stable compared to April. Confirms persistent mild azotemia."
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-cat-006",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-003",
+      "category": "vital-signs",
+      "name": "Body Weight",
+      "effective_date": "2026-01-20T09:00:00Z",
+      "value": 4.8,
+      "unit": "kg",
+      "interpretation": "normal",
+      "notes": "Stable weight — good sign for CKD management"
+    }
+  ],
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-cat-001",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-003",
+      "vaccine_name": "Purevax RCPCh",
+      "occurrence_date": "2026-01-20",
+      "expiration_date": "2027-01-20",
+      "next_dose_date": "2027-01-20",
+      "lot_number": "PVX-2026-E1",
+      "manufacturer": "Boehringer Ingelheim",
+      "route": "subcutaneous",
+      "site": "Right lateral thorax",
+      "practitioner": {
+        "name": "Dr. Ewa Majewska",
+        "license_number": "PL-VET-33333"
+      },
+      "is_primary_course": false,
+      "notes": "Annual booster — indoor-only protocol (no FeLV)"
+    }
+  ],
+  "medication_statements": [
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-cat-001",
+      "patient_id": "pat-cat-001",
+      "encounter_id": "enc-cat-002",
+      "medication_name": "Royal Canin Renal Select",
+      "status": "active",
+      "date_started": "2025-05-15",
+      "dosage": {
+        "value": 55,
+        "unit": "g",
+        "frequency": "Twice daily",
+        "route": "oral"
+      },
+      "reason": "CKD IRIS Stage 2 — phosphorus-restricted renal diet",
+      "prescriber": {
+        "name": "Dr. Ewa Majewska",
+        "license_number": "PL-VET-33333"
+      },
+      "notes": "Long-term. Monitor weight and kidney values every 3-4 months."
+    }
+  ]
+}

@@ -1,0 +1,3225 @@
+# VetNote Open Vet Format (OVF) — Full Context
+
+> This file contains the complete specification, all JSON schemas, and key examples
+> for LLM consumption. Generated from the source files in this repository.
+
+---
+
+# SPECIFICATION
+
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+
+# Open Vet Format (OVF) Specification
+
+**Version:** 1.0.0
+**Status:** Draft
+**Date:** 2026-03-30
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+
+---
+
+## 1. Document Structure
+
+An OVF document is a JSON object that represents a veterinary patient record with associated clinical data.
+
+### 1.1 Top-Level Fields
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `format_version` | string (semver) | MUST | The OVF schema version this document conforms to, e.g. `"1.0.0"`. |
+| `exported_at` | string (ISO 8601 datetime) | MUST | Timestamp when this document was generated, e.g. `"2026-03-30T12:00:00Z"`. |
+| `patient` | Patient | MUST | The patient resource this document describes. |
+| `exporter` | object | SHOULD | Information about the software that produced this document. |
+| `exporter.name` | string | SHOULD | Name of the exporting application. |
+| `exporter.version` | string | SHOULD | Version of the exporting application. |
+| `encounters` | Encounter[] | MAY | Array of encounter resources. MAY be omitted or empty. |
+| `conditions` | Condition[] | MAY | Array of condition resources. MAY be omitted or empty. |
+| `observations` | Observation[] | MAY | Array of observation resources. MAY be omitted or empty. |
+| `immunizations` | Immunization[] | MAY | Array of immunization resources. MAY be omitted or empty. |
+| `procedures` | Procedure[] | MAY | Array of procedure resources. MAY be omitted or empty. |
+| `allergies` | AllergyIntolerance[] | MAY | Array of allergy/intolerance resources. MAY be omitted or empty. |
+| `medications` | MedicationStatement[] | MAY | Array of medication statement resources. MAY be omitted or empty. |
+| `documents` | DocumentReference[] | MAY | Array of document reference resources. MAY be omitted or empty. |
+
+### 1.2 Encoding
+
+- An OVF document MUST be encoded as UTF-8 JSON.
+- An OVF document MUST use the `.json` file extension.
+- An OVF document SHOULD be pretty-printed with 2-space indentation for human readability.
+
+---
+
+## 2. Conformance Levels
+
+### 2.1 OVF Core
+
+A conforming **OVF Core** document MUST satisfy all of the following:
+
+1. Contains `format_version`, `exported_at`, and `patient` at the top level.
+2. The `patient` resource passes validation against the Patient schema.
+3. Contains at least one additional resource array (e.g. `encounters`, `conditions`) with at least one valid entry.
+
+### 2.2 OVF Complete
+
+A conforming **OVF Complete** document MUST satisfy all of the following:
+
+1. Meets all OVF Core requirements.
+2. Contains all 9 resource types: `patient`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergies`, `medications`, and `documents`.
+3. Each resource array contains at least one valid entry.
+
+---
+
+## 3. Resource Types
+
+### 3.1 Patient
+
+Represents an animal patient in a veterinary practice.
+
+**Required fields:** `resource_type`, `id`, `name`, `species`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Patient"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier for the patient. UUID recommended. |
+| `name` | string | MUST | The pet's given name. |
+| `species` | string (enum) | MUST | Animal species. See [Species Enum](#41-species). |
+| `breed` | string | MAY | Breed or breed mix in free-text form. |
+| `breed_code` | object | MAY | Standardized breed code. See [Breed Code](#311-breed-code). |
+| `date_of_birth` | string (date) | MAY | Date of birth in ISO 8601 format (`YYYY-MM-DD`). |
+| `sex` | string (enum) | MAY | Biological sex: `male`, `female`, `unknown`. |
+| `gender_status` | string (enum) | MAY | Reproductive status: `intact`, `neutered`, `spayed`, `unknown`. |
+| `color` | string | MAY | Coat or skin color description. |
+| `weight` | object | MAY | Body weight. See [Weight](#312-weight). |
+| `identifiers` | Identifier[] | MAY | External identifiers (microchip, passport, etc.). See [Identifier](#313-identifier). |
+| `owner` | object | MAY | Owner contact information. See [Owner](#314-owner). |
+| `is_active` | boolean | MAY | Whether the patient record is active. Default: `true`. |
+| `is_deceased` | boolean | MAY | Whether the patient is deceased. Default: `false`. |
+| `deceased_date` | string (date) | MAY | Date of death in ISO 8601 format. |
+| `notes` | string | MAY | Free-text notes about the patient. |
+| `photo_url` | string (uri) | MAY | URL to a photo of the patient. |
+
+#### 3.1.1 Breed Code
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `system` | string (enum) | MUST | Breed registry system: `fci`, `fife`, `tica`, `other`. |
+| `value` | string | MUST | Breed code value within the registry. |
+
+#### 3.1.2 Weight
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `value` | number (>= 0) | MUST | Numeric weight value. |
+| `unit` | string (enum) | MUST | Unit: `kg`, `lbs`. |
+
+#### 3.1.3 Identifier
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `system` | string (enum) | MUST | Identification system. See [Identifier Systems](#8-identifiers). |
+| `value` | string | MUST | Identifier value within the system. |
+
+#### 3.1.4 Owner
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | MAY | Full name of the owner. |
+| `phone` | string | MAY | Phone number. |
+| `email` | string | MAY | Email address. |
+| `address` | string | MAY | Postal address. |
+
+---
+
+### 3.2 Encounter
+
+Represents a clinical encounter or visit between a patient and a veterinary practitioner.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `status`, `date`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Encounter"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `status` | string (enum) | MUST | Encounter status. See [Encounter Status](#42-encounter-status). |
+| `type` | string (enum) | MAY | Encounter type. See [Encounter Type](#43-encounter-type). |
+| `date` | string (date-time) | MUST | Start date/time in ISO 8601. |
+| `end_date` | string (date-time) | MAY | End date/time in ISO 8601. |
+| `reason` | string | MAY | Chief complaint or reason for the visit. |
+| `practitioner` | object | MAY | Practitioner involved. See [Practitioner](#321-practitioner). |
+| `notes` | string | MAY | Clinical notes or summary. |
+| `diagnoses` | string[] | MAY | Array of condition IDs diagnosed during this encounter. |
+
+#### 3.2.1 Practitioner
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | MAY | Full name. |
+| `license_number` | string | MAY | Professional license number. |
+| `clinic` | string | MAY | Name of the clinic (Encounter practitioner only). |
+
+---
+
+### 3.3 Condition
+
+Represents a clinical condition, diagnosis, or health problem.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `name`, `clinical_status`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Condition"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the diagnosing encounter. |
+| `code` | object | MAY | Coded condition. See [Condition Code](#331-condition-code). |
+| `name` | string | MUST | Human-readable condition name. |
+| `clinical_status` | string (enum) | MUST | See [Condition Clinical Status](#44-condition-clinical-status). |
+| `severity` | string (enum) | MAY | Severity: `mild`, `moderate`, `severe`. |
+| `onset_date` | string (date) | MAY | Date condition first appeared. |
+| `abatement_date` | string (date) | MAY | Date condition resolved or entered remission. |
+| `notes` | string | MAY | Additional clinical notes. |
+
+#### 3.3.1 Condition Code
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `system` | string (enum) | MUST | Coding system: `icd-10-vet`, `snomed-ct-vet`, `internal`, `other`. |
+| `value` | string | MUST | Code value. |
+| `display` | string | MUST | Human-readable display text. |
+
+---
+
+### 3.4 Observation
+
+Represents a clinical observation or measurement.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `category`, `name`, `effective_date`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Observation"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the encounter. |
+| `category` | string (enum) | MUST | See [Observation Category](#45-observation-category). |
+| `code` | object | MAY | Coded observation type (system + value + display). |
+| `name` | string | MUST | Human-readable observation name. |
+| `effective_date` | string (date-time) | MUST | Date/time the observation was measured. |
+| `value` | number, string, boolean, or object | MAY | The observed value. |
+| `unit` | string | MAY | Unit of measurement. |
+| `reference_range` | object | MAY | Expected range. See [Reference Range](#341-reference-range). |
+| `interpretation` | string (enum) | MAY | Interpretation: `normal`, `abnormal`, `low`, `high`, `critical`. |
+| `notes` | string | MAY | Additional notes. |
+
+#### 3.4.1 Reference Range
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `low` | number | MAY | Lower bound. |
+| `high` | number | MAY | Upper bound. |
+| `text` | string | MAY | Human-readable range description. |
+
+---
+
+### 3.5 Immunization
+
+Represents a vaccination event.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `vaccine_name`, `occurrence_date`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Immunization"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the encounter. |
+| `vaccine_name` | string | MUST | Name of the vaccine product. |
+| `vaccine_code` | object | MAY | Coded vaccine (system + value). |
+| `occurrence_date` | string (date) | MUST | Date the vaccination was administered. |
+| `expiration_date` | string (date) | MAY | Date vaccine protection expires. |
+| `next_dose_date` | string (date) | MAY | Recommended date for next booster. |
+| `lot_number` | string | MAY | Manufacturer lot/batch number. |
+| `manufacturer` | string | MAY | Vaccine manufacturer name. |
+| `route` | string (enum) | MAY | Route: `intramuscular`, `subcutaneous`, `oral`, `intranasal`, `other`. |
+| `site` | string | MAY | Anatomical site of administration. |
+| `dose_quantity` | object | MAY | Dosage amount (value + unit). |
+| `practitioner` | object | MAY | Administering practitioner (name + license_number). |
+| `is_primary_course` | boolean | MAY | Whether this is part of the initial immunization course. |
+| `notes` | string | MAY | Additional notes. |
+
+---
+
+### 3.6 Procedure
+
+Represents a clinical procedure performed on a patient.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `name`, `status`, `performed_date`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Procedure"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the encounter. |
+| `name` | string | MUST | Human-readable procedure name. |
+| `code` | object | MAY | Coded procedure (system + value + display). |
+| `status` | string (enum) | MUST | Status: `planned`, `in-progress`, `completed`, `cancelled`. |
+| `category` | string (enum) | MAY | See [Procedure Category](#46-procedure-category). |
+| `performed_date` | string (date-time) | MUST | Date/time the procedure was performed. |
+| `end_date` | string (date-time) | MAY | Date/time the procedure ended. |
+| `practitioner` | object | MAY | Performing practitioner (name + license_number). |
+| `anesthesia` | object | MAY | Anesthesia details. See [Anesthesia](#361-anesthesia). |
+| `outcome` | string | MAY | Description of procedure outcome. |
+| `complications` | string | MAY | Complications during or after the procedure. |
+| `notes` | string | MAY | Additional notes. |
+
+#### 3.6.1 Anesthesia
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | string (enum) | MAY | Anesthesia type: `general`, `local`, `sedation`, `none`. |
+| `agent` | string | MAY | Anesthetic agent used. |
+
+---
+
+### 3.7 AllergyIntolerance
+
+Represents an allergy or intolerance identified for a patient.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `type`, `category`, `substance`, `clinical_status`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"AllergyIntolerance"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the identifying encounter. |
+| `type` | string (enum) | MUST | `allergy` (immune-mediated) or `intolerance` (non-immune). |
+| `category` | string (enum) | MUST | Substance category: `food`, `medication`, `environment`, `other`. |
+| `substance` | string | MUST | Name of the causative substance. |
+| `clinical_status` | string (enum) | MUST | Status: `active`, `inactive`, `resolved`. |
+| `criticality` | string (enum) | MAY | Criticality: `low`, `high`, `unable-to-assess`. |
+| `onset_date` | string (date) | MAY | Date first identified. |
+| `reaction` | object | MAY | Reaction details. See [Reaction](#371-reaction). |
+| `notes` | string | MAY | Additional notes. |
+
+#### 3.7.1 Reaction
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `manifestation` | string | MAY | Clinical manifestation or symptom. |
+| `severity` | string (enum) | MAY | Severity: `mild`, `moderate`, `severe`. |
+
+---
+
+### 3.8 MedicationStatement
+
+Represents a medication being taken by or administered to a patient.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `medication_name`, `status`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"MedicationStatement"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the encounter. |
+| `medication_name` | string | MUST | Name of the medication. |
+| `medication_code` | object | MAY | Coded medication (system + value). |
+| `status` | string (enum) | MUST | Status: `active`, `completed`, `stopped`, `on-hold`. |
+| `date_started` | string (date) | MAY | Date medication was started. |
+| `date_ended` | string (date) | MAY | Date medication was stopped. |
+| `dosage` | object | MAY | Dosage instructions. See [Dosage](#381-dosage). |
+| `reason` | string | MAY | Clinical reason for the medication. |
+| `prescriber` | object | MAY | Prescribing practitioner (name + license_number). |
+| `notes` | string | MAY | Additional notes. |
+
+#### 3.8.1 Dosage
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `value` | number | MAY | Dose amount per administration. |
+| `unit` | string | MAY | Unit of the dose. |
+| `frequency` | string | MAY | Administration frequency (e.g. "twice daily"). |
+| `route` | string (enum) | MAY | Route: `oral`, `topical`, `injection`, `inhalation`, `other`. |
+
+---
+
+### 3.9 DocumentReference
+
+Represents a reference to a clinical document or file.
+
+**Required fields:** `resource_type`, `id`, `patient_id`, `type`, `date`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"DocumentReference"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `patient_id` | string | MUST | Reference to the patient. |
+| `encounter_id` | string | MAY | Reference to the encounter. |
+| `type` | string (enum) | MUST | Document type. See [Document Type](#47-document-type). |
+| `description` | string | MAY | Human-readable description. |
+| `date` | string (date-time) | MUST | Date/time the document was created. |
+| `content_type` | string | MAY | MIME type (e.g. `application/pdf`). |
+| `url` | string (uri) | MAY | URL where the document can be retrieved. |
+| `data` | string | MAY | Base64-encoded document content for inline embedding. |
+| `size_bytes` | integer | MAY | Document size in bytes. |
+| `hash` | string | MAY | SHA-256 hash for integrity verification. |
+| `author` | object | MAY | Document author (name). |
+| `notes` | string | MAY | Additional notes. |
+
+---
+
+## 4. Controlled Vocabularies
+
+### 4.1 Species
+
+| Value | Description |
+|---|---|
+| `dog` | Domestic dog (Canis lupus familiaris) |
+| `cat` | Domestic cat (Felis catus) |
+| `bird` | Avian species |
+| `rabbit` | Domestic rabbit (Oryctolagus cuniculus) |
+| `hamster` | Hamster species (Cricetinae) |
+| `guinea_pig` | Guinea pig (Cavia porcellus) |
+| `fish` | Aquatic fish species |
+| `reptile` | Reptilian species (snakes, lizards, turtles, etc.) |
+| `horse` | Domestic horse (Equus ferus caballus) |
+| `other` | Any species not listed above |
+
+### 4.2 Encounter Status
+
+| Value | Description |
+|---|---|
+| `planned` | The encounter is scheduled but has not started. |
+| `in-progress` | The encounter is currently underway. |
+| `completed` | The encounter has finished. |
+| `cancelled` | The encounter was cancelled before completion. |
+
+### 4.3 Encounter Type
+
+| Value | Description |
+|---|---|
+| `consultation` | General consultation or office visit. |
+| `emergency` | Emergency or urgent care visit. |
+| `follow-up` | Follow-up visit for a previous condition or procedure. |
+| `vaccination` | Visit primarily for vaccination. |
+| `surgery` | Surgical procedure visit. |
+| `dental` | Dental examination or procedure. |
+| `grooming` | Grooming services. |
+| `telehealth` | Remote consultation via video/phone. |
+| `other` | Encounter type not listed above. |
+
+### 4.4 Condition Clinical Status
+
+| Value | Description |
+|---|---|
+| `active` | The condition is currently active and being managed. |
+| `recurrence` | The condition has returned after a period of resolution. |
+| `relapse` | The condition has worsened after a period of improvement. |
+| `inactive` | The condition is no longer active but not formally resolved. |
+| `remission` | The condition is in remission. |
+| `resolved` | The condition has been fully resolved. |
+
+### 4.5 Observation Category
+
+| Value | Description |
+|---|---|
+| `vital-signs` | Vital sign measurements (temperature, heart rate, respiratory rate, etc.). |
+| `laboratory` | Laboratory test results (blood work, urinalysis, etc.). |
+| `imaging` | Imaging study findings (X-ray, ultrasound, etc.). |
+| `clinical-note` | Clinical observation recorded as a note. |
+| `other` | Observation category not listed above. |
+
+### 4.6 Procedure Category
+
+| Value | Description |
+|---|---|
+| `surgery` | Surgical procedure. |
+| `dental` | Dental procedure. |
+| `diagnostic` | Diagnostic procedure (e.g. biopsy, endoscopy). |
+| `therapeutic` | Therapeutic procedure (e.g. fluid therapy, wound care). |
+| `grooming` | Grooming procedure. |
+| `other` | Procedure category not listed above. |
+
+### 4.7 Document Type
+
+| Value | Description |
+|---|---|
+| `lab-report` | Laboratory test report. |
+| `imaging` | Imaging study (X-ray, ultrasound, MRI, etc.). |
+| `discharge-summary` | Discharge summary from hospitalization. |
+| `referral` | Referral letter to a specialist. |
+| `consent` | Owner consent form. |
+| `invoice` | Billing invoice. |
+| `other` | Document type not listed above. |
+
+### 4.8 Observation Interpretation
+
+| Value | Description |
+|---|---|
+| `normal` | Value is within the normal reference range. |
+| `abnormal` | Value is outside the normal reference range. |
+| `low` | Value is below the reference range. |
+| `high` | Value is above the reference range. |
+| `critical` | Value is critically abnormal and requires immediate attention. |
+
+### 4.9 Immunization Route
+
+| Value | Description |
+|---|---|
+| `intramuscular` | Injection into muscle tissue. |
+| `subcutaneous` | Injection under the skin. |
+| `oral` | Administered by mouth. |
+| `intranasal` | Administered through the nose. |
+| `other` | Route not listed above. |
+
+### 4.10 Medication Dosage Route
+
+| Value | Description |
+|---|---|
+| `oral` | Administered by mouth. |
+| `topical` | Applied to the skin surface. |
+| `injection` | Administered by injection (any route). |
+| `inhalation` | Administered by inhalation. |
+| `other` | Route not listed above. |
+
+### 4.11 Anesthesia Type
+
+| Value | Description |
+|---|---|
+| `general` | General anesthesia (full unconsciousness). |
+| `local` | Local anesthesia (regional numbing). |
+| `sedation` | Sedation without full anesthesia. |
+| `none` | No anesthesia administered. |
+
+### 4.12 AllergyIntolerance Type
+
+| Value | Description |
+|---|---|
+| `allergy` | Immune-mediated adverse reaction. |
+| `intolerance` | Non-immune adverse reaction. |
+
+### 4.13 AllergyIntolerance Category
+
+| Value | Description |
+|---|---|
+| `food` | Food substance. |
+| `medication` | Pharmaceutical substance. |
+| `environment` | Environmental substance (pollen, dust, etc.). |
+| `other` | Category not listed above. |
+
+### 4.14 AllergyIntolerance Clinical Status
+
+| Value | Description |
+|---|---|
+| `active` | The allergy/intolerance is currently active. |
+| `inactive` | The allergy/intolerance is no longer active. |
+| `resolved` | The allergy/intolerance has been resolved. |
+
+### 4.15 Criticality
+
+| Value | Description |
+|---|---|
+| `low` | Low risk of serious harm from future exposure. |
+| `high` | High risk of serious harm from future exposure. |
+| `unable-to-assess` | Criticality cannot be determined. |
+
+### 4.16 Severity (Condition / Reaction)
+
+| Value | Description |
+|---|---|
+| `mild` | Mild severity; minimal impact on daily function. |
+| `moderate` | Moderate severity; noticeable impact on daily function. |
+| `severe` | Severe; significant impact, may be life-threatening. |
+
+### 4.17 Sex
+
+| Value | Description |
+|---|---|
+| `male` | Male biological sex. |
+| `female` | Female biological sex. |
+| `unknown` | Sex is unknown or not recorded. |
+
+### 4.18 Gender Status
+
+| Value | Description |
+|---|---|
+| `intact` | Not surgically altered. |
+| `neutered` | Male castration performed. |
+| `spayed` | Female ovariohysterectomy performed. |
+| `unknown` | Reproductive status unknown. |
+
+### 4.19 Breed Code System
+
+| Value | Description |
+|---|---|
+| `fci` | Federation Cynologique Internationale (dogs). |
+| `fife` | Federation Internationale Feline (cats). |
+| `tica` | The International Cat Association (cats). |
+| `other` | Other breed registry not listed above. |
+
+### 4.20 Condition Code System
+
+| Value | Description |
+|---|---|
+| `icd-10-vet` | ICD-10 adapted for veterinary use. |
+| `snomed-ct-vet` | SNOMED CT adapted for veterinary use. |
+| `internal` | Practice-internal coding system. |
+| `other` | Other coding system. |
+
+### 4.21 Medication Status
+
+| Value | Description |
+|---|---|
+| `active` | The patient is currently taking the medication. |
+| `completed` | The medication course has been completed. |
+| `stopped` | The medication was stopped before completion. |
+| `on-hold` | The medication is temporarily paused. |
+
+---
+
+## 5. Extension Mechanism
+
+OVF allows custom fields to support practice-specific or regional data needs.
+
+### 5.1 Rules
+
+- Custom fields MUST use the `x_` prefix (e.g. `x_clinic_internal_id`, `x_insurance_provider`).
+- Extensions MUST NOT change the meaning or semantics of any standard field defined in this specification.
+- All OVF objects have `additionalProperties: true` in their JSON Schema, allowing extensions on any resource.
+- Consumers that do not recognize an `x_`-prefixed field SHOULD preserve it during round-trip processing and MUST NOT reject the document.
+
+### 5.2 Example
+
+```json
+{
+  "resource_type": "Patient",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Burek",
+  "species": "dog",
+  "x_insurance_provider": "PetPlan Poland",
+  "x_insurance_policy_number": "PP-2025-123456"
+}
+```
+
+---
+
+## 6. Versioning Policy
+
+OVF follows **SchemaVer** (Semantic Versioning for schemas): `MAJOR.MINOR.PATCH`.
+
+| Change Type | Version Bump | Examples |
+|---|---|---|
+| **MAJOR** | Breaking changes | Removing a required field, changing a field type, renaming a field, removing an enum value. |
+| **MINOR** | Backward-compatible additions | Adding a new optional field, adding a new enum value, adding a new resource type. |
+| **PATCH** | Non-functional changes | Fixing descriptions, updating examples, correcting typos. |
+
+### 6.1 Compatibility Guarantees
+
+- A consumer supporting version `1.x` MUST be able to read any `1.y` document where `y >= x`, ignoring unknown fields.
+- A producer SHOULD generate documents at the highest MINOR version it supports.
+- The `format_version` field in the document MUST reflect the schema version the document was validated against.
+
+---
+
+## 7. Data Types
+
+### 7.1 Date and DateTime
+
+- Date fields use ISO 8601 date format: `YYYY-MM-DD` (e.g. `2025-06-15`).
+- DateTime fields use ISO 8601 date-time format: `YYYY-MM-DDThh:mm:ssZ` (e.g. `2025-06-15T10:30:00Z`).
+- DateTime values SHOULD include a timezone offset or use UTC (`Z`).
+
+### 7.2 Identifiers
+
+All identifiers (`id` fields) SHOULD be UUIDs (RFC 4122) but MAY be any unique string. Producers MUST ensure uniqueness within a document.
+
+---
+
+## 8. Identifiers
+
+OVF uses a `system` + `value` pair pattern for external identifiers on the Patient resource.
+
+### 8.1 Supported Systems
+
+| System | Description | Value Format |
+|---|---|---|
+| `iso-microchip-11784` | ISO 11784/11785 compliant microchip. | 15-digit numeric string (e.g. `616000012345678`). Country code prefix per ISO 3166. |
+| `eu-pet-passport` | EU Pet Passport number. | Country code + alphanumeric (e.g. `PL-1234567`). |
+| `safe-animal` | SAFE-ANIMAL registry (Poland). | Registry-assigned identifier. |
+| `europetnet` | EUROPETNET European pet identification network. | Network-assigned identifier. |
+| `national-registry` | Country-specific national pet registry. | Varies by country. |
+| `other` | Any identification system not listed above. | Free-form string. |
+
+### 8.2 Example
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "iso-microchip-11784",
+      "value": "616000012345678"
+    },
+    {
+      "system": "eu-pet-passport",
+      "value": "PL-1234567"
+    },
+    {
+      "system": "safe-animal",
+      "value": "SAFE-2025-98765"
+    }
+  ]
+}
+```
+
+---
+
+## 9. References
+
+- [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/json-schema-core)
+- [RFC 2119 — Key words for use in RFCs](https://www.rfc-editor.org/rfc/rfc2119)
+- [ISO 8601 — Date and time format](https://www.iso.org/iso-8601-date-and-time-format.html)
+- [ISO 11784/11785 — Radio frequency identification of animals](https://www.iso.org/standard/25881.html)
+- [HL7 FHIR R4](https://hl7.org/fhir/R4/)
+
+---
+
+# SCHEMAS
+
+## allergy-intolerance.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/allergy-intolerance.schema.json",
+  "title": "AllergyIntolerance",
+  "description": "Represents an allergy or intolerance identified for a patient, including the causative substance, reaction details, and clinical status.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "type", "category", "substance", "clinical_status"],
+  "additionalProperties": true,
+  "$defs": {
+    "reaction": {
+      "type": "object",
+      "description": "Details of the adverse reaction caused by the substance.",
+      "properties": {
+        "manifestation": {
+          "type": "string",
+          "description": "Clinical manifestation or symptom of the reaction.",
+          "examples": ["Urticaria and facial swelling"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["mild", "moderate", "severe"],
+          "description": "Severity of the reaction.",
+          "examples": ["moderate"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "AllergyIntolerance",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["AllergyIntolerance"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the allergy/intolerance record. UUID recommended.",
+      "examples": ["allergy-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient who has this allergy or intolerance.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this allergy or intolerance was identified.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["allergy", "intolerance"],
+      "description": "Whether this represents a true allergy (immune-mediated) or an intolerance (non-immune).",
+      "examples": ["allergy"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["food", "medication", "environment", "other"],
+      "description": "Category of the causative substance.",
+      "examples": ["medication"]
+    },
+    "substance": {
+      "type": "string",
+      "description": "Name of the substance that causes the adverse reaction.",
+      "examples": ["Penicillin"]
+    },
+    "clinical_status": {
+      "type": "string",
+      "enum": ["active", "inactive", "resolved"],
+      "description": "Current clinical status of the allergy or intolerance.",
+      "examples": ["active"]
+    },
+    "criticality": {
+      "type": "string",
+      "enum": ["low", "high", "unable-to-assess"],
+      "description": "Estimate of the potential clinical harm or seriousness of future reactions.",
+      "examples": ["high"]
+    },
+    "onset_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the allergy or intolerance was first identified.",
+      "examples": ["2024-03-10"]
+    },
+    "reaction": {
+      "$ref": "#/$defs/reaction"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the allergy or intolerance.",
+      "examples": ["Confirmed via intradermal skin testing. Avoid all beta-lactam antibiotics."]
+    }
+  }
+}
+```
+
+## condition.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/condition.schema.json",
+  "title": "Condition",
+  "description": "Represents a clinical condition, diagnosis, or health problem identified for a patient.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "name", "clinical_status"],
+  "additionalProperties": true,
+  "$defs": {
+    "code": {
+      "type": "object",
+      "description": "Coded representation of the condition using a standardized veterinary terminology system.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["icd-10-vet", "snomed-ct-vet", "internal", "other"],
+          "description": "The coding system used.",
+          "examples": ["icd-10-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The code value within the specified system.",
+          "examples": ["K29.0"]
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code.",
+          "examples": ["Acute gastritis"]
+        }
+      },
+      "required": ["system", "value", "display"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Condition",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Condition"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the condition record. UUID recommended.",
+      "examples": ["cond-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this condition belongs to.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this condition was diagnosed.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "code": {
+      "$ref": "#/$defs/code"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the diagnosis or condition.",
+      "examples": ["Acute gastritis"]
+    },
+    "clinical_status": {
+      "type": "string",
+      "enum": ["active", "recurrence", "relapse", "inactive", "remission", "resolved"],
+      "description": "The clinical status of the condition.",
+      "examples": ["active"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["mild", "moderate", "severe"],
+      "description": "Subjective assessment of the condition severity.",
+      "examples": ["moderate"]
+    },
+    "onset_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Estimated or actual date when the condition first appeared.",
+      "examples": ["2025-05-01"]
+    },
+    "abatement_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the condition resolved or went into remission.",
+      "examples": ["2025-06-15"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional clinical notes about the condition.",
+      "examples": ["Likely caused by dietary indiscretion. Owner reports the dog ate garbage."]
+    }
+  }
+}
+```
+
+## document-reference.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/document-reference.schema.json",
+  "title": "DocumentReference",
+  "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "type", "date"],
+  "additionalProperties": true,
+  "$defs": {
+    "author": {
+      "type": "object",
+      "description": "The person who authored or created the document.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the document author.",
+          "examples": ["Dr. Anna Nowak"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "DocumentReference",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["DocumentReference"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the document reference record. UUID recommended.",
+      "examples": ["doc-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this document is associated with.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this document was created or obtained.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["lab-report", "imaging", "discharge-summary", "referral", "consent", "invoice", "other"],
+      "description": "The category or type of document.",
+      "examples": ["lab-report"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the document.",
+      "examples": ["Complete blood count results from annual wellness exam"]
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time the document was created or obtained.",
+      "examples": ["2025-06-15T11:00:00Z"]
+    },
+    "content_type": {
+      "type": "string",
+      "description": "MIME type of the document content.",
+      "examples": ["application/pdf"]
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL where the document can be retrieved.",
+      "examples": ["https://example.com/documents/cbc-report-2025-06-15.pdf"]
+    },
+    "data": {
+      "type": "string",
+      "description": "Base64-encoded content of the document. Use for inline embedding of small documents.",
+      "examples": ["JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKExhYiBS..."]
+    },
+    "size_bytes": {
+      "type": "integer",
+      "description": "Size of the document content in bytes.",
+      "examples": [524288]
+    },
+    "hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the document content for integrity verification.",
+      "examples": ["e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"]
+    },
+    "author": {
+      "$ref": "#/$defs/author"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the document.",
+      "examples": ["Results reviewed and discussed with owner on 2025-06-16."]
+    }
+  }
+}
+```
+
+## encounter.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/encounter.schema.json",
+  "title": "Encounter",
+  "description": "Represents a clinical encounter or visit between a patient and a veterinary practitioner.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "status", "date"],
+  "additionalProperties": true,
+  "$defs": {
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner involved in this encounter.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": ["Dr. Anna Nowak"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-12345"]
+        },
+        "clinic": {
+          "type": "string",
+          "description": "Name of the veterinary clinic or hospital.",
+          "examples": ["Happy Paws Veterinary Clinic"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Encounter",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Encounter"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the encounter. UUID recommended.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this encounter belongs to.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "in-progress", "completed", "cancelled"],
+      "description": "Current status of the encounter.",
+      "examples": ["completed"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["consultation", "emergency", "follow-up", "vaccination", "surgery", "dental", "grooming", "telehealth", "other"],
+      "description": "The category or type of encounter.",
+      "examples": ["consultation"]
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start date and time of the encounter in ISO 8601 format.",
+      "examples": ["2025-06-15T10:30:00Z"]
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End date and time of the encounter in ISO 8601 format.",
+      "examples": ["2025-06-15T11:00:00Z"]
+    },
+    "reason": {
+      "type": "string",
+      "description": "The chief complaint or reason for the visit.",
+      "examples": ["Annual wellness check and vaccination"]
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Clinical notes or summary of the encounter.",
+      "examples": ["Patient presented in good health. Vaccination administered. Next visit recommended in 12 months."]
+    },
+    "diagnoses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of condition IDs diagnosed during this encounter.",
+      "examples": [["cond-001", "cond-002"]]
+    }
+  }
+}
+```
+
+## immunization.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/immunization.schema.json",
+  "title": "Immunization",
+  "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
+  "additionalProperties": true,
+  "$defs": {
+    "vaccine_code": {
+      "type": "object",
+      "description": "Coded representation of the vaccine product.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system for the vaccine (e.g., ATC-vet, CVX, internal).",
+          "examples": ["atc-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The vaccine code within the specified system.",
+          "examples": ["QI07AA01"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
+    "dose_quantity": {
+      "type": "object",
+      "description": "The dosage amount administered.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Numeric dose value.",
+          "examples": [1.0]
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the dose (e.g., mL, dose).",
+          "examples": ["mL"]
+        }
+      },
+      "required": ["value", "unit"],
+      "additionalProperties": true
+    },
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner who administered the vaccination.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": ["Dr. Anna Nowak"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-12345"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Immunization",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Immunization"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the immunization record. UUID recommended.",
+      "examples": ["imm-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient who received the vaccination.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the vaccination was administered.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "vaccine_name": {
+      "type": "string",
+      "description": "Name of the vaccine product administered.",
+      "examples": ["Nobivac DHPPi"]
+    },
+    "vaccine_code": {
+      "$ref": "#/$defs/vaccine_code"
+    },
+    "occurrence_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the vaccination was administered in ISO 8601 format.",
+      "examples": ["2025-06-15"]
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the vaccine protection is expected to expire.",
+      "examples": ["2026-06-15"]
+    },
+    "next_dose_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Recommended date for the next booster or dose.",
+      "examples": ["2025-07-15"]
+    },
+    "lot_number": {
+      "type": "string",
+      "description": "Manufacturer lot or batch number of the vaccine.",
+      "examples": ["A123B456"]
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Name of the vaccine manufacturer.",
+      "examples": ["MSD Animal Health"]
+    },
+    "route": {
+      "type": "string",
+      "enum": ["intramuscular", "subcutaneous", "oral", "intranasal", "other"],
+      "description": "Route of administration for the vaccine.",
+      "examples": ["subcutaneous"]
+    },
+    "site": {
+      "type": "string",
+      "description": "Anatomical site where the vaccine was administered.",
+      "examples": ["Right shoulder"]
+    },
+    "dose_quantity": {
+      "$ref": "#/$defs/dose_quantity"
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "is_primary_course": {
+      "type": "boolean",
+      "description": "Whether this vaccination is part of the initial primary immunization course rather than a booster.",
+      "examples": [true]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the vaccination event.",
+      "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
+    }
+  }
+}
+```
+
+## medication-statement.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/medication-statement.schema.json",
+  "title": "MedicationStatement",
+  "description": "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "medication_name", "status"],
+  "additionalProperties": true,
+  "$defs": {
+    "medication_code": {
+      "type": "object",
+      "description": "Coded representation of the medication product.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system used (e.g., ATC-vet, RxNorm, internal).",
+          "examples": ["atc-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The medication code within the specified system.",
+          "examples": ["QJ01CA04"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
+    "dosage": {
+      "type": "object",
+      "description": "Dosage instructions for the medication.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Numeric dose amount per administration.",
+          "examples": [250]
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the dose amount.",
+          "examples": ["mg"]
+        },
+        "frequency": {
+          "type": "string",
+          "description": "How often the medication is administered.",
+          "examples": ["twice daily"]
+        },
+        "route": {
+          "type": "string",
+          "enum": ["oral", "topical", "injection", "inhalation", "other"],
+          "description": "Route of administration.",
+          "examples": ["oral"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "prescriber": {
+      "type": "object",
+      "description": "The veterinary practitioner who prescribed the medication.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the prescriber.",
+          "examples": ["Dr. Anna Nowak"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-12345"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "MedicationStatement",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["MedicationStatement"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the medication statement record. UUID recommended.",
+      "examples": ["med-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient taking or receiving the medication.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the medication was prescribed or recorded.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "medication_name": {
+      "type": "string",
+      "description": "Name of the medication.",
+      "examples": ["Amoxicillin"]
+    },
+    "medication_code": {
+      "$ref": "#/$defs/medication_code"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "completed", "stopped", "on-hold"],
+      "description": "Current status of the medication usage.",
+      "examples": ["active"]
+    },
+    "date_started": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the medication was started.",
+      "examples": ["2025-06-15"]
+    },
+    "date_ended": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the medication was stopped or completed.",
+      "examples": ["2025-06-29"]
+    },
+    "dosage": {
+      "$ref": "#/$defs/dosage"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Clinical reason or indication for the medication.",
+      "examples": ["Bacterial skin infection"]
+    },
+    "prescriber": {
+      "$ref": "#/$defs/prescriber"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the medication statement.",
+      "examples": ["Administer with food. Complete full 14-day course even if symptoms improve."]
+    }
+  }
+}
+```
+
+## observation.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/observation.schema.json",
+  "title": "Observation",
+  "description": "Represents a clinical observation or measurement for a patient, including vital signs, lab results, imaging findings, and clinical notes.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "category", "name", "effective_date"],
+  "additionalProperties": true,
+  "$defs": {
+    "code": {
+      "type": "object",
+      "description": "Coded representation of the observation type using a terminology system.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system used (e.g., LOINC, SNOMED, internal).",
+          "examples": ["loinc"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The code value within the specified system.",
+          "examples": ["2339-0"]
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code.",
+          "examples": ["Blood Glucose"]
+        }
+      },
+      "required": ["system", "value", "display"],
+      "additionalProperties": true
+    },
+    "reference_range": {
+      "type": "object",
+      "description": "The normal or expected range for this observation value.",
+      "properties": {
+        "low": {
+          "type": "number",
+          "description": "Lower bound of the reference range.",
+          "examples": [70]
+        },
+        "high": {
+          "type": "number",
+          "description": "Upper bound of the reference range.",
+          "examples": [140]
+        },
+        "text": {
+          "type": "string",
+          "description": "Human-readable description of the reference range.",
+          "examples": ["70-140 mg/dL"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Observation",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Observation"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the observation record. UUID recommended.",
+      "examples": ["obs-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this observation belongs to.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this observation was recorded.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["vital-signs", "laboratory", "imaging", "clinical-note", "other"],
+      "description": "The high-level category of the observation.",
+      "examples": ["laboratory"]
+    },
+    "code": {
+      "$ref": "#/$defs/code"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the observation.",
+      "examples": ["Blood Glucose"]
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the observation was clinically effective or measured.",
+      "examples": ["2025-06-15T10:45:00Z"]
+    },
+    "value": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string" },
+        { "type": "boolean" },
+        { "type": "object", "additionalProperties": true }
+      ],
+      "description": "The observed value. Can be a number, string, boolean, or structured object depending on the observation type.",
+      "examples": [95.5, "Positive", true]
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measurement for the observed value.",
+      "examples": ["mg/dL"]
+    },
+    "reference_range": {
+      "$ref": "#/$defs/reference_range"
+    },
+    "interpretation": {
+      "type": "string",
+      "enum": ["normal", "abnormal", "low", "high", "critical"],
+      "description": "Clinical interpretation of the observation value relative to reference ranges.",
+      "examples": ["normal"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or context about the observation.",
+      "examples": ["Fasting sample collected at 8:00 AM."]
+    }
+  }
+}
+```
+
+## ovf.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json",
+  "title": "Open Vet Format (OVF)",
+  "description": "Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
+  "type": "object",
+  "required": ["format_version", "exported_at", "patient"],
+  "additionalProperties": true,
+  "$defs": {
+    "exporter": {
+      "type": "object",
+      "description": "Information about the software that generated this OVF export.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the exporting software or system.",
+          "examples": ["VetNote"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the exporting software.",
+          "examples": ["2.4.1"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "format_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the OVF format used in this export.",
+      "examples": ["1.0.0"]
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this export was generated in ISO 8601 format.",
+      "examples": ["2025-06-15T12:00:00Z"]
+    },
+    "exporter": {
+      "$ref": "#/$defs/exporter"
+    },
+    "patient": {
+      "$ref": "patient.schema.json",
+      "description": "The patient whose medical records are contained in this export."
+    },
+    "encounters": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "encounter.schema.json"
+      },
+      "description": "Clinical encounters or visits for the patient.",
+      "examples": [[]]
+    },
+    "conditions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "condition.schema.json"
+      },
+      "description": "Diagnosed conditions or health problems for the patient.",
+      "examples": [[]]
+    },
+    "observations": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "observation.schema.json"
+      },
+      "description": "Clinical observations and measurements for the patient.",
+      "examples": [[]]
+    },
+    "immunizations": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "immunization.schema.json"
+      },
+      "description": "Vaccination records for the patient.",
+      "examples": [[]]
+    },
+    "procedures": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "procedure.schema.json"
+      },
+      "description": "Clinical procedures performed on the patient.",
+      "examples": [[]]
+    },
+    "allergy_intolerances": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "allergy-intolerance.schema.json"
+      },
+      "description": "Allergies and intolerances identified for the patient.",
+      "examples": [[]]
+    },
+    "medication_statements": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "medication-statement.schema.json"
+      },
+      "description": "Medication records for the patient.",
+      "examples": [[]]
+    },
+    "document_references": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "document-reference.schema.json"
+      },
+      "description": "Documents and files associated with the patient.",
+      "examples": [[]]
+    }
+  }
+}
+```
+
+## patient.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/patient.schema.json",
+  "title": "Patient",
+  "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
+  "type": "object",
+  "required": ["resource_type", "id", "name", "species"],
+  "additionalProperties": true,
+  "$defs": {
+    "breed_code": {
+      "type": "object",
+      "description": "Standardized breed classification code from a recognized registry.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["fci", "fife", "tica", "other"],
+          "description": "The breed registry system used for classification.",
+          "examples": ["fci"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The breed code value within the specified registry system.",
+          "examples": ["166"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
+    "weight": {
+      "type": "object",
+      "description": "The patient's body weight measurement.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Numeric weight value. Must be zero or positive.",
+          "examples": [12.5]
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["kg", "lbs"],
+          "description": "Unit of weight measurement.",
+          "examples": ["kg"]
+        }
+      },
+      "required": ["value", "unit"],
+      "additionalProperties": true
+    },
+    "identifier": {
+      "type": "object",
+      "description": "An external identifier for the patient, such as a microchip or passport number.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["iso-microchip-11784", "eu-pet-passport", "safe-animal", "europetnet", "national-registry", "other"],
+          "description": "The identification system or namespace.",
+          "examples": ["iso-microchip-11784"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The identifier value within the specified system.",
+          "examples": ["941000024680135"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
+    "owner": {
+      "type": "object",
+      "description": "Contact information for the patient's owner or guardian.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the owner.",
+          "examples": ["Jan Kowalski"]
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number of the owner.",
+          "examples": ["+48 600 123 456"]
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the owner.",
+          "examples": ["jan.kowalski@example.com"]
+        },
+        "address": {
+          "type": "string",
+          "description": "Postal address of the owner.",
+          "examples": ["ul. Zwierzyniecka 10, 31-015 Krakow, Poland"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Patient",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Patient"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the patient record. UUID recommended.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "name": {
+      "type": "string",
+      "description": "The pet's given name.",
+      "examples": ["Burek"]
+    },
+    "species": {
+      "type": "string",
+      "enum": ["dog", "cat", "bird", "rabbit", "hamster", "guinea_pig", "fish", "reptile", "horse", "other"],
+      "description": "The animal species of the patient.",
+      "examples": ["dog"]
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed or breed mix of the patient in free-text form.",
+      "examples": ["Labrador Retriever"]
+    },
+    "breed_code": {
+      "$ref": "#/$defs/breed_code"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "The patient's date of birth in ISO 8601 format.",
+      "examples": ["2020-03-15"]
+    },
+    "sex": {
+      "type": "string",
+      "enum": ["male", "female", "unknown"],
+      "description": "Biological sex of the patient.",
+      "examples": ["male"]
+    },
+    "gender_status": {
+      "type": "string",
+      "enum": ["intact", "neutered", "spayed", "unknown"],
+      "description": "Reproductive status of the patient.",
+      "examples": ["neutered"]
+    },
+    "color": {
+      "type": "string",
+      "description": "Coat or skin color description of the patient.",
+      "examples": ["golden"]
+    },
+    "weight": {
+      "$ref": "#/$defs/weight"
+    },
+    "identifiers": {
+      "type": "array",
+      "description": "External identifiers such as microchip numbers or passport IDs.",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
+      "examples": [[{"system": "iso-microchip-11784", "value": "941000024680135"}]]
+    },
+    "owner": {
+      "$ref": "#/$defs/owner"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this patient record is currently active in the practice.",
+      "examples": [true]
+    },
+    "is_deceased": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the patient is deceased.",
+      "examples": [false]
+    },
+    "deceased_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of death in ISO 8601 format, if applicable.",
+      "examples": ["2025-12-01"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text notes about the patient.",
+      "examples": ["Friendly but nervous during examinations. Prefers treats as positive reinforcement."]
+    },
+    "photo_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to a photo of the patient.",
+      "examples": ["https://example.com/photos/burek.jpg"]
+    }
+  }
+}
+```
+
+## procedure.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/procedure.schema.json",
+  "title": "Procedure",
+  "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
+  "additionalProperties": true,
+  "$defs": {
+    "code": {
+      "type": "object",
+      "description": "Coded representation of the procedure using a standardized terminology system.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).",
+          "examples": ["snomed-ct-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The procedure code within the specified system.",
+          "examples": ["65801008"]
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code.",
+          "examples": ["Ovariohysterectomy"]
+        }
+      },
+      "required": ["system", "value", "display"],
+      "additionalProperties": true
+    },
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner who performed the procedure.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": ["Dr. Piotr Wisniewski"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-67890"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "anesthesia": {
+      "type": "object",
+      "description": "Anesthesia details for the procedure.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["general", "local", "sedation", "none"],
+          "description": "Type of anesthesia administered.",
+          "examples": ["general"]
+        },
+        "agent": {
+          "type": "string",
+          "description": "Name of the anesthetic agent used.",
+          "examples": ["Isoflurane"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Procedure",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Procedure"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the procedure record. UUID recommended.",
+      "examples": ["proc-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient on whom the procedure was performed.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the procedure was performed.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the procedure.",
+      "examples": ["Ovariohysterectomy (Spay)"]
+    },
+    "code": {
+      "$ref": "#/$defs/code"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "in-progress", "completed", "cancelled"],
+      "description": "Current status of the procedure.",
+      "examples": ["completed"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["surgery", "dental", "diagnostic", "therapeutic", "grooming", "other"],
+      "description": "The high-level category of the procedure.",
+      "examples": ["surgery"]
+    },
+    "performed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the procedure was performed or started.",
+      "examples": ["2025-06-15T09:00:00Z"]
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the procedure ended.",
+      "examples": ["2025-06-15T10:30:00Z"]
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "anesthesia": {
+      "$ref": "#/$defs/anesthesia"
+    },
+    "outcome": {
+      "type": "string",
+      "description": "Description of the procedure outcome.",
+      "examples": ["Successful. Patient recovered well from anesthesia."]
+    },
+    "complications": {
+      "type": "string",
+      "description": "Any complications that occurred during or after the procedure.",
+      "examples": ["Minor bleeding controlled with cauterization."]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the procedure.",
+      "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
+    }
+  }
+}
+```
+
+---
+
+# KEY EXAMPLES
+
+## minimal.json
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Luna",
+    "species": "dog"
+  }
+}
+```
+
+## complete-dog.json
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T15:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-dog-001",
+    "name": "Rocky",
+    "species": "dog",
+    "breed": "French Bulldog",
+    "breed_code": {
+      "system": "fci",
+      "value": "101"
+    },
+    "date_of_birth": "2024-01-10",
+    "sex": "male",
+    "gender_status": "neutered",
+    "color": "Brindle",
+    "weight": {
+      "value": 12.3,
+      "unit": "kg"
+    },
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616093900112233"
+      },
+      {
+        "system": "eu-pet-passport",
+        "value": "PL-987654321"
+      },
+      {
+        "system": "safe-animal",
+        "value": "SA-2024-00112233"
+      }
+    ],
+    "owner": {
+      "name": "Jan Kowalski",
+      "phone": "+48 600 123 456",
+      "email": "jan.kowalski@example.com",
+      "address": "ul. Marszałkowska 10, 00-001 Warszawa, Poland"
+    },
+    "is_active": true,
+    "is_deceased": false,
+    "notes": "Friendly but anxious during examinations. Prefers treats as reward."
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-001",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2024-03-15T10:00:00Z",
+      "reason": "Primary vaccination course — first visit",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "notes": "Puppy in good health. Weight 4.2 kg. Started primary vaccination course."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-002",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2024-04-15T10:00:00Z",
+      "reason": "Primary vaccination — second dose",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      }
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-003",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "surgery",
+      "date": "2024-09-20T08:00:00Z",
+      "end_date": "2024-09-20T10:30:00Z",
+      "reason": "Elective castration",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "diagnoses": ["cond-dog-001"],
+      "notes": "Pre-op bloodwork normal. Smooth recovery."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-004",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2025-02-10T14:00:00Z",
+      "reason": "Skin irritation on belly — owner reports itching for 2 weeks",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "diagnoses": ["cond-dog-002"]
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-005",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2026-01-15T09:30:00Z",
+      "reason": "Annual checkup + booster vaccination",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "notes": "Healthy. Weight stable. Skin allergy well managed with diet."
+    }
+  ],
+  "conditions": [
+    {
+      "resource_type": "Condition",
+      "id": "cond-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-003",
+      "name": "Cryptorchidism (unilateral)",
+      "clinical_status": "resolved",
+      "severity": "mild",
+      "onset_date": "2024-09-20",
+      "abatement_date": "2024-09-20",
+      "notes": "Right testicle retained inguinally. Removed during castration."
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "name": "Atopic dermatitis — food-related",
+      "code": {
+        "system": "icd-10-vet",
+        "value": "L30.9",
+        "display": "Dermatitis, unspecified"
+      },
+      "clinical_status": "active",
+      "severity": "moderate",
+      "onset_date": "2025-01-25",
+      "notes": "Suspected chicken protein allergy. Started elimination diet."
+    }
+  ],
+  "observations": [
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Body Weight",
+      "effective_date": "2026-01-15T09:30:00Z",
+      "value": 12.3,
+      "unit": "kg",
+      "interpretation": "normal",
+      "notes": "Stable weight — ideal for breed"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Heart Rate",
+      "effective_date": "2026-01-15T09:35:00Z",
+      "value": 110,
+      "unit": "bpm",
+      "reference_range": {
+        "low": 60,
+        "high": 140,
+        "text": "60-140 bpm (dog)"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-003",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Body Temperature",
+      "effective_date": "2026-01-15T09:35:00Z",
+      "value": 38.6,
+      "unit": "°C",
+      "reference_range": {
+        "low": 38.0,
+        "high": 39.2,
+        "text": "38.0-39.2°C (dog)"
+      },
+      "interpretation": "normal"
+    }
+  ],
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-001",
+      "vaccine_name": "Nobivac Puppy DP",
+      "occurrence_date": "2024-03-15",
+      "lot_number": "PDP-2024-A1",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-002",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2024-04-15",
+      "expiration_date": "2025-04-15",
+      "next_dose_date": "2025-04-15",
+      "lot_number": "DHP-2024-B2",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-003",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-002",
+      "vaccine_name": "Nobivac Rabies",
+      "occurrence_date": "2024-04-15",
+      "expiration_date": "2027-04-15",
+      "next_dose_date": "2027-04-15",
+      "lot_number": "RAB-2024-C3",
+      "manufacturer": "MSD Animal Health",
+      "route": "intramuscular",
+      "site": "Left thigh",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Required for EU Pet Passport"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-004",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2026-01-15",
+      "expiration_date": "2027-01-15",
+      "next_dose_date": "2027-01-15",
+      "lot_number": "DHP-2026-D4",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": false,
+      "notes": "Annual booster"
+    }
+  ],
+  "procedures": [
+    {
+      "resource_type": "Procedure",
+      "id": "proc-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-003",
+      "name": "Castration with cryptorchid testicle removal",
+      "status": "completed",
+      "category": "surgery",
+      "performed_date": "2024-09-20T08:30:00Z",
+      "end_date": "2024-09-20T09:45:00Z",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890"
+      },
+      "anesthesia": {
+        "type": "general",
+        "agent": "Isoflurane + Propofol induction"
+      },
+      "outcome": "Successful. Both testicles removed. Clean incisions.",
+      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used."
+    }
+  ],
+  "allergy_intolerances": [
+    {
+      "resource_type": "AllergyIntolerance",
+      "id": "allergy-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "type": "allergy",
+      "category": "food",
+      "substance": "Chicken protein",
+      "clinical_status": "active",
+      "criticality": "low",
+      "onset_date": "2025-01-25",
+      "reaction": {
+        "manifestation": "Skin rash, itching on ventral abdomen and inner thighs",
+        "severity": "moderate"
+      },
+      "notes": "Confirmed via 8-week elimination diet. Symptoms resolved with hydrolyzed protein diet."
+    }
+  ],
+  "medication_statements": [
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "medication_name": "Apoquel (oclacitinib)",
+      "status": "completed",
+      "date_started": "2025-02-10",
+      "date_ended": "2025-03-10",
+      "dosage": {
+        "value": 5.4,
+        "unit": "mg",
+        "frequency": "Twice daily for 14 days, then once daily",
+        "route": "oral"
+      },
+      "reason": "Atopic dermatitis — symptomatic relief during elimination diet",
+      "prescriber": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      }
+    },
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "medication_name": "Royal Canin Hypoallergenic",
+      "status": "active",
+      "date_started": "2025-02-10",
+      "dosage": {
+        "value": 200,
+        "unit": "g",
+        "frequency": "Twice daily",
+        "route": "oral"
+      },
+      "reason": "Hydrolyzed protein diet for food allergy management",
+      "prescriber": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "notes": "Long-term dietary management. No chicken-based treats allowed."
+    }
+  ]
+}
+```
+
+## vaccination-only.json
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T10:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Max",
+    "species": "dog",
+    "breed": "German Shepherd",
+    "date_of_birth": "2022-03-15",
+    "sex": "male",
+    "gender_status": "intact",
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616093900067890"
+      },
+      {
+        "system": "eu-pet-passport",
+        "value": "PL-123456789"
+      }
+    ]
+  },
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-001",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi",
+      "occurrence_date": "2022-05-15",
+      "expiration_date": "2023-05-15",
+      "next_dose_date": "2023-05-15",
+      "lot_number": "A1234B",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "First dose of primary vaccination course"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-002",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi",
+      "occurrence_date": "2022-06-15",
+      "expiration_date": "2023-06-15",
+      "next_dose_date": "2023-06-15",
+      "lot_number": "A1235C",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Second dose of primary vaccination course"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-003",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac Rabies",
+      "occurrence_date": "2022-06-15",
+      "expiration_date": "2025-06-15",
+      "next_dose_date": "2025-06-15",
+      "lot_number": "R5678D",
+      "manufacturer": "MSD Animal Health",
+      "route": "intramuscular",
+      "site": "Left thigh",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Rabies vaccination — required for EU Pet Passport"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-004",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2023-05-20",
+      "expiration_date": "2024-05-20",
+      "next_dose_date": "2024-05-20",
+      "lot_number": "B2345E",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890"
+      },
+      "is_primary_course": false,
+      "notes": "Annual booster with Leptospirosis"
+    }
+  ]
+}
+```
+
+## lab-results.json
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T14:30:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-lab-001",
+    "name": "Bella",
+    "species": "dog",
+    "breed": "Labrador Retriever",
+    "date_of_birth": "2019-08-20",
+    "sex": "female",
+    "gender_status": "spayed",
+    "weight": {
+      "value": 28.5,
+      "unit": "kg"
+    }
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-lab-001",
+      "patient_id": "pat-lab-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2026-03-28T09:00:00Z",
+      "reason": "Annual checkup — blood panel ordered",
+      "practitioner": {
+        "name": "Dr. Marta Wiśniewska",
+        "license_number": "PL-VET-11111",
+        "clinic": "VetCare Warszawa"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "resource_type": "Observation",
+      "id": "obs-001",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — WBC",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 12.5,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": 5.5,
+        "high": 16.9,
+        "text": "5.5-16.9 10^9/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-002",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — RBC",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 7.2,
+      "unit": "10^12/L",
+      "reference_range": {
+        "low": 5.5,
+        "high": 8.5,
+        "text": "5.5-8.5 10^12/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-003",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Hemoglobin",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 16.8,
+      "unit": "g/dL",
+      "reference_range": {
+        "low": 12.0,
+        "high": 18.0,
+        "text": "12.0-18.0 g/dL"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-004",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Hematocrit",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 48.2,
+      "unit": "%",
+      "reference_range": {
+        "low": 37.0,
+        "high": 55.0,
+        "text": "37-55%"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-005",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Platelets",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 310,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": 175,
+        "high": 500,
+        "text": "175-500 10^9/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-006",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — ALT (SGPT)",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 45,
+      "unit": "U/L",
+      "reference_range": {
+        "low": 10,
+        "high": 125,
+        "text": "10-125 U/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-007",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Creatinine",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 1.8,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 0.5,
+        "high": 1.8,
+        "text": "0.5-1.8 mg/dL"
+      },
+      "interpretation": "normal",
+      "notes": "Upper end of normal range — recommend monitoring"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-008",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — BUN (Blood Urea Nitrogen)",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 32,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 7,
+        "high": 27,
+        "text": "7-27 mg/dL"
+      },
+      "interpretation": "high",
+      "notes": "Mildly elevated — correlate with creatinine and hydration status"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-009",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Glucose",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 95,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 74,
+        "high": 143,
+        "text": "74-143 mg/dL"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-010",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Total Protein",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 6.8,
+      "unit": "g/dL",
+      "reference_range": {
+        "low": 5.2,
+        "high": 8.2,
+        "text": "5.2-8.2 g/dL"
+      },
+      "interpretation": "normal"
+    }
+  ],
+  "document_references": [
+    {
+      "resource_type": "DocumentReference",
+      "id": "doc-lab-001",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "type": "lab-report",
+      "description": "Complete blood panel report — March 2026",
+      "date": "2026-03-28T12:00:00Z",
+      "content_type": "application/pdf",
+      "url": "https://vetcare.example.com/reports/pat-lab-001/cbc-2026-03.pdf",
+      "author": {
+        "name": "VetLab Diagnostyka"
+      }
+    }
+  ]
+}
+```
+
+---
+
+# FHIR MAPPING
+
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+
+# FHIR Mapping Guide
+
+This document describes the mapping between Open Vet Format (OVF) resources and HL7 FHIR R4 resources. OVF was designed with FHIR alignment in mind but simplifies many structures for the veterinary domain.
+
+---
+
+## Resource Mapping Overview
+
+| OVF Resource | FHIR Resource | Key Differences |
+|---|---|---|
+| Patient | Patient | OVF adds `species`, `breed`, `breed_code` as top-level fields; FHIR uses extensions. OVF has flat `owner` object; FHIR uses separate `RelatedPerson` resource. |
+| Encounter | Encounter | OVF uses simplified status values (4 vs FHIR's 9). Flat `practitioner` object instead of `participant` array with role coding. |
+| Condition | Condition | Nearly identical structure. OVF uses simpler code systems (`icd-10-vet`, `snomed-ct-vet`) instead of full CodeableConcept with multiple codings. |
+| Observation | Observation | OVF uses a flexible `value` field (number/string/boolean/object); FHIR uses typed `value[x]` (valueQuantity, valueString, valueCodeableConcept, etc.). |
+| Immunization | Immunization | OVF adds `next_dose_date` and `expiration_date` as first-class fields. FHIR handles these via `protocolApplied` and vaccine product info. |
+| Procedure | Procedure | OVF adds a dedicated `anesthesia` sub-object (type + agent). FHIR would model this as a separate Procedure or via extensions. |
+| AllergyIntolerance | AllergyIntolerance | Nearly identical. OVF simplifies `reaction` to a single object; FHIR allows an array of reactions each with multiple manifestations. |
+| MedicationStatement | MedicationStatement | OVF simplifies dosage to a flat object (value, unit, frequency, route); FHIR uses the complex `Dosage` backbone element with `timing`, `doseAndRate`, etc. |
+| DocumentReference | DocumentReference | OVF uses a simplified content model with direct `url`, `data`, `content_type` fields; FHIR nests content in `content[].attachment`. |
+
+---
+
+## Detailed Conversion Notes
+
+### OVF to FHIR
+
+#### Patient
+
+OVF Patient maps to FHIR Patient with the following considerations:
+
+- **Species and breed**: FHIR does not have native species/breed fields on Patient. Use the [FHIR Species extension](http://hl7.org/fhir/StructureDefinition/patient-animal) or the `Patient.animal` backbone element (available in some veterinary FHIR profiles):
+  ```json
+  {
+    "resourceType": "Patient",
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/StructureDefinition/patient-animal",
+        "extension": [
+          {
+            "url": "species",
+            "valueCodeableConcept": {
+              "coding": [{ "system": "http://snomed.info/sct", "code": "448771007", "display": "Canis lupus familiaris" }]
+            }
+          },
+          {
+            "url": "breed",
+            "valueCodeableConcept": {
+              "coding": [{ "system": "http://fci.be", "code": "166", "display": "Labrador Retriever" }]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+- **Identifiers**: OVF `identifiers[]` maps directly to FHIR `identifier[]`. The OVF `system` enum values should be expanded to full URIs:
+  | OVF System | FHIR Identifier System URI |
+  |---|---|
+  | `iso-microchip-11784` | `urn:oid:2.16.840.1.113883.4.3xx` or `http://hl7.org/fhir/sid/microchip` |
+  | `eu-pet-passport` | `http://ec.europa.eu/food/animals/pet-movement/eu-pet-passport` |
+  | `safe-animal` | `https://www.safe-animal.eu` |
+  | `europetnet` | `https://www.europetnet.com` |
+- **Owner**: OVF `owner` maps to a FHIR `RelatedPerson` resource linked via `Patient.link` or `Patient.contact`.
+- **Weight**: Map to a FHIR Observation with LOINC code `29463-7` (Body weight).
+- **Gender status**: Map `neutered`/`spayed` to FHIR extensions or Procedure records.
+
+#### Encounter
+
+- **Status**: OVF uses 4 status values. FHIR has additional statuses (`arrived`, `triaged`, `onleave`, `entered-in-error`, `unknown`). Map directly where values overlap.
+- **Type**: OVF uses a simple enum. Convert to FHIR `type` CodeableConcept with an appropriate coding system.
+- **Practitioner**: OVF's flat `practitioner` object maps to FHIR `Encounter.participant[]` with `individual` reference to a `Practitioner` resource.
+- **Diagnoses**: OVF `diagnoses` (array of condition IDs) maps to `Encounter.diagnosis[].condition` as Reference(Condition).
+
+#### Condition
+
+- **Code**: OVF `code` (system + value + display) maps to FHIR `Condition.code` as a CodeableConcept. Expand `system` enum values to URIs:
+  | OVF System | FHIR Code System URI |
+  |---|---|
+  | `icd-10-vet` | `http://hl7.org/fhir/sid/icd-10` (with vet qualifier) |
+  | `snomed-ct-vet` | `http://snomed.info/sct` |
+  | `internal` | Use a practice-specific URI |
+- **Clinical status**: Maps directly to `Condition.clinicalStatus` CodeableConcept.
+
+#### Observation
+
+- **Value**: OVF's polymorphic `value` must be mapped to the appropriate FHIR `value[x]` type:
+  | OVF value type | FHIR field |
+  |---|---|
+  | number | `valueQuantity` (with `unit`) |
+  | string | `valueString` |
+  | boolean | `valueBoolean` |
+  | object | `valueCodeableConcept` or `valueQuantity` depending on structure |
+- **Reference range**: Maps to `Observation.referenceRange[]`.
+
+#### Immunization
+
+- **Vaccine code**: OVF `vaccine_code` maps to `Immunization.vaccineCode` CodeableConcept.
+- **next_dose_date**: No direct FHIR field. Map to `ImmunizationRecommendation.recommendation[].dateCriterion` or use an extension.
+- **expiration_date**: Map to `Immunization.expirationDate`.
+- **is_primary_course**: Map to `Immunization.isSubpotent` or `protocolApplied.doseNumber`.
+
+#### Procedure
+
+- **Anesthesia**: FHIR has no native anesthesia sub-object on Procedure. Options:
+  - Create a separate FHIR Procedure for the anesthesia administration.
+  - Use an extension on the Procedure resource.
+  - Record as a MedicationAdministration resource linked to the Procedure.
+
+#### MedicationStatement
+
+- **Dosage**: OVF's flat dosage maps to FHIR `MedicationStatement.dosage[]` Dosage backbone element:
+  - `value` + `unit` -> `dosage[].doseAndRate[].doseQuantity`
+  - `frequency` -> `dosage[].timing.code` or `timing.repeat`
+  - `route` -> `dosage[].route` CodeableConcept
+
+#### DocumentReference
+
+- **Content**: OVF's flat `url`, `data`, `content_type` map to FHIR `DocumentReference.content[].attachment`:
+  ```json
+  {
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "url": "https://example.com/report.pdf",
+          "data": "base64...",
+          "size": 524288,
+          "hash": "sha256hash..."
+        }
+      }
+    ]
+  }
+  ```
+
+---
+
+### FHIR to OVF
+
+#### General Approach
+
+1. Map FHIR resource types to their OVF equivalents using the table above.
+2. Flatten complex FHIR structures (CodeableConcept, Reference, Dosage) into OVF's simpler fields.
+3. Use the first coding from any CodeableConcept array as the OVF code value.
+4. Drop FHIR metadata fields that have no OVF equivalent (`meta`, `text`, `contained`, `extension` unless mapped).
+
+#### Data Loss Considerations (FHIR to OVF)
+
+The following FHIR data may be lost or simplified when converting to OVF:
+
+- **Multiple codings**: FHIR CodeableConcept can have multiple codings per concept. OVF retains only one system + value + display.
+- **Complex timing**: FHIR Dosage timing with repeat patterns (e.g. "every 8 hours on Mon/Wed/Fri") simplifies to a free-text `frequency` string.
+- **Participant roles**: FHIR Encounter participants have typed roles. OVF captures only a single practitioner.
+- **Multiple reactions**: FHIR AllergyIntolerance supports multiple reaction entries with multiple manifestations. OVF supports a single reaction object.
+- **Resource references**: FHIR uses typed references (`Reference(Practitioner)`). OVF uses flat objects or string IDs.
+- **Provenance and audit**: FHIR `meta.lastUpdated`, `meta.source`, provenance chains have no OVF equivalent.
+- **Narrative text**: FHIR `text` (human-readable XHTML narrative) is not preserved in OVF.
+
+#### Data Loss Considerations (OVF to FHIR)
+
+The following OVF data may require special handling when converting to FHIR:
+
+- **Species/breed**: Must be mapped to FHIR extensions; no native field exists.
+- **Anesthesia sub-object**: Must be modeled as a separate resource or extension.
+- **next_dose_date**: Must be mapped to ImmunizationRecommendation or an extension.
+- **Owner as nested object**: Must be extracted into a separate RelatedPerson resource.
+- **`x_` extensions**: Custom OVF fields should be mapped to FHIR extensions with appropriate URIs.
+
+---
+
+### Date Format Compatibility
+
+Both OVF and FHIR use ISO 8601 for date and datetime values. No conversion is needed for temporal fields, with one caveat:
+
+- OVF date fields use `YYYY-MM-DD` format (JSON Schema `format: "date"`).
+- OVF datetime fields use `YYYY-MM-DDThh:mm:ssZ` format (JSON Schema `format: "date-time"`).
+- FHIR `dateTime` type is more flexible, supporting partial dates (`2025`, `2025-06`). These MUST be expanded to full precision when converting to OVF date fields.
+
+---
+
+## Conversion Libraries
+
+Community conversion libraries are tracked in the main repository. If you build an OVF-to-FHIR or FHIR-to-OVF converter, please open a pull request to add it.
+
+---
+
+# POLISH EXTENSIONS
+
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+
+# Polish Market Extensions
+
+This guide covers Poland-specific identifier systems, breed registries, and conventions supported by Open Vet Format. These features are built into the core schema using the `identifiers` and `breed_code` fields on the Patient resource.
+
+---
+
+## Microchip Standards
+
+### ISO 11784/11785
+
+The international standard for radio frequency identification of animals. All microchips used in Poland comply with this standard.
+
+- **Format**: 15-digit numeric string.
+- **Structure**: The first 3 digits encode the country code per ISO 3166 numeric. Poland's country code is **616**.
+- **OVF system**: `iso-microchip-11784`
+
+A Polish microchip number always starts with `616`:
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "iso-microchip-11784",
+      "value": "616000012345678"
+    }
+  ]
+}
+```
+
+The 15-digit format breaks down as:
+
+| Digits | Meaning |
+|---|---|
+| 1-3 | Country code (616 for Poland) |
+| 4-5 | Manufacturer code |
+| 6-15 | Unique animal identifier |
+
+---
+
+## Pet Registries
+
+### SAFE-ANIMAL
+
+[SAFE-ANIMAL](https://www.safe-animal.eu) is Poland's official pet registry for microchipped animals. It is the primary database used by veterinary clinics, shelters, and authorities to identify lost or stolen pets in Poland.
+
+- **Website**: www.safe-animal.eu
+- **OVF system**: `safe-animal`
+- **Coverage**: Dogs, cats, and other microchipped animals registered in Poland.
+- **Lookup**: Veterinarians and owners can search by microchip number to find owner contact information and pet details.
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "safe-animal",
+      "value": "SAFE-2025-98765"
+    }
+  ]
+}
+```
+
+### EUROPETNET
+
+[EUROPETNET](https://www.europetnet.com) is the European pet identification network that connects national pet registries across Europe. When a microchipped pet registered in Poland is found in another EU country, EUROPETNET enables cross-border identification.
+
+- **Website**: www.europetnet.com
+- **OVF system**: `europetnet`
+- **Members**: SAFE-ANIMAL is a member database of EUROPETNET, so Polish pets registered in SAFE-ANIMAL are also searchable via EUROPETNET.
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "europetnet",
+      "value": "EPN-616000012345678"
+    }
+  ]
+}
+```
+
+---
+
+## EU Pet Passport
+
+The EU Pet Passport is a standardized document required for travelling with pets within the European Union. It is issued by authorized veterinarians and contains:
+
+- Microchip number (mandatory since 2011, replacing tattoos).
+- Rabies vaccination record.
+- Owner identification and address.
+- Animal description (species, breed, sex, color, date of birth).
+
+### Identifier Format
+
+Polish EU Pet Passports use the country prefix `PL` followed by a numeric identifier:
+
+- **OVF system**: `eu-pet-passport`
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "eu-pet-passport",
+      "value": "PL-1234567"
+    }
+  ]
+}
+```
+
+### Combined Identifiers Example
+
+A fully identified Polish pet typically has multiple identifiers:
+
+```json
+{
+  "resource_type": "Patient",
+  "id": "pet-001",
+  "name": "Burek",
+  "species": "dog",
+  "breed": "Labrador Retriever",
+  "identifiers": [
+    {
+      "system": "iso-microchip-11784",
+      "value": "616000012345678"
+    },
+    {
+      "system": "eu-pet-passport",
+      "value": "PL-1234567"
+    },
+    {
+      "system": "safe-animal",
+      "value": "SAFE-2025-98765"
+    },
+    {
+      "system": "europetnet",
+      "value": "EPN-616000012345678"
+    }
+  ]
+}
+```
+
+---
+
+## Breed Code Systems
+
+OVF supports standardized breed codes via the `breed_code` field on Patient. This is particularly useful for official documentation, pedigree records, and cross-system interoperability.
+
+### FCI (Federation Cynologique Internationale)
+
+The [FCI](https://www.fci.be) is the largest international canine organization, and Poland's national kennel club (Zwiazek Kynologiczny w Polsce / ZKwP) is an FCI member. FCI breed codes are the standard for dog breed identification in Poland.
+
+- **OVF system**: `fci`
+- **Scope**: Dogs only.
+- **Format**: Numeric code assigned to each recognized breed.
+
+Common FCI breed codes:
+
+| FCI Code | Breed |
+|---|---|
+| 122 | German Shepherd Dog |
+| 166 | Labrador Retriever |
+| 111 | Golden Retriever |
+| 86 | French Bulldog |
+| 65 | Dachshund (Standard) |
+| 252 | Yorkshire Terrier |
+| 218 | Siberian Husky |
+| 15 | Boxer |
+| 332 | Jack Russell Terrier |
+| 83 | Miniature Schnauzer |
+
+```json
+{
+  "breed": "Labrador Retriever",
+  "breed_code": {
+    "system": "fci",
+    "value": "166"
+  }
+}
+```
+
+### FIFe (Federation Internationale Feline)
+
+[FIFe](https://fifeweb.org) is the largest international cat registry in Europe. Poland's national cat organization (Felinologiczny Zwiazek Hodowcow Kotow Rasowych) is a FIFe member.
+
+- **OVF system**: `fife`
+- **Scope**: Cats only.
+- **Format**: Three or four letter breed code (EMS code system).
+
+Common FIFe breed codes:
+
+| FIFe Code | Breed |
+|---|---|
+| PER | Persian |
+| BRI | British Shorthair |
+| MCO | Maine Coon |
+| RAG | Ragdoll |
+| BEN | Bengal |
+| SBI | Sacred Birman |
+| ABY | Abyssinian |
+| RUS | Russian Blue |
+| NFO | Norwegian Forest Cat |
+| SIA | Siamese |
+
+```json
+{
+  "breed": "British Shorthair",
+  "breed_code": {
+    "system": "fife",
+    "value": "BRI"
+  }
+}
+```
+
+FIFe EMS codes can also include color and pattern suffixes (e.g. `BRI a` for British Shorthair Blue), but the `breed_code.value` field should contain the base breed code only.
+
+### TICA (The International Cat Association)
+
+[TICA](https://tica.org) is another major international cat registry recognized in Poland.
+
+- **OVF system**: `tica`
+- **Scope**: Cats only.
+- **Format**: Two-letter breed code.
+
+Common TICA breed codes:
+
+| TICA Code | Breed |
+|---|---|
+| PS | Persian |
+| BS | British Shorthair |
+| MC | Maine Coon |
+| RD | Ragdoll |
+| BG | Bengal |
+| BI | Birman |
+| AB | Abyssinian |
+| RB | Russian Blue |
+| NF | Norwegian Forest Cat |
+| SI | Siamese |
+
+```json
+{
+  "breed": "Maine Coon",
+  "breed_code": {
+    "system": "tica",
+    "value": "MC"
+  }
+}
+```
+
+---
+
+## Complete Polish Patient Example
+
+A fully documented Polish dog with all identifier systems and breed coding:
+
+```json
+{
+  "resource_type": "Patient",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Burek",
+  "species": "dog",
+  "breed": "Labrador Retriever",
+  "breed_code": {
+    "system": "fci",
+    "value": "166"
+  },
+  "date_of_birth": "2020-03-15",
+  "sex": "male",
+  "gender_status": "neutered",
+  "color": "golden",
+  "weight": {
+    "value": 32.5,
+    "unit": "kg"
+  },
+  "identifiers": [
+    {
+      "system": "iso-microchip-11784",
+      "value": "616000012345678"
+    },
+    {
+      "system": "eu-pet-passport",
+      "value": "PL-1234567"
+    },
+    {
+      "system": "safe-animal",
+      "value": "SAFE-2025-98765"
+    },
+    {
+      "system": "europetnet",
+      "value": "EPN-616000012345678"
+    }
+  ],
+  "owner": {
+    "name": "Jan Kowalski",
+    "phone": "+48 600 123 456",
+    "email": "jan.kowalski@example.com",
+    "address": "ul. Zwierzyniecka 10, 31-015 Krakow, Poland"
+  },
+  "is_active": true,
+  "is_deceased": false,
+  "notes": "Friendly but nervous during examinations. Prefers treats as positive reinforcement."
+}
+```
+
+---
+
+## Notes for Implementers
+
+1. **Microchip validation**: Polish microchips always start with `616`. Implementations SHOULD validate that `iso-microchip-11784` values with a `616` prefix are exactly 15 digits.
+2. **SAFE-ANIMAL lookup**: The SAFE-ANIMAL API (when available) can be queried by microchip number to retrieve registration status.
+3. **Breed code priority**: When both FIFe and TICA codes are relevant for a cat, prefer FIFe as it is the dominant registry in Poland. Use the `x_secondary_breed_code` extension for the alternate code if needed.
+4. **EU Pet Passport expiry**: The passport itself does not expire, but the rabies vaccination recorded in it does. Track vaccination expiry via the Immunization resource's `expiration_date` field.
+5. **Cross-border travel**: When generating OVF documents for pets travelling within the EU, include both the `iso-microchip-11784` and `eu-pet-passport` identifiers at minimum.

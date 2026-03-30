@@ -1,0 +1,22 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-empty-001",
+    "name": "Nowy",
+    "species": "rabbit"
+  },
+  "encounters": [],
+  "conditions": [],
+  "observations": [],
+  "immunizations": [],
+  "procedures": [],
+  "allergy_intolerances": [],
+  "medication_statements": [],
+  "document_references": []
+}

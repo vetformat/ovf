@@ -1,0 +1,10 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "not-a-date",
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-001",
+    "name": "Luna",
+    "species": "dog"
+  }
+}

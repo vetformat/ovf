@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/allergy-intolerance.schema.json",
+  "title": "AllergyIntolerance",
+  "description": "Represents an allergy or intolerance identified for a patient, including the causative substance, reaction details, and clinical status.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "type", "category", "substance", "clinical_status"],
+  "additionalProperties": true,
+  "$defs": {
+    "reaction": {
+      "type": "object",
+      "description": "Details of the adverse reaction caused by the substance.",
+      "properties": {
+        "manifestation": {
+          "type": "string",
+          "description": "Clinical manifestation or symptom of the reaction.",
+          "examples": ["Urticaria and facial swelling"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["mild", "moderate", "severe"],
+          "description": "Severity of the reaction.",
+          "examples": ["moderate"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "AllergyIntolerance",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["AllergyIntolerance"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the allergy/intolerance record. UUID recommended.",
+      "examples": ["allergy-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient who has this allergy or intolerance.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this allergy or intolerance was identified.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["allergy", "intolerance"],
+      "description": "Whether this represents a true allergy (immune-mediated) or an intolerance (non-immune).",
+      "examples": ["allergy"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["food", "medication", "environment", "other"],
+      "description": "Category of the causative substance.",
+      "examples": ["medication"]
+    },
+    "substance": {
+      "type": "string",
+      "description": "Name of the substance that causes the adverse reaction.",
+      "examples": ["Penicillin"]
+    },
+    "clinical_status": {
+      "type": "string",
+      "enum": ["active", "inactive", "resolved"],
+      "description": "Current clinical status of the allergy or intolerance.",
+      "examples": ["active"]
+    },
+    "criticality": {
+      "type": "string",
+      "enum": ["low", "high", "unable-to-assess"],
+      "description": "Estimate of the potential clinical harm or seriousness of future reactions.",
+      "examples": ["high"]
+    },
+    "onset_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the allergy or intolerance was first identified.",
+      "examples": ["2024-03-10"]
+    },
+    "reaction": {
+      "$ref": "#/$defs/reaction"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the allergy or intolerance.",
+      "examples": ["Confirmed via intradermal skin testing. Avoid all beta-lactam antibiotics."]
+    }
+  }
+}

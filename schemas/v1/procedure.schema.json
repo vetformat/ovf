@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/procedure.schema.json",
+  "title": "Procedure",
+  "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
+  "type": "object",
+  "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
+  "additionalProperties": true,
+  "$defs": {
+    "code": {
+      "type": "object",
+      "description": "Coded representation of the procedure using a standardized terminology system.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).",
+          "examples": ["snomed-ct-vet"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The procedure code within the specified system.",
+          "examples": ["65801008"]
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code.",
+          "examples": ["Ovariohysterectomy"]
+        }
+      },
+      "required": ["system", "value", "display"],
+      "additionalProperties": true
+    },
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner who performed the procedure.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": ["Dr. Piotr Wisniewski"]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": ["VET-PL-67890"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "anesthesia": {
+      "type": "object",
+      "description": "Anesthesia details for the procedure.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["general", "local", "sedation", "none"],
+          "description": "Type of anesthesia administered.",
+          "examples": ["general"]
+        },
+        "agent": {
+          "type": "string",
+          "description": "Name of the anesthetic agent used.",
+          "examples": ["Isoflurane"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Procedure",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Procedure"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the procedure record. UUID recommended.",
+      "examples": ["proc-550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient on whom the procedure was performed.",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the procedure was performed.",
+      "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the procedure.",
+      "examples": ["Ovariohysterectomy (Spay)"]
+    },
+    "code": {
+      "$ref": "#/$defs/code"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "in-progress", "completed", "cancelled"],
+      "description": "Current status of the procedure.",
+      "examples": ["completed"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["surgery", "dental", "diagnostic", "therapeutic", "grooming", "other"],
+      "description": "The high-level category of the procedure.",
+      "examples": ["surgery"]
+    },
+    "performed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the procedure was performed or started.",
+      "examples": ["2025-06-15T09:00:00Z"]
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the procedure ended.",
+      "examples": ["2025-06-15T10:30:00Z"]
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "anesthesia": {
+      "$ref": "#/$defs/anesthesia"
+    },
+    "outcome": {
+      "type": "string",
+      "description": "Description of the procedure outcome.",
+      "examples": ["Successful. Patient recovered well from anesthesia."]
+    },
+    "complications": {
+      "type": "string",
+      "description": "Any complications that occurred during or after the procedure.",
+      "examples": ["Minor bleeding controlled with cauterization."]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the procedure.",
+      "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
+    }
+  }
+}

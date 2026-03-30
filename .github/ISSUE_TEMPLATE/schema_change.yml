@@ -1,0 +1,55 @@
+name: Schema Change Proposal
+description: Propose a change to the OVF schema
+title: "[Schema]: "
+labels: ["schema-change"]
+body:
+  - type: dropdown
+    id: resource
+    attributes:
+      label: Resource Affected
+      options:
+        - ovf (root schema)
+        - Patient
+        - Encounter
+        - Condition
+        - Observation
+        - Immunization
+        - Procedure
+        - AllergyIntolerance
+        - MedicationStatement
+        - DocumentReference
+        - New resource type
+    validations:
+      required: true
+
+  - type: textarea
+    id: field_changes
+    attributes:
+      label: Field Changes
+      description: Describe the fields to add, modify, or remove
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking Change?
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration_path
+    attributes:
+      label: Migration Path
+      description: If breaking, how should existing documents be migrated?
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this change needed? What use case does it support?
+    validations:
+      required: true

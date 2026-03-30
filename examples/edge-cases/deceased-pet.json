@@ -1,0 +1,50 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-deceased-001",
+    "name": "Burek",
+    "species": "dog",
+    "breed": "Mixed breed",
+    "date_of_birth": "2010-05-01",
+    "sex": "male",
+    "gender_status": "neutered",
+    "weight": {
+      "value": 18.0,
+      "unit": "kg"
+    },
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616093900099887"
+      }
+    ],
+    "is_active": false,
+    "is_deceased": true,
+    "deceased_date": "2025-11-15",
+    "notes": "Passed away peacefully at home. Long battle with lymphoma."
+  },
+  "conditions": [
+    {
+      "resource_type": "Condition",
+      "id": "cond-dec-001",
+      "patient_id": "pat-deceased-001",
+      "name": "Multicentric lymphoma",
+      "code": {
+        "system": "icd-10-vet",
+        "value": "C85.9",
+        "display": "Non-Hodgkin lymphoma, unspecified"
+      },
+      "clinical_status": "resolved",
+      "severity": "severe",
+      "onset_date": "2025-06-01",
+      "abatement_date": "2025-11-15",
+      "notes": "Diagnosed via lymph node aspirate. Owner declined chemotherapy. Palliative care provided."
+    }
+  ]
+}

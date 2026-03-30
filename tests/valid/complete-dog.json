@@ -1,0 +1,369 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T15:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-dog-001",
+    "name": "Rocky",
+    "species": "dog",
+    "breed": "French Bulldog",
+    "breed_code": {
+      "system": "fci",
+      "value": "101"
+    },
+    "date_of_birth": "2024-01-10",
+    "sex": "male",
+    "gender_status": "neutered",
+    "color": "Brindle",
+    "weight": {
+      "value": 12.3,
+      "unit": "kg"
+    },
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616093900112233"
+      },
+      {
+        "system": "eu-pet-passport",
+        "value": "PL-987654321"
+      },
+      {
+        "system": "safe-animal",
+        "value": "SA-2024-00112233"
+      }
+    ],
+    "owner": {
+      "name": "Jan Kowalski",
+      "phone": "+48 600 123 456",
+      "email": "jan.kowalski@example.com",
+      "address": "ul. Marszałkowska 10, 00-001 Warszawa, Poland"
+    },
+    "is_active": true,
+    "is_deceased": false,
+    "notes": "Friendly but anxious during examinations. Prefers treats as reward."
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-001",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2024-03-15T10:00:00Z",
+      "reason": "Primary vaccination course — first visit",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "notes": "Puppy in good health. Weight 4.2 kg. Started primary vaccination course."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-002",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2024-04-15T10:00:00Z",
+      "reason": "Primary vaccination — second dose",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      }
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-003",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "surgery",
+      "date": "2024-09-20T08:00:00Z",
+      "end_date": "2024-09-20T10:30:00Z",
+      "reason": "Elective castration",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "diagnoses": ["cond-dog-001"],
+      "notes": "Pre-op bloodwork normal. Smooth recovery."
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-004",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2025-02-10T14:00:00Z",
+      "reason": "Skin irritation on belly — owner reports itching for 2 weeks",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "diagnoses": ["cond-dog-002"]
+    },
+    {
+      "resource_type": "Encounter",
+      "id": "enc-dog-005",
+      "patient_id": "pat-dog-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2026-01-15T09:30:00Z",
+      "reason": "Annual checkup + booster vaccination",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345",
+        "clinic": "Klinika Weterynaryjna Łapa"
+      },
+      "notes": "Healthy. Weight stable. Skin allergy well managed with diet."
+    }
+  ],
+  "conditions": [
+    {
+      "resource_type": "Condition",
+      "id": "cond-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-003",
+      "name": "Cryptorchidism (unilateral)",
+      "clinical_status": "resolved",
+      "severity": "mild",
+      "onset_date": "2024-09-20",
+      "abatement_date": "2024-09-20",
+      "notes": "Right testicle retained inguinally. Removed during castration."
+    },
+    {
+      "resource_type": "Condition",
+      "id": "cond-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "name": "Atopic dermatitis — food-related",
+      "code": {
+        "system": "icd-10-vet",
+        "value": "L30.9",
+        "display": "Dermatitis, unspecified"
+      },
+      "clinical_status": "active",
+      "severity": "moderate",
+      "onset_date": "2025-01-25",
+      "notes": "Suspected chicken protein allergy. Started elimination diet."
+    }
+  ],
+  "observations": [
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Body Weight",
+      "effective_date": "2026-01-15T09:30:00Z",
+      "value": 12.3,
+      "unit": "kg",
+      "interpretation": "normal",
+      "notes": "Stable weight — ideal for breed"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Heart Rate",
+      "effective_date": "2026-01-15T09:35:00Z",
+      "value": 110,
+      "unit": "bpm",
+      "reference_range": {
+        "low": 60,
+        "high": 140,
+        "text": "60-140 bpm (dog)"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-dog-003",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "category": "vital-signs",
+      "name": "Body Temperature",
+      "effective_date": "2026-01-15T09:35:00Z",
+      "value": 38.6,
+      "unit": "°C",
+      "reference_range": {
+        "low": 38.0,
+        "high": 39.2,
+        "text": "38.0-39.2°C (dog)"
+      },
+      "interpretation": "normal"
+    }
+  ],
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-001",
+      "vaccine_name": "Nobivac Puppy DP",
+      "occurrence_date": "2024-03-15",
+      "lot_number": "PDP-2024-A1",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-002",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2024-04-15",
+      "expiration_date": "2025-04-15",
+      "next_dose_date": "2025-04-15",
+      "lot_number": "DHP-2024-B2",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-003",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-002",
+      "vaccine_name": "Nobivac Rabies",
+      "occurrence_date": "2024-04-15",
+      "expiration_date": "2027-04-15",
+      "next_dose_date": "2027-04-15",
+      "lot_number": "RAB-2024-C3",
+      "manufacturer": "MSD Animal Health",
+      "route": "intramuscular",
+      "site": "Left thigh",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Required for EU Pet Passport"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-dog-004",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-005",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2026-01-15",
+      "expiration_date": "2027-01-15",
+      "next_dose_date": "2027-01-15",
+      "lot_number": "DHP-2026-D4",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": false,
+      "notes": "Annual booster"
+    }
+  ],
+  "procedures": [
+    {
+      "resource_type": "Procedure",
+      "id": "proc-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-003",
+      "name": "Castration with cryptorchid testicle removal",
+      "status": "completed",
+      "category": "surgery",
+      "performed_date": "2024-09-20T08:30:00Z",
+      "end_date": "2024-09-20T09:45:00Z",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890"
+      },
+      "anesthesia": {
+        "type": "general",
+        "agent": "Isoflurane + Propofol induction"
+      },
+      "outcome": "Successful. Both testicles removed. Clean incisions.",
+      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used."
+    }
+  ],
+  "allergy_intolerances": [
+    {
+      "resource_type": "AllergyIntolerance",
+      "id": "allergy-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "type": "allergy",
+      "category": "food",
+      "substance": "Chicken protein",
+      "clinical_status": "active",
+      "criticality": "low",
+      "onset_date": "2025-01-25",
+      "reaction": {
+        "manifestation": "Skin rash, itching on ventral abdomen and inner thighs",
+        "severity": "moderate"
+      },
+      "notes": "Confirmed via 8-week elimination diet. Symptoms resolved with hydrolyzed protein diet."
+    }
+  ],
+  "medication_statements": [
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-dog-001",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "medication_name": "Apoquel (oclacitinib)",
+      "status": "completed",
+      "date_started": "2025-02-10",
+      "date_ended": "2025-03-10",
+      "dosage": {
+        "value": 5.4,
+        "unit": "mg",
+        "frequency": "Twice daily for 14 days, then once daily",
+        "route": "oral"
+      },
+      "reason": "Atopic dermatitis — symptomatic relief during elimination diet",
+      "prescriber": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      }
+    },
+    {
+      "resource_type": "MedicationStatement",
+      "id": "med-dog-002",
+      "patient_id": "pat-dog-001",
+      "encounter_id": "enc-dog-004",
+      "medication_name": "Royal Canin Hypoallergenic",
+      "status": "active",
+      "date_started": "2025-02-10",
+      "dosage": {
+        "value": 200,
+        "unit": "g",
+        "frequency": "Twice daily",
+        "route": "oral"
+      },
+      "reason": "Hydrolyzed protein diet for food allergy management",
+      "prescriber": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "notes": "Long-term dietary management. No chicken-based treats allowed."
+    }
+  ]
+}
