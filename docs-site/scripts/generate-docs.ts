@@ -318,7 +318,16 @@ function main(): void {
     }
   }
 
-  console.log("\nDone! Generated pages are in docs-site/src/content/docs/");
+  // Copy raw schemas to public/ so $id URLs resolve
+  const publicSchemas = resolve(ROOT, "docs-site", "public", "schemas", "v1");
+  ensureDir(publicSchemas);
+  for (const file of schemaFiles) {
+    const content = readFileSync(resolve(SCHEMAS_DIR, file), "utf-8");
+    writeFileSync(resolve(publicSchemas, file), content);
+  }
+  console.log(`\nCopied ${schemaFiles.length} schemas to public/schemas/v1/`);
+
+  console.log("Done! Generated pages are in docs-site/src/content/docs/");
 }
 
 main();
