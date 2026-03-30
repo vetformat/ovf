@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/immunization.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/immunization.schema.json",
   "title": "Immunization",
   "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
   "type": "object",

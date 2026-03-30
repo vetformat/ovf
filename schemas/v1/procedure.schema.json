@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/procedure.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/procedure.schema.json",
   "title": "Procedure",
   "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
   "type": "object",

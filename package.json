@@ -1,5 +1,5 @@
 {
-  "name": "@vetnote/open-vet-format",
+  "name": "@vetformat/ovf",
   "version": "1.0.0",
   "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
   "license": "Apache-2.0",

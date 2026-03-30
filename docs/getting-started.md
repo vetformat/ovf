@@ -14,7 +14,7 @@ Get up and running with OVF in under 5 minutes. This guide covers creating, vali
 ## Installation
 
 ```bash
-npm install @vetnote/open-vet-format
+npm install @vetformat/ovf
 ```
 
 This installs the OVF JSON schemas, TypeScript types, and the `ovf-validate` CLI tool.
@@ -148,8 +148,8 @@ Use [ajv](https://ajv.js.org/) to validate OVF documents programmatically:
 ```typescript
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import patientSchema from "@vetnote/open-vet-format/schemas/v1/patient.schema.json";
-import encounterSchema from "@vetnote/open-vet-format/schemas/v1/encounter.schema.json";
+import patientSchema from "@vetformat/ovf/schemas/v1/patient.schema.json";
+import encounterSchema from "@vetformat/ovf/schemas/v1/encounter.schema.json";
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -197,7 +197,7 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-schemas_dir = Path("node_modules/@vetnote/open-vet-format/schemas/v1")
+schemas_dir = Path("node_modules/@vetformat/ovf/schemas/v1")
 
 patient_schema = json.loads(
     (schemas_dir / "patient.schema.json").read_text()

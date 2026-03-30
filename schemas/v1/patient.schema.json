@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/patient.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/patient.schema.json",
   "title": "Patient",
   "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
   "type": "object",

@@ -10,7 +10,7 @@ JSON Schemas themselves cannot contain vulnerabilities — they are declarative 
 
 ## Reporting a Vulnerability
 
-**Email:** security@vetnote.app
+**Email:** security@vetformat.org
 
 Please include:
 - Description of the vulnerability

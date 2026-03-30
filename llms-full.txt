@@ -693,7 +693,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/allergy-intolerance.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/allergy-intolerance.schema.json",
   "title": "AllergyIntolerance",
   "description": "Represents an allergy or intolerance identified for a patient, including the causative substance, reaction details, and clinical status.",
   "type": "object",
@@ -791,7 +791,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/condition.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/condition.schema.json",
   "title": "Condition",
   "description": "Represents a clinical condition, diagnosis, or health problem identified for a patient.",
   "type": "object",
@@ -889,7 +889,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/document-reference.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/document-reference.schema.json",
   "title": "DocumentReference",
   "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
   "type": "object",
@@ -989,7 +989,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/encounter.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/encounter.schema.json",
   "title": "Encounter",
   "description": "Represents a clinical encounter or visit between a patient and a veterinary practitioner.",
   "type": "object",
@@ -1118,7 +1118,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/immunization.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/immunization.schema.json",
   "title": "Immunization",
   "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
   "type": "object",
@@ -1293,7 +1293,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/medication-statement.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/medication-statement.schema.json",
   "title": "MedicationStatement",
   "description": "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.",
   "type": "object",
@@ -1435,7 +1435,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/observation.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/observation.schema.json",
   "title": "Observation",
   "description": "Represents a clinical observation or measurement for a patient, including vital signs, lab results, imaging findings, and clinical notes.",
   "type": "object",
@@ -1572,7 +1572,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/ovf.schema.json",
   "title": "Open Vet Format (OVF)",
   "description": "Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
   "type": "object",
@@ -1697,7 +1697,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/patient.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/patient.schema.json",
   "title": "Patient",
   "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
   "type": "object",
@@ -1916,7 +1916,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-vet-format.vetnote.app/schemas/v1/procedure.schema.json",
+  "$id": "https://vetformat.org/schemas/v1/procedure.schema.json",
   "title": "Procedure",
   "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
   "type": "object",
@@ -2485,348 +2485,6 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         "license_number": "PL-VET-12345"
       },
       "notes": "Long-term dietary management. No chicken-based treats allowed."
-    }
-  ]
-}
-```
-
-## vaccination-only.json
-```json
-{
-  "format_version": "1.0.0",
-  "exported_at": "2026-03-30T10:00:00Z",
-  "exporter": {
-    "name": "VetNote",
-    "version": "2.0.0"
-  },
-  "patient": {
-    "resource_type": "Patient",
-    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Max",
-    "species": "dog",
-    "breed": "German Shepherd",
-    "date_of_birth": "2022-03-15",
-    "sex": "male",
-    "gender_status": "intact",
-    "identifiers": [
-      {
-        "system": "iso-microchip-11784",
-        "value": "616093900067890"
-      },
-      {
-        "system": "eu-pet-passport",
-        "value": "PL-123456789"
-      }
-    ]
-  },
-  "immunizations": [
-    {
-      "resource_type": "Immunization",
-      "id": "imm-001",
-      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "vaccine_name": "Nobivac DHPPi",
-      "occurrence_date": "2022-05-15",
-      "expiration_date": "2023-05-15",
-      "next_dose_date": "2023-05-15",
-      "lot_number": "A1234B",
-      "manufacturer": "MSD Animal Health",
-      "route": "subcutaneous",
-      "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
-      "is_primary_course": true,
-      "notes": "First dose of primary vaccination course"
-    },
-    {
-      "resource_type": "Immunization",
-      "id": "imm-002",
-      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "vaccine_name": "Nobivac DHPPi",
-      "occurrence_date": "2022-06-15",
-      "expiration_date": "2023-06-15",
-      "next_dose_date": "2023-06-15",
-      "lot_number": "A1235C",
-      "manufacturer": "MSD Animal Health",
-      "route": "subcutaneous",
-      "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
-      "is_primary_course": true,
-      "notes": "Second dose of primary vaccination course"
-    },
-    {
-      "resource_type": "Immunization",
-      "id": "imm-003",
-      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "vaccine_name": "Nobivac Rabies",
-      "occurrence_date": "2022-06-15",
-      "expiration_date": "2025-06-15",
-      "next_dose_date": "2025-06-15",
-      "lot_number": "R5678D",
-      "manufacturer": "MSD Animal Health",
-      "route": "intramuscular",
-      "site": "Left thigh",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
-      "is_primary_course": true,
-      "notes": "Rabies vaccination — required for EU Pet Passport"
-    },
-    {
-      "resource_type": "Immunization",
-      "id": "imm-004",
-      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "vaccine_name": "Nobivac DHPPi + L4",
-      "occurrence_date": "2023-05-20",
-      "expiration_date": "2024-05-20",
-      "next_dose_date": "2024-05-20",
-      "lot_number": "B2345E",
-      "manufacturer": "MSD Animal Health",
-      "route": "subcutaneous",
-      "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890"
-      },
-      "is_primary_course": false,
-      "notes": "Annual booster with Leptospirosis"
-    }
-  ]
-}
-```
-
-## lab-results.json
-```json
-{
-  "format_version": "1.0.0",
-  "exported_at": "2026-03-30T14:30:00Z",
-  "exporter": {
-    "name": "VetNote",
-    "version": "2.0.0"
-  },
-  "patient": {
-    "resource_type": "Patient",
-    "id": "pat-lab-001",
-    "name": "Bella",
-    "species": "dog",
-    "breed": "Labrador Retriever",
-    "date_of_birth": "2019-08-20",
-    "sex": "female",
-    "gender_status": "spayed",
-    "weight": {
-      "value": 28.5,
-      "unit": "kg"
-    }
-  },
-  "encounters": [
-    {
-      "resource_type": "Encounter",
-      "id": "enc-lab-001",
-      "patient_id": "pat-lab-001",
-      "status": "completed",
-      "type": "consultation",
-      "date": "2026-03-28T09:00:00Z",
-      "reason": "Annual checkup — blood panel ordered",
-      "practitioner": {
-        "name": "Dr. Marta Wiśniewska",
-        "license_number": "PL-VET-11111",
-        "clinic": "VetCare Warszawa"
-      }
-    }
-  ],
-  "observations": [
-    {
-      "resource_type": "Observation",
-      "id": "obs-001",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Complete Blood Count — WBC",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 12.5,
-      "unit": "10^9/L",
-      "reference_range": {
-        "low": 5.5,
-        "high": 16.9,
-        "text": "5.5-16.9 10^9/L"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-002",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Complete Blood Count — RBC",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 7.2,
-      "unit": "10^12/L",
-      "reference_range": {
-        "low": 5.5,
-        "high": 8.5,
-        "text": "5.5-8.5 10^12/L"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-003",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Complete Blood Count — Hemoglobin",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 16.8,
-      "unit": "g/dL",
-      "reference_range": {
-        "low": 12.0,
-        "high": 18.0,
-        "text": "12.0-18.0 g/dL"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-004",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Complete Blood Count — Hematocrit",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 48.2,
-      "unit": "%",
-      "reference_range": {
-        "low": 37.0,
-        "high": 55.0,
-        "text": "37-55%"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-005",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Complete Blood Count — Platelets",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 310,
-      "unit": "10^9/L",
-      "reference_range": {
-        "low": 175,
-        "high": 500,
-        "text": "175-500 10^9/L"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-006",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Biochemistry — ALT (SGPT)",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 45,
-      "unit": "U/L",
-      "reference_range": {
-        "low": 10,
-        "high": 125,
-        "text": "10-125 U/L"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-007",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Biochemistry — Creatinine",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 1.8,
-      "unit": "mg/dL",
-      "reference_range": {
-        "low": 0.5,
-        "high": 1.8,
-        "text": "0.5-1.8 mg/dL"
-      },
-      "interpretation": "normal",
-      "notes": "Upper end of normal range — recommend monitoring"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-008",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Biochemistry — BUN (Blood Urea Nitrogen)",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 32,
-      "unit": "mg/dL",
-      "reference_range": {
-        "low": 7,
-        "high": 27,
-        "text": "7-27 mg/dL"
-      },
-      "interpretation": "high",
-      "notes": "Mildly elevated — correlate with creatinine and hydration status"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-009",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Biochemistry — Glucose",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 95,
-      "unit": "mg/dL",
-      "reference_range": {
-        "low": 74,
-        "high": 143,
-        "text": "74-143 mg/dL"
-      },
-      "interpretation": "normal"
-    },
-    {
-      "resource_type": "Observation",
-      "id": "obs-010",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "category": "laboratory",
-      "name": "Biochemistry — Total Protein",
-      "effective_date": "2026-03-28T11:00:00Z",
-      "value": 6.8,
-      "unit": "g/dL",
-      "reference_range": {
-        "low": 5.2,
-        "high": 8.2,
-        "text": "5.2-8.2 g/dL"
-      },
-      "interpretation": "normal"
-    }
-  ],
-  "document_references": [
-    {
-      "resource_type": "DocumentReference",
-      "id": "doc-lab-001",
-      "patient_id": "pat-lab-001",
-      "encounter_id": "enc-lab-001",
-      "type": "lab-report",
-      "description": "Complete blood panel report — March 2026",
-      "date": "2026-03-28T12:00:00Z",
-      "content_type": "application/pdf",
-      "url": "https://vetcare.example.com/reports/pat-lab-001/cbc-2026-03.pdf",
-      "author": {
-        "name": "VetLab Diagnostyka"
-      }
     }
   ]
 }

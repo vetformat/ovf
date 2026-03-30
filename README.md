@@ -77,7 +77,7 @@ OVF maps cleanly to FHIR concepts (see [FHIR Mapping](docs/fhir-mapping.md)), so
 ## Installation
 
 ```bash
-npm install @vetnote/open-vet-format
+npm install @vetformat/ovf
 ```
 
 ### Validate a document
@@ -91,7 +91,7 @@ npx ovf-validate ./my-record.json
 ```typescript
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import schema from "@vetnote/open-vet-format/schemas/v1/ovf.schema.json";
+import schema from "@vetformat/ovf/schemas/v1/ovf.schema.json";
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
