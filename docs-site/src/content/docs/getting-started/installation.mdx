@@ -1,17 +1,55 @@
 ---
 title: Installation
-description: Install the OVF npm package and set up validation in TypeScript or Python.
+description: Install OVF schemas, typed SDKs, and validation tools for TypeScript and Python.
 ---
 
-## npm install
+## Typed SDKs
+
+OVF provides generated type definitions for type-safe development — no manual typing needed.
+
+### TypeScript
 
 ```bash
-npm install @vetnote/open-vet-format
+npm install @vetformat/ovf-types
 ```
 
-This installs the OVF JSON schemas, TypeScript types, and the `ovf-validate` CLI tool.
+```typescript
+import type { OvfDocument, Patient, Encounter } from "@vetformat/ovf-types";
 
-## CLI usage
+const doc: OvfDocument = JSON.parse(rawJson);
+console.log(doc.patient.name);    // string
+console.log(doc.patient.species); // "dog" | "cat" | "bird" | ...
+```
+
+### Python
+
+```bash
+pip install ovf_types
+```
+
+```python
+from ovf_types import OvfDocument, Patient, Encounter
+
+doc = OvfDocument.model_validate(data)
+print(doc.patient.name)
+print(doc.patient.species)
+```
+
+:::tip
+The Python models are [Pydantic v2](https://docs.pydantic.dev/) BaseModels — you get validation, serialization, and IDE autocomplete out of the box.
+:::
+
+## JSON Schemas
+
+If you need the raw schemas (e.g. for validation or code generation in other languages):
+
+```bash
+npm install @vetformat/ovf
+```
+
+This installs all JSON Schema files and the `ovf-validate` CLI tool.
+
+## CLI validation
 
 Validate any OVF JSON file from the command line:
 
@@ -54,7 +92,7 @@ for (const name of schemas) {
   ajv.addSchema(
     JSON.parse(
       readFileSync(
-        `node_modules/@vetnote/open-vet-format/schemas/v1/${name}.schema.json`,
+        `node_modules/@vetformat/ovf/schemas/v1/${name}.schema.json`,
         "utf-8"
       )
     )
@@ -64,7 +102,7 @@ for (const name of schemas) {
 // Compile the root OVF document schema
 const rootSchema = JSON.parse(
   readFileSync(
-    "node_modules/@vetnote/open-vet-format/schemas/v1/ovf.schema.json",
+    "node_modules/@vetformat/ovf/schemas/v1/ovf.schema.json",
     "utf-8"
   )
 );
@@ -85,16 +123,30 @@ You must add all resource schemas to the ajv instance **before** compiling the r
 
 ## Programmatic validation (Python)
 
-Use [jsonschema](https://python-jsonschema.readthedocs.io/) with Draft 2020-12 support:
+Use [jsonschema](https://python-jsonschema.readthedocs.io/) with Draft 2020-12 support, or simply use the typed models for validation:
+
+```python
+from ovf_types import OvfDocument
+import json
+
+with open("my-record.json") as f:
+    data = json.load(f)
+
+# Pydantic validates the structure automatically
+doc = OvfDocument.model_validate(data)
+print(f"Patient: {doc.patient.name}")
+print(f"Encounters: {len(doc.encounters or [])}")
+```
+
+For schema-level validation without Pydantic:
 
 ```python
 import json
 from pathlib import Path
 from jsonschema import Draft202012Validator, FormatChecker
 
-schemas_dir = Path("node_modules/@vetnote/open-vet-format/schemas/v1")
+schemas_dir = Path("schemas/v1")  # or wherever your schemas are
 
-# Load and validate a patient resource
 patient_schema = json.loads(
     (schemas_dir / "patient.schema.json").read_text()
 )
@@ -118,54 +170,8 @@ else:
         print(f"Validation error: {error.message}")
 ```
 
-For full document validation with `$ref` resolution across resource schemas:
-
-```python
-import json
-from pathlib import Path
-from jsonschema import Draft202012Validator, FormatChecker
-
-schemas_dir = Path("node_modules/@vetnote/open-vet-format/schemas/v1")
-
-def validate_ovf_document(document: dict) -> list[str]:
-    """Validate a full OVF document. Returns a list of error messages."""
-    errors: list[str] = []
-
-    # Validate patient
-    patient_schema = json.loads(
-        (schemas_dir / "patient.schema.json").read_text()
-    )
-    pv = Draft202012Validator(patient_schema, format_checker=FormatChecker())
-    for err in pv.iter_errors(document.get("patient", {})):
-        errors.append(f"patient: {err.message}")
-
-    # Validate each resource array
-    resource_map = {
-        "encounters": "encounter.schema.json",
-        "conditions": "condition.schema.json",
-        "observations": "observation.schema.json",
-        "immunizations": "immunization.schema.json",
-        "procedures": "procedure.schema.json",
-        "allergies": "allergy-intolerance.schema.json",
-        "medications": "medication-statement.schema.json",
-        "documents": "document-reference.schema.json",
-    }
-
-    for array_key, schema_file in resource_map.items():
-        resources = document.get(array_key, [])
-        if not resources:
-            continue
-        schema = json.loads((schemas_dir / schema_file).read_text())
-        rv = Draft202012Validator(schema, format_checker=FormatChecker())
-        for i, resource in enumerate(resources):
-            for err in rv.iter_errors(resource):
-                errors.append(f"{array_key}[{i}]: {err.message}")
-
-    return errors
-```
-
 ## Next steps
 
-- [Quick Start](/getting-started/quick-start/) -- create your first OVF document
-- [Schema Reference](/schemas/overview/) -- detailed field definitions for all resource types
-- [Extensions](/guides/extensions/) -- add custom fields with the `x_` prefix
+- [Quick Start](/getting-started/quick-start/) — create your first OVF document
+- [Schema Reference](/schemas/overview/) — detailed field definitions for all resource types
+- [Extensions](/guides/extensions/) — add custom fields with the `x_` prefix
