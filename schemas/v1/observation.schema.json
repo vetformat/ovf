@@ -104,6 +104,12 @@
       "description": "The observed value. Can be a number, string, boolean, or structured object depending on the observation type.",
       "examples": [95.5, "Positive", true]
     },
+    "value_type": {
+      "type": "string",
+      "enum": ["quantity", "text", "boolean", "ratio", "range", "coded", "attachment"],
+      "description": "Hint for the semantic type of the value field. Helps LLMs and parsers interpret the value correctly without type inference. 'quantity' = numeric with unit, 'text' = free text or narrative, 'boolean' = yes/no result, 'ratio' = e.g. titer 1:128, 'range' = value expressed as a range, 'coded' = value from a controlled vocabulary, 'attachment' = reference to external data.",
+      "examples": ["quantity"]
+    },
     "unit": {
       "type": "string",
       "description": "Unit of measurement for the observed value.",

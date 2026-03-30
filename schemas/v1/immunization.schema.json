@@ -7,6 +7,25 @@
   "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [120.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "vaccine_code": {
       "type": "object",
       "description": "Coded representation of the vaccine product.",
@@ -144,6 +163,9 @@
       "type": "string",
       "description": "Additional notes about the vaccination event.",
       "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }

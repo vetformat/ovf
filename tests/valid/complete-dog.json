@@ -92,7 +92,12 @@
         "clinic": "Klinika Weterynaryjna Łapa"
       },
       "diagnoses": ["cond-dog-001"],
-      "notes": "Pre-op bloodwork normal. Smooth recovery."
+      "diagnoses_display": ["Cryptorchidism (unilateral)"],
+      "notes": "Pre-op bloodwork normal. Smooth recovery.",
+      "cost": {
+        "amount": 1200.00,
+        "currency": "PLN"
+      }
     },
     {
       "resource_type": "Encounter",
@@ -107,7 +112,8 @@
         "license_number": "PL-VET-12345",
         "clinic": "Klinika Weterynaryjna Łapa"
       },
-      "diagnoses": ["cond-dog-002"]
+      "diagnoses": ["cond-dog-002"],
+      "diagnoses_display": ["Atopic dermatitis — food-related"]
     },
     {
       "resource_type": "Encounter",
@@ -165,6 +171,7 @@
       "name": "Body Weight",
       "effective_date": "2026-01-15T09:30:00Z",
       "value": 12.3,
+      "value_type": "quantity",
       "unit": "kg",
       "interpretation": "normal",
       "notes": "Stable weight — ideal for breed"
@@ -178,6 +185,7 @@
       "name": "Heart Rate",
       "effective_date": "2026-01-15T09:35:00Z",
       "value": 110,
+      "value_type": "quantity",
       "unit": "bpm",
       "reference_range": {
         "low": 60,
@@ -195,6 +203,7 @@
       "name": "Body Temperature",
       "effective_date": "2026-01-15T09:35:00Z",
       "value": 38.6,
+      "value_type": "quantity",
       "unit": "°C",
       "reference_range": {
         "low": 38.0,
@@ -300,7 +309,11 @@
         "agent": "Isoflurane + Propofol induction"
       },
       "outcome": "Successful. Both testicles removed. Clean incisions.",
-      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used."
+      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used.",
+      "cost": {
+        "amount": 1200.00,
+        "currency": "PLN"
+      }
     }
   ],
   "allergy_intolerances": [

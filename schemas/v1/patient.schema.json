@@ -26,6 +26,25 @@
       "required": ["system", "value"],
       "additionalProperties": true
     },
+    "species_code": {
+      "type": "object",
+      "description": "Standardized species classification code from a recognized taxonomy.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["itis", "ncbi-taxonomy", "other"],
+          "description": "The taxonomy system used for species classification.",
+          "examples": ["itis"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The species code within the specified taxonomy system.",
+          "examples": ["180092"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
     "weight": {
       "type": "object",
       "description": "The patient's body weight measurement.",
@@ -122,6 +141,9 @@
     },
     "breed_code": {
       "$ref": "#/$defs/breed_code"
+    },
+    "species_code": {
+      "$ref": "#/$defs/species_code"
     },
     "date_of_birth": {
       "type": "string",

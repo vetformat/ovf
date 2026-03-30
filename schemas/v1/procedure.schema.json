@@ -7,6 +7,25 @@
   "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this procedure. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [1500.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "code": {
       "type": "object",
       "description": "Coded representation of the procedure using a standardized terminology system.",
@@ -139,6 +158,9 @@
       "type": "string",
       "description": "Additional notes about the procedure.",
       "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }

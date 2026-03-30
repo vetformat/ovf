@@ -7,6 +7,25 @@
   "required": ["resource_type", "id", "patient_id", "status", "date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [250.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "practitioner": {
       "type": "object",
       "description": "The veterinary practitioner involved in this encounter.",
@@ -88,8 +107,19 @@
       "items": {
         "type": "string"
       },
-      "description": "Array of condition IDs diagnosed during this encounter.",
+      "description": "Array of condition IDs diagnosed during this encounter. References entries in the conditions array.",
       "examples": [["cond-001", "cond-002"]]
+    },
+    "diagnoses_display": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array.",
+      "examples": [["Atopic dermatitis", "Otitis externa"]]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }
