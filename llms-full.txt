@@ -1,4 +1,4 @@
-# VetNote Open Vet Format (OVF) — Full Context
+# Open Vet Format (OVF) — Full Context
 
 > This file contains the complete specification, all JSON schemas, and key examples
 > for LLM consumption. Generated from the source files in this repository.
@@ -996,6 +996,25 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "required": ["resource_type", "id", "patient_id", "status", "date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [250.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "practitioner": {
       "type": "object",
       "description": "The veterinary practitioner involved in this encounter.",
@@ -1077,8 +1096,19 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "items": {
         "type": "string"
       },
-      "description": "Array of condition IDs diagnosed during this encounter.",
+      "description": "Array of condition IDs diagnosed during this encounter. References entries in the conditions array.",
       "examples": [["cond-001", "cond-002"]]
+    },
+    "diagnoses_display": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array.",
+      "examples": [["Atopic dermatitis", "Otitis externa"]]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }
@@ -1095,6 +1125,25 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [120.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "vaccine_code": {
       "type": "object",
       "description": "Coded representation of the vaccine product.",
@@ -1232,6 +1281,9 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "string",
       "description": "Additional notes about the vaccination event.",
       "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }
@@ -1487,6 +1539,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "description": "The observed value. Can be a number, string, boolean, or structured object depending on the observation type.",
       "examples": [95.5, "Positive", true]
     },
+    "value_type": {
+      "type": "string",
+      "enum": ["quantity", "text", "boolean", "ratio", "range", "coded", "attachment"],
+      "description": "Hint for the semantic type of the value field. Helps LLMs and parsers interpret the value correctly without type inference. 'quantity' = numeric with unit, 'text' = free text or narrative, 'boolean' = yes/no result, 'ratio' = e.g. titer 1:128, 'range' = value expressed as a range, 'coded' = value from a controlled vocabulary, 'attachment' = reference to external data.",
+      "examples": ["quantity"]
+    },
     "unit": {
       "type": "string",
       "description": "Unit of measurement for the observed value.",
@@ -1516,7 +1574,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json",
   "title": "Open Vet Format (OVF)",
-  "description": "Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
+  "description": "Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
   "type": "object",
   "required": ["format_version", "exported_at", "patient"],
   "additionalProperties": true,
@@ -1665,6 +1723,25 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "required": ["system", "value"],
       "additionalProperties": true
     },
+    "species_code": {
+      "type": "object",
+      "description": "Standardized species classification code from a recognized taxonomy.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["itis", "ncbi-taxonomy", "other"],
+          "description": "The taxonomy system used for species classification.",
+          "examples": ["itis"]
+        },
+        "value": {
+          "type": "string",
+          "description": "The species code within the specified taxonomy system.",
+          "examples": ["180092"]
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": true
+    },
     "weight": {
       "type": "object",
       "description": "The patient's body weight measurement.",
@@ -1762,6 +1839,9 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     "breed_code": {
       "$ref": "#/$defs/breed_code"
     },
+    "species_code": {
+      "$ref": "#/$defs/species_code"
+    },
     "date_of_birth": {
       "type": "string",
       "format": "date",
@@ -1843,6 +1923,25 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
   "additionalProperties": true,
   "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this procedure. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [1500.00]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": true
+    },
     "code": {
       "type": "object",
       "description": "Coded representation of the procedure using a standardized terminology system.",
@@ -1975,6 +2074,9 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "string",
       "description": "Additional notes about the procedure.",
       "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
     }
   }
 }
@@ -2098,7 +2200,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         "clinic": "Klinika Weterynaryjna Łapa"
       },
       "diagnoses": ["cond-dog-001"],
-      "notes": "Pre-op bloodwork normal. Smooth recovery."
+      "diagnoses_display": ["Cryptorchidism (unilateral)"],
+      "notes": "Pre-op bloodwork normal. Smooth recovery.",
+      "cost": {
+        "amount": 1200.00,
+        "currency": "PLN"
+      }
     },
     {
       "resource_type": "Encounter",
@@ -2113,7 +2220,8 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         "license_number": "PL-VET-12345",
         "clinic": "Klinika Weterynaryjna Łapa"
       },
-      "diagnoses": ["cond-dog-002"]
+      "diagnoses": ["cond-dog-002"],
+      "diagnoses_display": ["Atopic dermatitis — food-related"]
     },
     {
       "resource_type": "Encounter",
@@ -2171,6 +2279,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "name": "Body Weight",
       "effective_date": "2026-01-15T09:30:00Z",
       "value": 12.3,
+      "value_type": "quantity",
       "unit": "kg",
       "interpretation": "normal",
       "notes": "Stable weight — ideal for breed"
@@ -2184,6 +2293,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "name": "Heart Rate",
       "effective_date": "2026-01-15T09:35:00Z",
       "value": 110,
+      "value_type": "quantity",
       "unit": "bpm",
       "reference_range": {
         "low": 60,
@@ -2201,6 +2311,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "name": "Body Temperature",
       "effective_date": "2026-01-15T09:35:00Z",
       "value": 38.6,
+      "value_type": "quantity",
       "unit": "°C",
       "reference_range": {
         "low": 38.0,
@@ -2306,7 +2417,11 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         "agent": "Isoflurane + Propofol induction"
       },
       "outcome": "Successful. Both testicles removed. Clean incisions.",
-      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used."
+      "notes": "Right inguinal testicle found and removed. Standard scrotal approach for left. Absorbable sutures used.",
+      "cost": {
+        "amount": 1200.00,
+        "currency": "PLN"
+      }
     }
   ],
   "allergy_intolerances": [
