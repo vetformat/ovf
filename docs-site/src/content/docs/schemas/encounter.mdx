@@ -1,0 +1,263 @@
+---
+title: "Encounter"
+description: "Represents a clinical encounter or visit between a patient and a veterinary practitioner."
+---
+
+{/* Auto-generated from schemas/v1/encounter.schema.json — do not edit manually */}
+
+Represents a clinical encounter or visit between a patient and a veterinary practitioner.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/encounter.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"Encounter"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the encounter. UUID recommended. |
+| `patient_id` | `string` | Yes | Reference to the patient this encounter belongs to. |
+| `status` | enum | Yes | Current status of the encounter. |
+| `type` | enum | No | The category or type of encounter. |
+| `date` | `string (date-time)` | Yes | Start date and time of the encounter in ISO 8601 format. |
+| `end_date` | `string (date-time)` | No | End date and time of the encounter in ISO 8601 format. |
+| `reason` | `string` | No | The chief complaint or reason for the visit. |
+| `practitioner` | [practitioner] | No |  |
+| `notes` | `string` | No | Clinical notes or summary of the encounter. |
+| `diagnoses` | array\<string\> | No | Array of condition IDs diagnosed during this encounter. References entries in the conditions array. |
+| `diagnoses_display` | array\<string\> | No | Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array. |
+| `cost` | [cost] | No |  |
+
+
+### `status` values
+
+- `planned`
+- `in-progress`
+- `completed`
+- `cancelled`
+
+
+### `type` values
+
+- `consultation`
+- `emergency`
+- `follow-up`
+- `vaccination`
+- `surgery`
+- `dental`
+- `grooming`
+- `telehealth`
+- `other`
+
+## Sub-objects
+
+
+### `cost` object
+
+Cost information for this encounter. Optional — useful for pet owners tracking health expenses.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `amount` | `number` | Yes | Total cost amount. |
+| `currency` | `string` | Yes | ISO 4217 currency code. |
+
+### `practitioner` object
+
+The veterinary practitioner involved in this encounter.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | No | Full name of the practitioner. |
+| `license_number` | `string` | No | Professional license or registration number. |
+| `clinic` | `string` | No | Name of the veterinary clinic or hospital. |
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/encounter.schema.json",
+  "title": "Encounter",
+  "description": "Represents a clinical encounter or visit between a patient and a veterinary practitioner.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "patient_id",
+    "status",
+    "date"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "cost": {
+      "type": "object",
+      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount.",
+          "examples": [
+            250
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": [
+            "PLN"
+          ]
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "additionalProperties": true
+    },
+    "practitioner": {
+      "type": "object",
+      "description": "The veterinary practitioner involved in this encounter.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the practitioner.",
+          "examples": [
+            "Dr. Anna Nowak"
+          ]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": [
+            "VET-PL-12345"
+          ]
+        },
+        "clinic": {
+          "type": "string",
+          "description": "Name of the veterinary clinic or hospital.",
+          "examples": [
+            "Happy Paws Veterinary Clinic"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Encounter",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "Encounter"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the encounter. UUID recommended.",
+      "examples": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      ]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this encounter belongs to.",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "in-progress",
+        "completed",
+        "cancelled"
+      ],
+      "description": "Current status of the encounter.",
+      "examples": [
+        "completed"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "consultation",
+        "emergency",
+        "follow-up",
+        "vaccination",
+        "surgery",
+        "dental",
+        "grooming",
+        "telehealth",
+        "other"
+      ],
+      "description": "The category or type of encounter.",
+      "examples": [
+        "consultation"
+      ]
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start date and time of the encounter in ISO 8601 format.",
+      "examples": [
+        "2025-06-15T10:30:00Z"
+      ]
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End date and time of the encounter in ISO 8601 format.",
+      "examples": [
+        "2025-06-15T11:00:00Z"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "description": "The chief complaint or reason for the visit.",
+      "examples": [
+        "Annual wellness check and vaccination"
+      ]
+    },
+    "practitioner": {
+      "$ref": "#/$defs/practitioner"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Clinical notes or summary of the encounter.",
+      "examples": [
+        "Patient presented in good health. Vaccination administered. Next visit recommended in 12 months."
+      ]
+    },
+    "diagnoses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of condition IDs diagnosed during this encounter. References entries in the conditions array.",
+      "examples": [
+        [
+          "cond-001",
+          "cond-002"
+        ]
+      ]
+    },
+    "diagnoses_display": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array.",
+      "examples": [
+        [
+          "Atopic dermatitis",
+          "Otitis externa"
+        ]
+      ]
+    },
+    "cost": {
+      "$ref": "#/$defs/cost"
+    }
+  }
+}
+```

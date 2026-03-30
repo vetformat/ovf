@@ -1,0 +1,215 @@
+---
+title: "Condition"
+description: "Represents a clinical condition, diagnosis, or health problem identified for a patient."
+---
+
+{/* Auto-generated from schemas/v1/condition.schema.json — do not edit manually */}
+
+Represents a clinical condition, diagnosis, or health problem identified for a patient.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/condition.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"Condition"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the condition record. UUID recommended. |
+| `patient_id` | `string` | Yes | Reference to the patient this condition belongs to. |
+| `encounter_id` | `string` | No | Reference to the encounter during which this condition was diagnosed. |
+| `code` | [code] | No |  |
+| `name` | `string` | Yes | Human-readable name of the diagnosis or condition. |
+| `clinical_status` | enum | Yes | The clinical status of the condition. |
+| `severity` | enum | No | Subjective assessment of the condition severity. |
+| `onset_date` | `string (date)` | No | Estimated or actual date when the condition first appeared. |
+| `abatement_date` | `string (date)` | No | Date when the condition resolved or went into remission. |
+| `notes` | `string` | No | Additional clinical notes about the condition. |
+
+
+### `clinical_status` values
+
+- `active`
+- `recurrence`
+- `relapse`
+- `inactive`
+- `remission`
+- `resolved`
+
+
+### `severity` values
+
+- `mild`
+- `moderate`
+- `severe`
+
+## Sub-objects
+
+
+### `code` object
+
+Coded representation of the condition using a standardized veterinary terminology system.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | enum | Yes | The coding system used. |
+| `value` | `string` | Yes | The code value within the specified system. |
+| `display` | `string` | Yes | Human-readable display text for the code. |
+
+### `code.system` values
+
+- `icd-10-vet`
+- `snomed-ct-vet`
+- `internal`
+- `other`
+
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/condition.schema.json",
+  "title": "Condition",
+  "description": "Represents a clinical condition, diagnosis, or health problem identified for a patient.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "patient_id",
+    "name",
+    "clinical_status"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "code": {
+      "type": "object",
+      "description": "Coded representation of the condition using a standardized veterinary terminology system.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "icd-10-vet",
+            "snomed-ct-vet",
+            "internal",
+            "other"
+          ],
+          "description": "The coding system used.",
+          "examples": [
+            "icd-10-vet"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The code value within the specified system.",
+          "examples": [
+            "K29.0"
+          ]
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code.",
+          "examples": [
+            "Acute gastritis"
+          ]
+        }
+      },
+      "required": [
+        "system",
+        "value",
+        "display"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Condition",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "Condition"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the condition record. UUID recommended.",
+      "examples": [
+        "cond-550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this condition belongs to.",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this condition was diagnosed.",
+      "examples": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      ]
+    },
+    "code": {
+      "$ref": "#/$defs/code"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the diagnosis or condition.",
+      "examples": [
+        "Acute gastritis"
+      ]
+    },
+    "clinical_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "recurrence",
+        "relapse",
+        "inactive",
+        "remission",
+        "resolved"
+      ],
+      "description": "The clinical status of the condition.",
+      "examples": [
+        "active"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "mild",
+        "moderate",
+        "severe"
+      ],
+      "description": "Subjective assessment of the condition severity.",
+      "examples": [
+        "moderate"
+      ]
+    },
+    "onset_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Estimated or actual date when the condition first appeared.",
+      "examples": [
+        "2025-05-01"
+      ]
+    },
+    "abatement_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the condition resolved or went into remission.",
+      "examples": [
+        "2025-06-15"
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional clinical notes about the condition.",
+      "examples": [
+        "Likely caused by dietary indiscretion. Owner reports the dog ate garbage."
+      ]
+    }
+  }
+}
+```

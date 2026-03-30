@@ -1,0 +1,247 @@
+---
+title: "Lab Results"
+description: "Example OVF document: Lab Results"
+---
+
+{/* Auto-generated from examples/lab-results.json — do not edit manually */}
+
+**Patient:** Bella (dog)
+
+**Resources included:**
+
+- **encounters**: 1
+- **observations**: 10
+- **document references**: 1
+
+## Full Document
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T14:30:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pat-lab-001",
+    "name": "Bella",
+    "species": "dog",
+    "breed": "Labrador Retriever",
+    "date_of_birth": "2019-08-20",
+    "sex": "female",
+    "gender_status": "spayed",
+    "weight": {
+      "value": 28.5,
+      "unit": "kg"
+    }
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-lab-001",
+      "patient_id": "pat-lab-001",
+      "status": "completed",
+      "type": "consultation",
+      "date": "2026-03-28T09:00:00Z",
+      "reason": "Annual checkup — blood panel ordered",
+      "practitioner": {
+        "name": "Dr. Marta Wiśniewska",
+        "license_number": "PL-VET-11111",
+        "clinic": "VetCare Warszawa"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "resource_type": "Observation",
+      "id": "obs-001",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — WBC",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 12.5,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": 5.5,
+        "high": 16.9,
+        "text": "5.5-16.9 10^9/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-002",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — RBC",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 7.2,
+      "unit": "10^12/L",
+      "reference_range": {
+        "low": 5.5,
+        "high": 8.5,
+        "text": "5.5-8.5 10^12/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-003",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Hemoglobin",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 16.8,
+      "unit": "g/dL",
+      "reference_range": {
+        "low": 12,
+        "high": 18,
+        "text": "12.0-18.0 g/dL"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-004",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Hematocrit",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 48.2,
+      "unit": "%",
+      "reference_range": {
+        "low": 37,
+        "high": 55,
+        "text": "37-55%"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-005",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Complete Blood Count — Platelets",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 310,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": 175,
+        "high": 500,
+        "text": "175-500 10^9/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-006",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — ALT (SGPT)",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 45,
+      "unit": "U/L",
+      "reference_range": {
+        "low": 10,
+        "high": 125,
+        "text": "10-125 U/L"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-007",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Creatinine",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 1.8,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 0.5,
+        "high": 1.8,
+        "text": "0.5-1.8 mg/dL"
+      },
+      "interpretation": "normal",
+      "notes": "Upper end of normal range — recommend monitoring"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-008",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — BUN (Blood Urea Nitrogen)",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 32,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 7,
+        "high": 27,
+        "text": "7-27 mg/dL"
+      },
+      "interpretation": "high",
+      "notes": "Mildly elevated — correlate with creatinine and hydration status"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-009",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Glucose",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 95,
+      "unit": "mg/dL",
+      "reference_range": {
+        "low": 74,
+        "high": 143,
+        "text": "74-143 mg/dL"
+      },
+      "interpretation": "normal"
+    },
+    {
+      "resource_type": "Observation",
+      "id": "obs-010",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "category": "laboratory",
+      "name": "Biochemistry — Total Protein",
+      "effective_date": "2026-03-28T11:00:00Z",
+      "value": 6.8,
+      "unit": "g/dL",
+      "reference_range": {
+        "low": 5.2,
+        "high": 8.2,
+        "text": "5.2-8.2 g/dL"
+      },
+      "interpretation": "normal"
+    }
+  ],
+  "document_references": [
+    {
+      "resource_type": "DocumentReference",
+      "id": "doc-lab-001",
+      "patient_id": "pat-lab-001",
+      "encounter_id": "enc-lab-001",
+      "type": "lab-report",
+      "description": "Complete blood panel report — March 2026",
+      "date": "2026-03-28T12:00:00Z",
+      "content_type": "application/pdf",
+      "url": "https://vetcare.example.com/reports/pat-lab-001/cbc-2026-03.pdf",
+      "author": {
+        "name": "VetLab Diagnostyka"
+      }
+    }
+  ]
+}
+```

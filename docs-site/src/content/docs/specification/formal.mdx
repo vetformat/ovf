@@ -1,0 +1,77 @@
+---
+title: Formal Specification
+description: Overview of the OVF formal specification including document structure, required fields, and controlled vocabularies.
+---
+
+This page summarizes the key aspects of the OVF specification. The full specification is available in the [specification.md](https://github.com/vetnote/open-vet-format/blob/main/docs/specification.md) file in the repository.
+
+## RFC 2119 language
+
+The specification uses [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) keywords:
+
+- **MUST / REQUIRED / SHALL** -- absolute requirement
+- **MUST NOT / SHALL NOT** -- absolute prohibition
+- **SHOULD / RECOMMENDED** -- there may be valid reasons to ignore, but implications must be understood
+- **MAY / OPTIONAL** -- truly optional
+
+## Document structure
+
+An OVF document is a UTF-8 encoded JSON object with the following top-level structure:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `format_version` | string (semver) | MUST | Schema version, e.g. `"1.0.0"` |
+| `exported_at` | string (ISO 8601 datetime) | MUST | When the document was generated |
+| `patient` | Patient | MUST | The animal patient this document describes |
+| `exporter` | object | SHOULD | Software that produced the document (`name`, `version`) |
+| `encounters` | Encounter[] | MAY | Clinical encounters |
+| `conditions` | Condition[] | MAY | Diagnoses and health problems |
+| `observations` | Observation[] | MAY | Lab results, vital signs, clinical notes |
+| `immunizations` | Immunization[] | MAY | Vaccination records |
+| `procedures` | Procedure[] | MAY | Surgical and clinical procedures |
+| `allergies` | AllergyIntolerance[] | MAY | Allergies and intolerances |
+| `medications` | MedicationStatement[] | MAY | Medication records |
+| `documents` | DocumentReference[] | MAY | Attached files and reports |
+
+### Encoding rules
+
+- Documents MUST be UTF-8 JSON
+- Documents MUST use the `.json` file extension
+- Documents SHOULD be pretty-printed with 2-space indentation
+
+## Required vs optional fields
+
+OVF follows a pragmatic approach to required fields:
+
+- **Resource identity** is always required: `resource_type`, `id`, `patient_id` (on child resources)
+- **Clinical minimum** is required per resource type (e.g. `name` + `species` on Patient, `status` + `date` on Encounter)
+- **Everything else** is optional, allowing partial records and incremental data enrichment
+
+Each resource schema documents which fields are MUST vs MAY. See the [Schema Reference](/schemas/overview/) for per-resource details.
+
+## Controlled vocabularies
+
+OVF defines constrained enum values for fields that need interoperability. Key vocabularies include:
+
+| Vocabulary | Values |
+|---|---|
+| Species | `dog`, `cat`, `bird`, `rabbit`, `hamster`, `guinea_pig`, `fish`, `reptile`, `horse`, `other` |
+| Encounter status | `planned`, `in-progress`, `completed`, `cancelled` |
+| Encounter type | `consultation`, `emergency`, `follow-up`, `vaccination`, `surgery`, `dental`, `grooming`, `telehealth`, `other` |
+| Condition status | `active`, `recurrence`, `relapse`, `inactive`, `remission`, `resolved` |
+| Observation category | `vital-signs`, `laboratory`, `imaging`, `clinical-note`, `other` |
+| Severity | `mild`, `moderate`, `severe` |
+| Sex | `male`, `female`, `unknown` |
+| Gender status | `intact`, `neutered`, `spayed`, `unknown` |
+
+The full list of all controlled vocabularies is in the [specification](https://github.com/vetnote/open-vet-format/blob/main/docs/specification.md#4-controlled-vocabularies).
+
+## Data types
+
+- **Date**: `YYYY-MM-DD` (ISO 8601, JSON Schema `format: "date"`)
+- **DateTime**: `YYYY-MM-DDThh:mm:ssZ` (ISO 8601, JSON Schema `format: "date-time"`)
+- **Identifiers**: All `id` fields SHOULD be UUIDs (RFC 4122) but MAY be any unique string
+
+## Extension mechanism
+
+All OVF objects allow additional properties via the `x_` prefix. See [Extensions](/guides/extensions/) for details.

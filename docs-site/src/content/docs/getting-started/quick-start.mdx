@@ -1,0 +1,131 @@
+---
+title: Quick Start
+description: Create and validate your first OVF document in 5 minutes.
+---
+
+## Step 1: Create a minimal document
+
+Create a file called `minimal.json` with just a patient:
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pet-001",
+    "name": "Burek",
+    "species": "dog"
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-001",
+      "patient_id": "pet-001",
+      "status": "completed",
+      "date": "2026-03-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+This is the smallest valid **OVF Core** document: `format_version` + `exported_at` + `patient` + at least one resource array with one entry.
+
+## Step 2: Validate with the CLI
+
+```bash
+npx ovf-validate minimal.json
+```
+
+Expected output:
+
+```
+minimal.json: valid (OVF Core)
+```
+
+:::tip
+No installation needed. `npx` downloads and runs the validator on the fly from the `@vetnote/open-vet-format` package.
+:::
+
+## Step 3: Add an encounter and immunization
+
+Create `extended.json` with more clinical data:
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "exporter": {
+    "name": "MyVetApp",
+    "version": "2.1.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pet-001",
+    "name": "Burek",
+    "species": "dog",
+    "breed": "Labrador Retriever",
+    "date_of_birth": "2020-03-15",
+    "sex": "male",
+    "gender_status": "neutered",
+    "weight": { "value": 32.5, "unit": "kg" },
+    "identifiers": [
+      { "system": "iso-microchip-11784", "value": "616000012345678" }
+    ],
+    "owner": {
+      "name": "Jan Kowalski",
+      "phone": "+48 600 123 456"
+    }
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-001",
+      "patient_id": "pet-001",
+      "status": "completed",
+      "type": "vaccination",
+      "date": "2026-03-30T10:00:00Z",
+      "reason": "Annual vaccination",
+      "practitioner": {
+        "name": "Dr. Anna Nowak",
+        "license_number": "VET-PL-12345",
+        "clinic": "Happy Paws Veterinary Clinic"
+      }
+    }
+  ],
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-001",
+      "patient_id": "pet-001",
+      "encounter_id": "enc-001",
+      "vaccine_name": "Nobivac DHPPi",
+      "occurrence_date": "2026-03-30",
+      "expiration_date": "2027-03-30",
+      "lot_number": "A123B456",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "is_primary_course": false,
+      "notes": "Annual booster. No adverse reactions."
+    }
+  ]
+}
+```
+
+## Step 4: Validate again
+
+```bash
+npx ovf-validate extended.json
+```
+
+```
+extended.json: valid (OVF Core)
+```
+
+## Next steps
+
+- [Installation](/getting-started/installation/) -- set up programmatic validation in TypeScript or Python
+- [Schema Reference](/schemas/overview/) -- explore all 9 resource type schemas
+- [Examples](/examples/) -- browse complete sample documents
+- [FHIR Mapping](/guides/fhir-mapping/) -- convert between OVF and HL7 FHIR

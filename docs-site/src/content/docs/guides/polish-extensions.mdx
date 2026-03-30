@@ -1,0 +1,188 @@
+---
+title: Polish Extensions
+description: Poland-specific identifier systems, breed registries, and conventions supported by OVF.
+---
+
+This guide covers Poland-specific identifier systems, breed registries, and conventions built into OVF's core schema via the `identifiers` and `breed_code` fields on the Patient resource.
+
+## Microchip standards (ISO 11784/11785)
+
+All microchips used in Poland comply with the ISO 11784/11785 standard.
+
+- **Format**: 15-digit numeric string
+- **Country code**: Poland is `616` (ISO 3166 numeric)
+- **OVF system**: `iso-microchip-11784`
+
+```json
+{
+  "identifiers": [
+    {
+      "system": "iso-microchip-11784",
+      "value": "616000012345678"
+    }
+  ]
+}
+```
+
+The 15-digit format:
+
+| Digits | Meaning |
+|---|---|
+| 1-3 | Country code (616 for Poland) |
+| 4-5 | Manufacturer code |
+| 6-15 | Unique animal identifier |
+
+## Pet registries
+
+### SAFE-ANIMAL
+
+[SAFE-ANIMAL](https://www.safe-animal.eu) is Poland's official pet registry for microchipped animals. It is the primary database used by clinics, shelters, and authorities to identify lost or stolen pets.
+
+- **OVF system**: `safe-animal`
+- **Coverage**: Dogs, cats, and other microchipped animals registered in Poland
+
+```json
+{
+  "identifiers": [
+    { "system": "safe-animal", "value": "SAFE-2025-98765" }
+  ]
+}
+```
+
+### EUROPETNET
+
+[EUROPETNET](https://www.europetnet.com) connects national pet registries across Europe. SAFE-ANIMAL is a member, so Polish pets are searchable via EUROPETNET for cross-border identification.
+
+- **OVF system**: `europetnet`
+
+```json
+{
+  "identifiers": [
+    { "system": "europetnet", "value": "EPN-616000012345678" }
+  ]
+}
+```
+
+## EU Pet Passport
+
+Required for travelling with pets within the EU. Issued by authorized veterinarians. Contains microchip number, rabies vaccination record, owner identification, and animal description.
+
+Polish passports use the country prefix `PL`:
+
+- **OVF system**: `eu-pet-passport`
+
+```json
+{
+  "identifiers": [
+    { "system": "eu-pet-passport", "value": "PL-1234567" }
+  ]
+}
+```
+
+### Combined identifiers
+
+A fully identified Polish pet typically carries all four:
+
+```json
+{
+  "identifiers": [
+    { "system": "iso-microchip-11784", "value": "616000012345678" },
+    { "system": "eu-pet-passport", "value": "PL-1234567" },
+    { "system": "safe-animal", "value": "SAFE-2025-98765" },
+    { "system": "europetnet", "value": "EPN-616000012345678" }
+  ]
+}
+```
+
+## Breed code systems
+
+OVF supports standardized breed codes via the `breed_code` field on Patient.
+
+### FCI (dogs)
+
+The [FCI](https://www.fci.be) (Federation Cynologique Internationale) is the standard for dog breed identification in Poland. Poland's kennel club (ZKwP) is an FCI member.
+
+- **OVF system**: `fci`
+
+| FCI Code | Breed |
+|---|---|
+| 122 | German Shepherd Dog |
+| 166 | Labrador Retriever |
+| 111 | Golden Retriever |
+| 86 | French Bulldog |
+| 65 | Dachshund (Standard) |
+| 252 | Yorkshire Terrier |
+| 218 | Siberian Husky |
+| 15 | Boxer |
+| 332 | Jack Russell Terrier |
+| 83 | Miniature Schnauzer |
+
+```json
+{
+  "breed": "Labrador Retriever",
+  "breed_code": { "system": "fci", "value": "166" }
+}
+```
+
+### FIFe (cats)
+
+[FIFe](https://fifeweb.org) (Federation Internationale Feline) is the largest cat registry in Europe. Uses the EMS code system.
+
+- **OVF system**: `fife`
+
+| FIFe Code | Breed |
+|---|---|
+| PER | Persian |
+| BRI | British Shorthair |
+| MCO | Maine Coon |
+| RAG | Ragdoll |
+| BEN | Bengal |
+| SBI | Sacred Birman |
+| ABY | Abyssinian |
+| RUS | Russian Blue |
+| NFO | Norwegian Forest Cat |
+| SIA | Siamese |
+
+```json
+{
+  "breed": "British Shorthair",
+  "breed_code": { "system": "fife", "value": "BRI" }
+}
+```
+
+:::note
+FIFe EMS codes can include color/pattern suffixes (e.g. `BRI a` for Blue). The `breed_code.value` field should contain the base breed code only.
+:::
+
+### TICA (cats)
+
+[TICA](https://tica.org) (The International Cat Association) is another registry recognized in Poland. Uses two-letter codes.
+
+- **OVF system**: `tica`
+
+| TICA Code | Breed |
+|---|---|
+| PS | Persian |
+| BS | British Shorthair |
+| MC | Maine Coon |
+| RD | Ragdoll |
+| BG | Bengal |
+| BI | Birman |
+| AB | Abyssinian |
+| RB | Russian Blue |
+| NF | Norwegian Forest Cat |
+| SI | Siamese |
+
+```json
+{
+  "breed": "Maine Coon",
+  "breed_code": { "system": "tica", "value": "MC" }
+}
+```
+
+## Notes for implementers
+
+1. **Microchip validation**: Polish microchips always start with `616`. Validate that `iso-microchip-11784` values with a `616` prefix are exactly 15 digits.
+2. **Breed code priority**: When both FIFe and TICA codes apply for a cat, prefer FIFe as it is the dominant registry in Poland. Use `x_secondary_breed_code` for the alternate.
+3. **EU Pet Passport expiry**: The passport itself does not expire, but the rabies vaccination in it does. Track expiry via the Immunization resource's `expiration_date` field.
+4. **Cross-border travel**: For pets travelling within the EU, include both `iso-microchip-11784` and `eu-pet-passport` identifiers at minimum.

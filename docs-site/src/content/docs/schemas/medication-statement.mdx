@@ -1,0 +1,276 @@
+---
+title: "MedicationStatement"
+description: "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information."
+---
+
+{/* Auto-generated from schemas/v1/medication-statement.schema.json — do not edit manually */}
+
+Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/medication-statement.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"MedicationStatement"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the medication statement record. UUID recommended. |
+| `patient_id` | `string` | Yes | Reference to the patient taking or receiving the medication. |
+| `encounter_id` | `string` | No | Reference to the encounter during which the medication was prescribed or recorded. |
+| `medication_name` | `string` | Yes | Name of the medication. |
+| `medication_code` | [medication_code] | No |  |
+| `status` | enum | Yes | Current status of the medication usage. |
+| `date_started` | `string (date)` | No | Date when the medication was started. |
+| `date_ended` | `string (date)` | No | Date when the medication was stopped or completed. |
+| `dosage` | [dosage] | No |  |
+| `reason` | `string` | No | Clinical reason or indication for the medication. |
+| `prescriber` | [prescriber] | No |  |
+| `notes` | `string` | No | Additional notes about the medication statement. |
+
+
+### `status` values
+
+- `active`
+- `completed`
+- `stopped`
+- `on-hold`
+
+## Sub-objects
+
+
+### `medication_code` object
+
+Coded representation of the medication product.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | `string` | Yes | The coding system used (e.g., ATC-vet, RxNorm, internal). |
+| `value` | `string` | Yes | The medication code within the specified system. |
+
+### `dosage` object
+
+Dosage instructions for the medication.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | `number` | No | Numeric dose amount per administration. |
+| `unit` | `string` | No | Unit of the dose amount. |
+| `frequency` | `string` | No | How often the medication is administered. |
+| `route` | enum | No | Route of administration. |
+
+### `dosage.route` values
+
+- `oral`
+- `topical`
+- `injection`
+- `inhalation`
+- `other`
+
+
+### `prescriber` object
+
+The veterinary practitioner who prescribed the medication.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | No | Full name of the prescriber. |
+| `license_number` | `string` | No | Professional license or registration number. |
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/medication-statement.schema.json",
+  "title": "MedicationStatement",
+  "description": "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "patient_id",
+    "medication_name",
+    "status"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "medication_code": {
+      "type": "object",
+      "description": "Coded representation of the medication product.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "The coding system used (e.g., ATC-vet, RxNorm, internal).",
+          "examples": [
+            "atc-vet"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The medication code within the specified system.",
+          "examples": [
+            "QJ01CA04"
+          ]
+        }
+      },
+      "required": [
+        "system",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "dosage": {
+      "type": "object",
+      "description": "Dosage instructions for the medication.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Numeric dose amount per administration.",
+          "examples": [
+            250
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the dose amount.",
+          "examples": [
+            "mg"
+          ]
+        },
+        "frequency": {
+          "type": "string",
+          "description": "How often the medication is administered.",
+          "examples": [
+            "twice daily"
+          ]
+        },
+        "route": {
+          "type": "string",
+          "enum": [
+            "oral",
+            "topical",
+            "injection",
+            "inhalation",
+            "other"
+          ],
+          "description": "Route of administration.",
+          "examples": [
+            "oral"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "prescriber": {
+      "type": "object",
+      "description": "The veterinary practitioner who prescribed the medication.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the prescriber.",
+          "examples": [
+            "Dr. Anna Nowak"
+          ]
+        },
+        "license_number": {
+          "type": "string",
+          "description": "Professional license or registration number.",
+          "examples": [
+            "VET-PL-12345"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "MedicationStatement",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "MedicationStatement"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the medication statement record. UUID recommended.",
+      "examples": [
+        "med-550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient taking or receiving the medication.",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which the medication was prescribed or recorded.",
+      "examples": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      ]
+    },
+    "medication_name": {
+      "type": "string",
+      "description": "Name of the medication.",
+      "examples": [
+        "Amoxicillin"
+      ]
+    },
+    "medication_code": {
+      "$ref": "#/$defs/medication_code"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "stopped",
+        "on-hold"
+      ],
+      "description": "Current status of the medication usage.",
+      "examples": [
+        "active"
+      ]
+    },
+    "date_started": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the medication was started.",
+      "examples": [
+        "2025-06-15"
+      ]
+    },
+    "date_ended": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the medication was stopped or completed.",
+      "examples": [
+        "2025-06-29"
+      ]
+    },
+    "dosage": {
+      "$ref": "#/$defs/dosage"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Clinical reason or indication for the medication.",
+      "examples": [
+        "Bacterial skin infection"
+      ]
+    },
+    "prescriber": {
+      "$ref": "#/$defs/prescriber"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the medication statement.",
+      "examples": [
+        "Administer with food. Complete full 14-day course even if symptoms improve."
+      ]
+    }
+  }
+}
+```

@@ -1,0 +1,53 @@
+---
+title: Introduction
+description: What is Open Vet Format (OVF) — a FHIR-inspired JSON Schema for veterinary medical record exchange.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## What is Open Vet Format?
+
+**Open Vet Format (OVF)** is a FHIR-inspired JSON Schema for veterinary medical record exchange. It defines a structured, machine-readable format for representing animal patient data, clinical encounters, diagnoses, lab results, vaccinations, procedures, medications, allergies, and attached documents.
+
+OVF is designed to be the common language between veterinary clinic management systems, pet health apps, and AI-powered tools operating in the Polish and Central/Eastern European market.
+
+## Why OVF exists
+
+The veterinary software market in Poland and CEE has no interoperability standard. Every clinic system stores data in its own proprietary format, making it nearly impossible to:
+
+- Transfer a pet's medical history between clinics
+- Build third-party apps that read veterinary records
+- Feed structured clinical data into AI/LLM systems for analysis
+- Comply with emerging EU pet identification and travel regulations
+
+OVF solves this by providing a single, open, versioned schema that any system can export to and import from.
+
+## Key features
+
+<CardGrid>
+  <Card title="JSON-based" icon="seti:json">
+    Plain JSON documents validated against JSON Schema Draft 2020-12. No XML, no binary formats.
+  </Card>
+  <Card title="9 resource types" icon="list-format">
+    Patient, Encounter, Condition, Observation, Immunization, Procedure, AllergyIntolerance, MedicationStatement, and DocumentReference.
+  </Card>
+  <Card title="Extensible" icon="puzzle">
+    Custom fields via the `x_` prefix. All objects allow additional properties without breaking validation.
+  </Card>
+  <Card title="AI-friendly" icon="rocket">
+    Flat, predictable structures with controlled vocabularies. Ideal for LLM function calling and structured output.
+  </Card>
+</CardGrid>
+
+## Who is it for?
+
+- **Vet clinic software developers** building export/import functionality
+- **Pet health app builders** who need to read and display veterinary records
+- **AI/LLM engineers** building agents that process or generate clinical data
+- **Integrators** connecting multiple veterinary systems in a clinic network
+
+## Next steps
+
+<LinkCard title="Quick Start" description="Create and validate your first OVF document in 5 minutes." href="/getting-started/quick-start/" />
+<LinkCard title="Installation" description="Install the npm package and set up programmatic validation." href="/getting-started/installation/" />
+<LinkCard title="Schema Reference" description="Browse all 9 resource type schemas." href="/schemas/overview/" />

@@ -1,0 +1,194 @@
+---
+title: "DocumentReference"
+description: "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices."
+---
+
+{/* Auto-generated from schemas/v1/document-reference.schema.json — do not edit manually */}
+
+Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/document-reference.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"DocumentReference"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the document reference record. UUID recommended. |
+| `patient_id` | `string` | Yes | Reference to the patient this document is associated with. |
+| `encounter_id` | `string` | No | Reference to the encounter during which this document was created or obtained. |
+| `type` | enum | Yes | The category or type of document. |
+| `description` | `string` | No | Human-readable description of the document. |
+| `date` | `string (date-time)` | Yes | Date and time the document was created or obtained. |
+| `content_type` | `string` | No | MIME type of the document content. |
+| `url` | `string (uri)` | No | URL where the document can be retrieved. |
+| `data` | `string` | No | Base64-encoded content of the document. Use for inline embedding of small documents. |
+| `size_bytes` | `integer` | No | Size of the document content in bytes. |
+| `hash` | `string` | No | SHA-256 hash of the document content for integrity verification. |
+| `author` | [author] | No |  |
+| `notes` | `string` | No | Additional notes about the document. |
+
+
+### `type` values
+
+- `lab-report`
+- `imaging`
+- `discharge-summary`
+- `referral`
+- `consent`
+- `invoice`
+- `other`
+
+## Sub-objects
+
+
+### `author` object
+
+The person who authored or created the document.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | No | Full name of the document author. |
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/document-reference.schema.json",
+  "title": "DocumentReference",
+  "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "patient_id",
+    "type",
+    "date"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "author": {
+      "type": "object",
+      "description": "The person who authored or created the document.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the document author.",
+          "examples": [
+            "Dr. Anna Nowak"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "DocumentReference",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "DocumentReference"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the document reference record. UUID recommended.",
+      "examples": [
+        "doc-550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Reference to the patient this document is associated with.",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "encounter_id": {
+      "type": "string",
+      "description": "Reference to the encounter during which this document was created or obtained.",
+      "examples": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "lab-report",
+        "imaging",
+        "discharge-summary",
+        "referral",
+        "consent",
+        "invoice",
+        "other"
+      ],
+      "description": "The category or type of document.",
+      "examples": [
+        "lab-report"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the document.",
+      "examples": [
+        "Complete blood count results from annual wellness exam"
+      ]
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time the document was created or obtained.",
+      "examples": [
+        "2025-06-15T11:00:00Z"
+      ]
+    },
+    "content_type": {
+      "type": "string",
+      "description": "MIME type of the document content.",
+      "examples": [
+        "application/pdf"
+      ]
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL where the document can be retrieved.",
+      "examples": [
+        "https://example.com/documents/cbc-report-2025-06-15.pdf"
+      ]
+    },
+    "data": {
+      "type": "string",
+      "description": "Base64-encoded content of the document. Use for inline embedding of small documents.",
+      "examples": [
+        "JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKExhYiBS..."
+      ]
+    },
+    "size_bytes": {
+      "type": "integer",
+      "description": "Size of the document content in bytes.",
+      "examples": [
+        524288
+      ]
+    },
+    "hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the document content for integrity verification.",
+      "examples": [
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ]
+    },
+    "author": {
+      "$ref": "#/$defs/author"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the document.",
+      "examples": [
+        "Results reviewed and discussed with owner on 2025-06-16."
+      ]
+    }
+  }
+}
+```

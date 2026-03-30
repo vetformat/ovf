@@ -1,0 +1,193 @@
+---
+title: "Open Vet Format (OVF)"
+description: "Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document."
+---
+
+{/* Auto-generated from schemas/v1/ovf.schema.json — do not edit manually */}
+
+Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `format_version` | `string` | Yes | Semantic version of the OVF format used in this export. |
+| `exported_at` | `string (date-time)` | Yes | Timestamp when this export was generated in ISO 8601 format. |
+| `exporter` | [exporter] | No |  |
+| `patient` | [patient] | Yes | The patient whose medical records are contained in this export. |
+| `encounters` | array\<encounter\> | No | Clinical encounters or visits for the patient. |
+| `conditions` | array\<condition\> | No | Diagnosed conditions or health problems for the patient. |
+| `observations` | array\<observation\> | No | Clinical observations and measurements for the patient. |
+| `immunizations` | array\<immunization\> | No | Vaccination records for the patient. |
+| `procedures` | array\<procedure\> | No | Clinical procedures performed on the patient. |
+| `allergy_intolerances` | array\<allergy-intolerance\> | No | Allergies and intolerances identified for the patient. |
+| `medication_statements` | array\<medication-statement\> | No | Medication records for the patient. |
+| `document_references` | array\<document-reference\> | No | Documents and files associated with the patient. |
+
+## Sub-objects
+
+
+### `exporter` object
+
+Information about the software that generated this OVF export.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | No | Name of the exporting software or system. |
+| `version` | `string` | No | Version of the exporting software. |
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json",
+  "title": "Open Vet Format (OVF)",
+  "description": "Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
+  "type": "object",
+  "required": [
+    "format_version",
+    "exported_at",
+    "patient"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "exporter": {
+      "type": "object",
+      "description": "Information about the software that generated this OVF export.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the exporting software or system.",
+          "examples": [
+            "VetNote"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the exporting software.",
+          "examples": [
+            "2.4.1"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "format_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the OVF format used in this export.",
+      "examples": [
+        "1.0.0"
+      ]
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this export was generated in ISO 8601 format.",
+      "examples": [
+        "2025-06-15T12:00:00Z"
+      ]
+    },
+    "exporter": {
+      "$ref": "#/$defs/exporter"
+    },
+    "patient": {
+      "$ref": "patient.schema.json",
+      "description": "The patient whose medical records are contained in this export."
+    },
+    "encounters": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "encounter.schema.json"
+      },
+      "description": "Clinical encounters or visits for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "conditions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "condition.schema.json"
+      },
+      "description": "Diagnosed conditions or health problems for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "observations": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "observation.schema.json"
+      },
+      "description": "Clinical observations and measurements for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "immunizations": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "immunization.schema.json"
+      },
+      "description": "Vaccination records for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "procedures": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "procedure.schema.json"
+      },
+      "description": "Clinical procedures performed on the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "allergy_intolerances": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "allergy-intolerance.schema.json"
+      },
+      "description": "Allergies and intolerances identified for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "medication_statements": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "medication-statement.schema.json"
+      },
+      "description": "Medication records for the patient.",
+      "examples": [
+        []
+      ]
+    },
+    "document_references": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "document-reference.schema.json"
+      },
+      "description": "Documents and files associated with the patient.",
+      "examples": [
+        []
+      ]
+    }
+  }
+}
+```

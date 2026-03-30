@@ -1,0 +1,84 @@
+---
+title: Extensions (x_ prefix)
+description: How to add custom fields to OVF resources using the x_ prefix extension mechanism.
+---
+
+OVF supports custom fields on any resource to accommodate practice-specific or regional data needs without breaking schema validation.
+
+## How it works
+
+- All OVF objects have `additionalProperties: true` in their JSON Schema
+- Custom fields use the `x_` prefix (e.g. `x_clinic_internal_id`, `x_insurance_provider`)
+- Any JSON value type is allowed: strings, numbers, booleans, objects, arrays
+
+## Rules
+
+1. Extensions **must** use the `x_` prefix
+2. Extensions **must not** change the meaning or semantics of any standard OVF field
+3. Consumers that do not recognize an `x_`-prefixed field **should** preserve it during round-trip processing
+4. Consumers **must not** reject a document because it contains unknown `x_` fields
+
+## Example: custom fields on Patient
+
+```json
+{
+  "resource_type": "Patient",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Luna",
+  "species": "dog",
+  "x_clinic_internal_id": "PAT-2024-001",
+  "x_insurance_provider": "PetInsure Poland",
+  "x_insurance_policy_number": "PP-2025-123456"
+}
+```
+
+This document validates against the Patient schema. The `x_` fields are preserved but ignored by consumers that do not understand them.
+
+## Example: custom fields on Encounter
+
+```json
+{
+  "resource_type": "Encounter",
+  "id": "enc-001",
+  "patient_id": "pet-001",
+  "status": "completed",
+  "date": "2026-03-30T10:00:00Z",
+  "x_billing_code": "CONS-STD-001",
+  "x_room_number": "3A"
+}
+```
+
+## Example: nested extension objects
+
+Extensions can hold complex structures:
+
+```json
+{
+  "resource_type": "Patient",
+  "id": "pet-002",
+  "name": "Mruczek",
+  "species": "cat",
+  "x_behavioral_profile": {
+    "temperament": "calm",
+    "fear_triggers": ["loud_noises", "other_cats"],
+    "handling_notes": "Prefers towel wrap for examinations"
+  }
+}
+```
+
+## FHIR interoperability
+
+When converting OVF documents to FHIR, `x_` fields should be mapped to [FHIR extensions](https://hl7.org/fhir/R4/extensibility.html) with appropriate URIs. For example:
+
+```json
+{
+  "extension": [
+    {
+      "url": "https://your-system.example.com/fhir/extensions/clinic-internal-id",
+      "valueString": "PAT-2024-001"
+    }
+  ]
+}
+```
+
+See the [FHIR Mapping guide](/guides/fhir-mapping/) for full conversion details.

@@ -1,0 +1,30 @@
+---
+title: Open Vet Format
+description: FHIR-inspired JSON Schema for veterinary medical record exchange
+template: splash
+hero:
+  tagline: An open standard for exchanging veterinary medical records. JSON-based, extensible, AI-friendly.
+  actions:
+    - text: Get Started
+      link: /getting-started/introduction/
+      variant: primary
+    - text: View Schemas
+      link: /schemas/overview/
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="No standard exists" icon="warning">
+    The veterinary market has no interoperability standard. Every clinic stores data in its own format.
+  </Card>
+  <Card title="Built for vets" icon="heart">
+    Purpose-built for veterinary medicine, not adapted from human healthcare.
+  </Card>
+  <Card title="JSON Schema" icon="document">
+    Validated with JSON Schema Draft 2020-12. Any language, any platform.
+  </Card>
+  <Card title="AI-ready" icon="rocket">
+    Every field has descriptions and examples. LLMs can generate valid documents from schemas alone.
+  </Card>
+</CardGrid>

@@ -1,0 +1,123 @@
+---
+title: "Vaccination Only"
+description: "Example OVF document: Vaccination Only"
+---
+
+{/* Auto-generated from examples/vaccination-only.json — do not edit manually */}
+
+**Patient:** Max (dog)
+
+**Resources included:**
+
+- **immunizations**: 4
+
+## Full Document
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T10:00:00Z",
+  "exporter": {
+    "name": "VetNote",
+    "version": "2.0.0"
+  },
+  "patient": {
+    "resource_type": "Patient",
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Max",
+    "species": "dog",
+    "breed": "German Shepherd",
+    "date_of_birth": "2022-03-15",
+    "sex": "male",
+    "gender_status": "intact",
+    "identifiers": [
+      {
+        "system": "iso-microchip-11784",
+        "value": "616093900067890"
+      },
+      {
+        "system": "eu-pet-passport",
+        "value": "PL-123456789"
+      }
+    ]
+  },
+  "immunizations": [
+    {
+      "resource_type": "Immunization",
+      "id": "imm-001",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi",
+      "occurrence_date": "2022-05-15",
+      "expiration_date": "2023-05-15",
+      "next_dose_date": "2023-05-15",
+      "lot_number": "A1234B",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "First dose of primary vaccination course"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-002",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi",
+      "occurrence_date": "2022-06-15",
+      "expiration_date": "2023-06-15",
+      "next_dose_date": "2023-06-15",
+      "lot_number": "A1235C",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Second dose of primary vaccination course"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-003",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac Rabies",
+      "occurrence_date": "2022-06-15",
+      "expiration_date": "2025-06-15",
+      "next_dose_date": "2025-06-15",
+      "lot_number": "R5678D",
+      "manufacturer": "MSD Animal Health",
+      "route": "intramuscular",
+      "site": "Left thigh",
+      "practitioner": {
+        "name": "Dr. Anna Kowalska",
+        "license_number": "PL-VET-12345"
+      },
+      "is_primary_course": true,
+      "notes": "Rabies vaccination — required for EU Pet Passport"
+    },
+    {
+      "resource_type": "Immunization",
+      "id": "imm-004",
+      "patient_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "vaccine_name": "Nobivac DHPPi + L4",
+      "occurrence_date": "2023-05-20",
+      "expiration_date": "2024-05-20",
+      "next_dose_date": "2024-05-20",
+      "lot_number": "B2345E",
+      "manufacturer": "MSD Animal Health",
+      "route": "subcutaneous",
+      "site": "Right shoulder",
+      "practitioner": {
+        "name": "Dr. Piotr Nowak",
+        "license_number": "PL-VET-67890"
+      },
+      "is_primary_course": false,
+      "notes": "Annual booster with Leptospirosis"
+    }
+  ]
+}
+```

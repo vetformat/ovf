@@ -1,0 +1,479 @@
+---
+title: "Patient"
+description: "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information."
+---
+
+{/* Auto-generated from schemas/v1/patient.schema.json — do not edit manually */}
+
+Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.
+
+**Schema ID:** `https://open-vet-format.vetnote.app/schemas/v1/patient.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"Patient"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the patient record. UUID recommended. |
+| `name` | `string` | Yes | The pet's given name. |
+| `species` | enum | Yes | The animal species of the patient. |
+| `breed` | `string` | No | Breed or breed mix of the patient in free-text form. |
+| `breed_code` | [breed_code] | No |  |
+| `species_code` | [species_code] | No |  |
+| `date_of_birth` | `string (date)` | No | The patient's date of birth in ISO 8601 format. |
+| `sex` | enum | No | Biological sex of the patient. |
+| `gender_status` | enum | No | Reproductive status of the patient. |
+| `color` | `string` | No | Coat or skin color description of the patient. |
+| `weight` | [weight] | No |  |
+| `identifiers` | array\<identifier\> | No | External identifiers such as microchip numbers or passport IDs. |
+| `owner` | [owner] | No |  |
+| `is_active` | `boolean` | No | Whether this patient record is currently active in the practice. |
+| `is_deceased` | `boolean` | No | Whether the patient is deceased. |
+| `deceased_date` | `string (date)` | No | Date of death in ISO 8601 format, if applicable. |
+| `notes` | `string` | No | Free-text notes about the patient. |
+| `photo_url` | `string (uri)` | No | URL to a photo of the patient. |
+
+
+### `species` values
+
+- `dog`
+- `cat`
+- `bird`
+- `rabbit`
+- `hamster`
+- `guinea_pig`
+- `fish`
+- `reptile`
+- `horse`
+- `other`
+
+
+### `sex` values
+
+- `male`
+- `female`
+- `unknown`
+
+
+### `gender_status` values
+
+- `intact`
+- `neutered`
+- `spayed`
+- `unknown`
+
+## Sub-objects
+
+
+### `breed_code` object
+
+Standardized breed classification code from a recognized registry.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | enum | Yes | The breed registry system used for classification. |
+| `value` | `string` | Yes | The breed code value within the specified registry system. |
+
+### `breed_code.system` values
+
+- `fci`
+- `fife`
+- `tica`
+- `other`
+
+
+### `species_code` object
+
+Standardized species classification code from a recognized taxonomy.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | enum | Yes | The taxonomy system used for species classification. |
+| `value` | `string` | Yes | The species code within the specified taxonomy system. |
+
+### `species_code.system` values
+
+- `itis`
+- `ncbi-taxonomy`
+- `other`
+
+
+### `weight` object
+
+The patient's body weight measurement.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | `number` | Yes | Numeric weight value. Must be zero or positive. |
+| `unit` | enum | Yes | Unit of weight measurement. |
+
+### `weight.unit` values
+
+- `kg`
+- `lbs`
+
+
+### `identifier` object
+
+An external identifier for the patient, such as a microchip or passport number.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | enum | Yes | The identification system or namespace. |
+| `value` | `string` | Yes | The identifier value within the specified system. |
+
+### `identifier.system` values
+
+- `iso-microchip-11784`
+- `eu-pet-passport`
+- `safe-animal`
+- `europetnet`
+- `national-registry`
+- `other`
+
+
+### `owner` object
+
+Contact information for the patient's owner or guardian.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | No | Full name of the owner. |
+| `phone` | `string` | No | Phone number of the owner. |
+| `email` | `string` | No | Email address of the owner. |
+| `address` | `string` | No | Postal address of the owner. |
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-vet-format.vetnote.app/schemas/v1/patient.schema.json",
+  "title": "Patient",
+  "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "name",
+    "species"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "breed_code": {
+      "type": "object",
+      "description": "Standardized breed classification code from a recognized registry.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "fci",
+            "fife",
+            "tica",
+            "other"
+          ],
+          "description": "The breed registry system used for classification.",
+          "examples": [
+            "fci"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The breed code value within the specified registry system.",
+          "examples": [
+            "166"
+          ]
+        }
+      },
+      "required": [
+        "system",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "species_code": {
+      "type": "object",
+      "description": "Standardized species classification code from a recognized taxonomy.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "itis",
+            "ncbi-taxonomy",
+            "other"
+          ],
+          "description": "The taxonomy system used for species classification.",
+          "examples": [
+            "itis"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The species code within the specified taxonomy system.",
+          "examples": [
+            "180092"
+          ]
+        }
+      },
+      "required": [
+        "system",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "weight": {
+      "type": "object",
+      "description": "The patient's body weight measurement.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Numeric weight value. Must be zero or positive.",
+          "examples": [
+            12.5
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "kg",
+            "lbs"
+          ],
+          "description": "Unit of weight measurement.",
+          "examples": [
+            "kg"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "additionalProperties": true
+    },
+    "identifier": {
+      "type": "object",
+      "description": "An external identifier for the patient, such as a microchip or passport number.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "iso-microchip-11784",
+            "eu-pet-passport",
+            "safe-animal",
+            "europetnet",
+            "national-registry",
+            "other"
+          ],
+          "description": "The identification system or namespace.",
+          "examples": [
+            "iso-microchip-11784"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The identifier value within the specified system.",
+          "examples": [
+            "941000024680135"
+          ]
+        }
+      },
+      "required": [
+        "system",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "owner": {
+      "type": "object",
+      "description": "Contact information for the patient's owner or guardian.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the owner.",
+          "examples": [
+            "Jan Kowalski"
+          ]
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number of the owner.",
+          "examples": [
+            "+48 600 123 456"
+          ]
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the owner.",
+          "examples": [
+            "jan.kowalski@example.com"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Postal address of the owner.",
+          "examples": [
+            "ul. Zwierzyniecka 10, 31-015 Krakow, Poland"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "resource_type": {
+      "const": "Patient",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "Patient"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the patient record. UUID recommended.",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "The pet's given name.",
+      "examples": [
+        "Burek"
+      ]
+    },
+    "species": {
+      "type": "string",
+      "enum": [
+        "dog",
+        "cat",
+        "bird",
+        "rabbit",
+        "hamster",
+        "guinea_pig",
+        "fish",
+        "reptile",
+        "horse",
+        "other"
+      ],
+      "description": "The animal species of the patient.",
+      "examples": [
+        "dog"
+      ]
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed or breed mix of the patient in free-text form.",
+      "examples": [
+        "Labrador Retriever"
+      ]
+    },
+    "breed_code": {
+      "$ref": "#/$defs/breed_code"
+    },
+    "species_code": {
+      "$ref": "#/$defs/species_code"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "The patient's date of birth in ISO 8601 format.",
+      "examples": [
+        "2020-03-15"
+      ]
+    },
+    "sex": {
+      "type": "string",
+      "enum": [
+        "male",
+        "female",
+        "unknown"
+      ],
+      "description": "Biological sex of the patient.",
+      "examples": [
+        "male"
+      ]
+    },
+    "gender_status": {
+      "type": "string",
+      "enum": [
+        "intact",
+        "neutered",
+        "spayed",
+        "unknown"
+      ],
+      "description": "Reproductive status of the patient.",
+      "examples": [
+        "neutered"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "description": "Coat or skin color description of the patient.",
+      "examples": [
+        "golden"
+      ]
+    },
+    "weight": {
+      "$ref": "#/$defs/weight"
+    },
+    "identifiers": {
+      "type": "array",
+      "description": "External identifiers such as microchip numbers or passport IDs.",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
+      "examples": [
+        [
+          {
+            "system": "iso-microchip-11784",
+            "value": "941000024680135"
+          }
+        ]
+      ]
+    },
+    "owner": {
+      "$ref": "#/$defs/owner"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this patient record is currently active in the practice.",
+      "examples": [
+        true
+      ]
+    },
+    "is_deceased": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the patient is deceased.",
+      "examples": [
+        false
+      ]
+    },
+    "deceased_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of death in ISO 8601 format, if applicable.",
+      "examples": [
+        "2025-12-01"
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text notes about the patient.",
+      "examples": [
+        "Friendly but nervous during examinations. Prefers treats as positive reinforcement."
+      ]
+    },
+    "photo_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to a photo of the patient.",
+      "examples": [
+        "https://example.com/photos/burek.jpg"
+      ]
+    }
+  }
+}
+```

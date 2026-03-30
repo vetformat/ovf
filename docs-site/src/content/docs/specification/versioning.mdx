@@ -1,0 +1,57 @@
+---
+title: Versioning
+description: OVF versioning policy using SchemaVer (Semantic Versioning for schemas).
+---
+
+OVF follows **SchemaVer** -- Semantic Versioning applied to schemas: `MAJOR.MINOR.PATCH`.
+
+## Current version
+
+**1.0.0**
+
+The version is declared in the `format_version` field at the root of every OVF document:
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "patient": { "..." : "..." }
+}
+```
+
+## Version bump rules
+
+| Change type | Bump | Examples |
+|---|---|---|
+| **MAJOR** | Breaking | Removing a required field, changing a field type, renaming a field, removing an enum value |
+| **MINOR** | Additive | Adding a new optional field, adding a new enum value, adding a new resource type |
+| **PATCH** | Non-functional | Fixing descriptions, updating examples, correcting typos |
+
+## Compatibility guarantees
+
+- A consumer supporting version `1.x` **must** be able to read any `1.y` document where `y >= x`, ignoring unknown fields
+- A producer **should** generate documents at the highest MINOR version it supports
+- The `format_version` field **must** reflect the schema version the document was validated against
+
+## How to check the version
+
+Read the `format_version` field from the root of the JSON document:
+
+```typescript
+const doc = JSON.parse(readFileSync("record.json", "utf-8"));
+console.log(doc.format_version); // "1.0.0"
+```
+
+```python
+import json
+
+with open("record.json") as f:
+    doc = json.load(f)
+
+print(doc["format_version"])  # "1.0.0"
+```
+
+## What this means in practice
+
+- **Your code reads `1.0.0` documents today.** When OVF `1.1.0` ships (adding, say, a new optional field on Patient), your code still works -- you just ignore the new field until you choose to support it.
+- **OVF `2.0.0` would be a breaking change.** Your code would need updates. The `format_version` field lets you detect this and handle it gracefully.

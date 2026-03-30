@@ -1,0 +1,142 @@
+---
+title: FHIR Mapping
+description: Mapping between OVF resources and HL7 FHIR R4, including conversion notes and data loss considerations.
+---
+
+OVF was designed with FHIR alignment in mind but simplifies many structures for the veterinary domain. This guide covers how to convert between the two formats.
+
+## Resource mapping overview
+
+| OVF Resource | FHIR Resource | Key Differences |
+|---|---|---|
+| Patient | Patient | OVF adds `species`, `breed`, `breed_code` as top-level fields; FHIR uses extensions. OVF has flat `owner` object; FHIR uses separate `RelatedPerson`. |
+| Encounter | Encounter | OVF uses 4 status values (vs FHIR's 9). Flat `practitioner` instead of `participant` array with role coding. |
+| Condition | Condition | Nearly identical. OVF uses simpler code systems (`icd-10-vet`, `snomed-ct-vet`) instead of full CodeableConcept. |
+| Observation | Observation | OVF uses a flexible `value` field; FHIR uses typed `value[x]` (valueQuantity, valueString, etc.). |
+| Immunization | Immunization | OVF adds `next_dose_date` and `expiration_date` as first-class fields. |
+| Procedure | Procedure | OVF adds a dedicated `anesthesia` sub-object. FHIR models this as a separate resource or extension. |
+| AllergyIntolerance | AllergyIntolerance | OVF simplifies `reaction` to a single object; FHIR allows an array of reactions. |
+| MedicationStatement | MedicationStatement | OVF simplifies dosage to a flat object; FHIR uses the complex `Dosage` backbone element. |
+| DocumentReference | DocumentReference | OVF uses direct `url`, `data`, `content_type` fields; FHIR nests content in `content[].attachment`. |
+
+## OVF to FHIR conversion
+
+### Patient
+
+- **Species/breed**: FHIR has no native species/breed on Patient. Use the [patient-animal extension](http://hl7.org/fhir/StructureDefinition/patient-animal):
+
+```json
+{
+  "resourceType": "Patient",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/patient-animal",
+      "extension": [
+        {
+          "url": "species",
+          "valueCodeableConcept": {
+            "coding": [{ "system": "http://snomed.info/sct", "code": "448771007", "display": "Canis lupus familiaris" }]
+          }
+        },
+        {
+          "url": "breed",
+          "valueCodeableConcept": {
+            "coding": [{ "system": "http://fci.be", "code": "166", "display": "Labrador Retriever" }]
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+- **Identifiers**: OVF `system` enum values expand to full URIs:
+
+| OVF System | FHIR Identifier System URI |
+|---|---|
+| `iso-microchip-11784` | `urn:oid:2.16.840.1.113883.4.3xx` or `http://hl7.org/fhir/sid/microchip` |
+| `eu-pet-passport` | `http://ec.europa.eu/food/animals/pet-movement/eu-pet-passport` |
+| `safe-animal` | `https://www.safe-animal.eu` |
+| `europetnet` | `https://www.europetnet.com` |
+
+- **Owner**: Maps to a FHIR `RelatedPerson` resource linked via `Patient.link` or `Patient.contact`.
+- **Weight**: Maps to a FHIR Observation with LOINC code `29463-7` (Body weight).
+
+### Encounter
+
+- **Status**: OVF 4 values map directly where they overlap with FHIR's 9.
+- **Practitioner**: Flat `practitioner` maps to `Encounter.participant[].individual` referencing a `Practitioner` resource.
+- **Diagnoses**: Array of condition IDs maps to `Encounter.diagnosis[].condition` as `Reference(Condition)`.
+
+### Observation
+
+OVF's polymorphic `value` must be mapped to the appropriate FHIR `value[x]`:
+
+| OVF value type | FHIR field |
+|---|---|
+| number | `valueQuantity` (with `unit`) |
+| string | `valueString` |
+| boolean | `valueBoolean` |
+| object | `valueCodeableConcept` or `valueQuantity` |
+
+### Procedure
+
+FHIR has no native anesthesia sub-object. Options:
+- Create a separate FHIR Procedure for the anesthesia
+- Use an extension on the Procedure resource
+- Record as a MedicationAdministration linked to the Procedure
+
+### MedicationStatement
+
+OVF's flat dosage maps to FHIR `dosage[]`:
+- `value` + `unit` becomes `dosage[].doseAndRate[].doseQuantity`
+- `frequency` becomes `dosage[].timing.code` or `timing.repeat`
+- `route` becomes `dosage[].route` CodeableConcept
+
+## FHIR to OVF conversion
+
+### General approach
+
+1. Map FHIR resource types to OVF equivalents using the table above
+2. Flatten complex FHIR structures (CodeableConcept, Reference, Dosage) into OVF's simpler fields
+3. Use the first coding from any CodeableConcept array as the OVF code value
+4. Drop FHIR metadata fields with no OVF equivalent (`meta`, `text`, `contained`, `extension` unless mapped)
+
+### Data loss (FHIR to OVF)
+
+The following FHIR data may be lost or simplified:
+
+- **Multiple codings**: FHIR CodeableConcept can have multiple codings; OVF retains only one
+- **Complex timing**: Dosage timing with repeat patterns simplifies to a free-text `frequency` string
+- **Participant roles**: FHIR typed participant roles reduce to a single `practitioner`
+- **Multiple reactions**: FHIR's array of reactions reduces to a single `reaction` object
+- **Resource references**: FHIR typed references become flat objects or string IDs
+- **Provenance/audit**: `meta.lastUpdated`, `meta.source`, provenance chains have no OVF equivalent
+- **Narrative text**: FHIR `text` (XHTML narrative) is not preserved
+
+### Data loss (OVF to FHIR)
+
+- **Species/breed**: Must be mapped to FHIR extensions
+- **Anesthesia sub-object**: Must be modeled as a separate resource or extension
+- **`next_dose_date`**: Must be mapped to ImmunizationRecommendation or an extension
+- **Owner as nested object**: Must be extracted into a separate RelatedPerson resource
+- **`x_` extensions**: Custom OVF fields should map to FHIR extensions with appropriate URIs
+
+## Date format compatibility
+
+Both OVF and FHIR use ISO 8601. No conversion needed for temporal fields, with one caveat:
+
+- OVF date fields: `YYYY-MM-DD` (strict)
+- OVF datetime fields: `YYYY-MM-DDThh:mm:ssZ` (strict)
+- FHIR `dateTime` supports partial dates (`2025`, `2025-06`) -- these **must** be expanded to full precision when converting to OVF
+
+## When to use FHIR vs OVF
+
+| Use case | Recommended format |
+|---|---|
+| Interop with human healthcare / hospital systems | FHIR |
+| Veterinary clinic-to-clinic data exchange | OVF |
+| Pet health apps in the Polish/CEE market | OVF |
+| AI/LLM structured output for vet records | OVF |
+| Regulatory compliance (EU Pet Passport data) | OVF with [Polish extensions](/guides/polish-extensions/) |
+| Academic research requiring full clinical detail | FHIR |

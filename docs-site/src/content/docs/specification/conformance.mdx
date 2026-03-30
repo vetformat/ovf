@@ -1,0 +1,117 @@
+---
+title: Conformance
+description: OVF conformance levels, validation rules, and what makes a document valid or invalid.
+---
+
+## Conformance levels
+
+OVF defines two conformance levels.
+
+### OVF Core
+
+A conforming **OVF Core** document must satisfy all of the following:
+
+1. Contains `format_version`, `exported_at`, and `patient` at the top level
+2. The `patient` resource passes validation against the Patient schema
+3. Contains at least one additional resource array (e.g. `encounters`, `conditions`) with at least one valid entry
+
+This is the minimum bar for a valid OVF document.
+
+### OVF Complete
+
+A conforming **OVF Complete** document must satisfy all of the following:
+
+1. Meets all OVF Core requirements
+2. Contains all 9 resource types: `patient`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergies`, `medications`, `documents`
+3. Each resource array contains at least one valid entry
+
+:::note
+Most real-world documents will be OVF Core. OVF Complete is primarily useful for testing, demo data, and systems that export a full patient history.
+:::
+
+## Validation
+
+### CLI
+
+The fastest way to validate:
+
+```bash
+npx ovf-validate my-record.json
+```
+
+The CLI reports the conformance level and any validation errors.
+
+### Programmatic (ajv)
+
+See the [Installation guide](/getting-started/installation/) for full TypeScript and Python validation examples.
+
+### What gets validated
+
+- **Schema validation**: Each resource is checked against its JSON Schema (required fields, types, enum values, formats)
+- **Structural validation**: The root document must have `format_version`, `exported_at`, and `patient`
+- **Format checks**: Date fields must be `YYYY-MM-DD`, datetime fields must be ISO 8601
+
+### What is NOT validated
+
+- **Referential integrity**: The validator does not check that `patient_id` values in child resources match `patient.id`
+- **Business rules**: Clinical validity (e.g. "encounter date must be after patient birth date") is not enforced by the schema
+- **Extension content**: `x_`-prefixed fields are accepted but not validated
+
+## Valid vs invalid: examples
+
+**Valid (OVF Core)** -- patient + one encounter:
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pet-001",
+    "name": "Burek",
+    "species": "dog"
+  },
+  "encounters": [
+    {
+      "resource_type": "Encounter",
+      "id": "enc-001",
+      "patient_id": "pet-001",
+      "status": "completed",
+      "date": "2026-03-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+**Invalid** -- missing `species` (required on Patient):
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pet-001",
+    "name": "Burek"
+  }
+}
+```
+
+**Invalid** -- patient only, no resource arrays:
+
+```json
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-30T12:00:00Z",
+  "patient": {
+    "resource_type": "Patient",
+    "id": "pet-001",
+    "name": "Burek",
+    "species": "dog"
+  }
+}
+```
+
+:::tip
+A document with a valid patient but empty resource arrays (e.g. `"encounters": []`) is also invalid for OVF Core. At least one array must have at least one entry.
+:::
