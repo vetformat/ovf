@@ -31,8 +31,8 @@ Before submitting a PR, ensure:
 ## Development Setup
 
 ```bash
-git clone https://github.com/kamilnowak/vetnote-open-vet-format.git
-cd vetnote-open-vet-format
+git clone https://github.com/vetformat/ovf.git
+cd ovf
 npm install
 npm test
 ```

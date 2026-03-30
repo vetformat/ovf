@@ -19,12 +19,12 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/vetnote/open-vet-format",
+          href: "https://github.com/vetformat/ovf",
         },
       ],
       editLink: {
         baseUrl:
-          "https://github.com/vetnote/open-vet-format/edit/main/docs-site/",
+          "https://github.com/vetformat/ovf/edit/main/docs-site/",
       },
       customCss: ["./src/styles/custom.css"],
       sidebar: [

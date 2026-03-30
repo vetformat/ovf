@@ -5,9 +5,9 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vetnote/open-vet-format.git"
+    "url": "https://github.com/vetformat/ovf.git"
   },
-  "homepage": "https://github.com/vetnote/open-vet-format",
+  "homepage": "https://github.com/vetformat/ovf",
   "keywords": [
     "veterinary",
     "fhir",

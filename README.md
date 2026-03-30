@@ -7,7 +7,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Docs: CC-BY-4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-DOCS)
 [![Schema Version](https://img.shields.io/badge/schema-v1.0.0-green.svg)](schemas/v1/)
-[![CI](https://github.com/vetnote/open-vet-format/actions/workflows/validate.yml/badge.svg)](https://github.com/vetnote/open-vet-format/actions/workflows/validate.yml)
+[![CI](https://github.com/vetformat/ovf/actions/workflows/validate.yml/badge.svg)](https://github.com/vetformat/ovf/actions/workflows/validate.yml)
 
 The veterinary market — especially in Poland and Central Europe — has no standard for exchanging medical records between clinics, pet owners, and software systems. OVF fills this gap with a pragmatic, JSON-based format designed specifically for veterinary medicine.
 
