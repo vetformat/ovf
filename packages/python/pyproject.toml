@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ovf_types"
-version = "1.0.0"
+version = "1.2.0"
 description = "Python Pydantic v2 models for the Open Vet Format (OVF)"
 readme = "README.md"
 license = "Apache-2.0"

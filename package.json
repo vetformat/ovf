@@ -1,6 +1,6 @@
 {
   "name": "@vetformat/ovf",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
   "license": "Apache-2.0",
   "repository": {
@@ -47,7 +47,8 @@
     "docs:build": "npm run docs:generate && cd docs-site && npm run build",
     "generate": "npm run generate:typescript && npm run generate:python",
     "generate:typescript": "npx tsx tools/generate-typescript.ts",
-    "generate:python": "bash tools/generate-python.sh"
+    "generate:python": "bash tools/generate-python.sh",
+    "version": "npm version $npm_package_version --no-git-tag-version --workspace=packages/typescript && sed -i '' \"s/^version = \\\".*\\\"/version = \\\"$npm_package_version\\\"/\" packages/python/pyproject.toml && git add packages/typescript/package.json packages/python/pyproject.toml"
   },
   "dependencies": {
     "ajv": "^8.17.1",
