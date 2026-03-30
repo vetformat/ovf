@@ -1,0 +1,34 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Open Vet Format (OVF)",
+  "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
+  "folders": [
+    "docs",
+    "schemas",
+    "examples"
+  ],
+  "excludeFolders": [
+    "node_modules",
+    "dist",
+    "docs-site",
+    "packages",
+    "tools"
+  ],
+  "excludeFiles": [
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "LICENSE",
+    "LICENSE-DOCS",
+    "SECURITY.md",
+    "GOVERNANCE.md",
+    "ADOPTERS.md",
+    "TASKS.md"
+  ],
+  "rules": [
+    "OVF schemas follow FHIR resource naming conventions adapted for veterinary use",
+    "All schema files use JSON Schema draft 2020-12",
+    "Species-specific extensions use the species field to scope applicability",
+    "Use the validate tool (tools/validate.ts) to verify examples against schemas",
+    "Encounter is the root resource that references all other resources"
+  ]
+}
