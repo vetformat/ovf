@@ -6,3 +6,4 @@ dist/
 docs-site/dist/
 docs-site/node_modules/
 docs-site/.astro/
+__pycache__/
