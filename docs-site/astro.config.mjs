@@ -4,7 +4,7 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://docs.open-vet-format.vetnote.app",
+  site: "https://vetformat.org",
   integrations: [
     starlight({
       title: "Open Vet Format",
