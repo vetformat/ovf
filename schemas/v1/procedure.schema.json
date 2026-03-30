@@ -49,23 +49,6 @@
       "required": ["system", "value", "display"],
       "additionalProperties": true
     },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner who performed the procedure.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Piotr Wisniewski"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-67890"]
-        }
-      },
-      "additionalProperties": true
-    },
     "anesthesia": {
       "type": "object",
       "description": "Anesthesia details for the procedure.",
@@ -138,8 +121,10 @@
       "description": "Date and time when the procedure ended.",
       "examples": ["2025-06-15T10:30:00Z"]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "description": "Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "anesthesia": {
       "$ref": "#/$defs/anesthesia"

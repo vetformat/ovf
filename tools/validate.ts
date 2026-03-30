@@ -14,7 +14,7 @@ function loadSchema(filename: string): Record<string, unknown> {
   return JSON.parse(content) as Record<string, unknown>;
 }
 
-function createValidator(): Ajv {
+function createValidator(): InstanceType<typeof Ajv2020> {
   const ajv = new Ajv2020({
     allErrors: true,
     strict: false,
@@ -27,6 +27,7 @@ function createValidator(): Ajv {
 
   const schemaFiles = [
     "patient.schema.json",
+    "practitioner.schema.json",
     "encounter.schema.json",
     "condition.schema.json",
     "observation.schema.json",

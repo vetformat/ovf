@@ -74,24 +74,6 @@ class Code(BaseModel):
     """
 
 
-class Practitioner(BaseModel):
-    """
-    The veterinary practitioner who performed the procedure.
-    """
-
-    model_config = ConfigDict(
-        extra='allow',
-    )
-    name: Annotated[str | None, Field(examples=['Dr. Piotr Wisniewski'])] = None
-    """
-    Full name of the practitioner.
-    """
-    license_number: Annotated[str | None, Field(examples=['VET-PL-67890'])] = None
-    """
-    Professional license or registration number.
-    """
-
-
 class Type(Enum):
     """
     Type of anesthesia administered.
@@ -170,7 +152,10 @@ class Procedure(BaseModel):
     """
     Date and time when the procedure ended.
     """
-    practitioner: Practitioner | None = None
+    practitioner_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    """
+    Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.
+    """
     anesthesia: Anesthesia | None = None
     outcome: Annotated[
         str | None,

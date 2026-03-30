@@ -97,6 +97,8 @@ export interface OvfDocument {
   exporter?: Exporter;
   /** The patient whose medical records are contained in this export. */
   patient: Patient;
+  /** Veterinary practitioners referenced by clinical resources in this export. */
+  practitioners?: Practitioner[];
   /** Clinical encounters or visits for the patient. */
   encounters?: Encounter[];
   /** Diagnosed conditions or health problems for the patient. */

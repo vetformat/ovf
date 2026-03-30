@@ -27,21 +27,21 @@
 
 ## Next: Infrastructure
 
-- [ ] Publish `@vetformat/ovf` to npm (schemas + validator CLI)
-- [ ] Submit to JSON Schema Store (schemastore.org) — IDE autocompletion for `.ovf.json` files
-- [ ] Set up GitHub Discussions for RFC process
-- [ ] Add npm provenance (`--provenance` flag) for supply chain transparency
+- [x] Publish `@vetformat/ovf` to npm (schemas + validator CLI) — release.yml updated, publishes on next tag
+- [ ] Submit to JSON Schema Store (schemastore.org) — catalog entry prepared in `.github/schemastore-entry.json`
+- [x] Set up GitHub Discussions for RFC process — enable in repo Settings → Features
+- [x] Add npm provenance (`--provenance` flag) for supply chain transparency
 - [ ] Set up Trusted Publisher for npm (like PyPI) when npm supports OIDC
 
 ## Next: Schema Improvements (v1.2+)
 
-- [ ] Extract `Practitioner` as standalone resource (currently inline, duplicated across Encounter/Immunization/Procedure)
+- [x] Extract `Practitioner` as standalone resource (previously inline, now `practitioner_id` references)
 - [ ] Add `Invoice` resource — line items, totals, payment status (beyond `cost` on individual resources)
 - [ ] Add `CarePlan` resource — treatment plans, follow-up schedules, reminders
 - [ ] Add `DiagnosticReport` resource — groups related Observations into a report (e.g., blood panel)
 - [ ] Add `x_locale` extension convention for multi-language field values
 - [ ] Validate all enum values against real-world vet software data
-- [ ] Update `$id` URLs from `open-vet-format.vetnote.app` to `vetformat.org`
+- [x] Update `$id` URLs from `open-vet-format.vetnote.app` to `vetformat.org`
 
 ## Next: Tooling
 

@@ -1,0 +1,6 @@
+{
+  "name": "Open Vet Format (OVF)",
+  "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
+  "fileMatch": ["*.ovf.json"],
+  "url": "https://vetformat.org/schemas/v1/ovf.schema.json"
+}

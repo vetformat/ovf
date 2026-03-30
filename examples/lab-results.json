@@ -19,6 +19,15 @@
       "unit": "kg"
     }
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Marta Wiśniewska",
+      "license_number": "PL-VET-11111",
+      "clinic": "VetCare Warszawa"
+    }
+  ],
   "encounters": [
     {
       "resource_type": "Encounter",
@@ -28,11 +37,7 @@
       "type": "consultation",
       "date": "2026-03-28T09:00:00Z",
       "reason": "Annual checkup — blood panel ordered",
-      "practitioner": {
-        "name": "Dr. Marta Wiśniewska",
-        "license_number": "PL-VET-11111",
-        "clinic": "VetCare Warszawa"
-      }
+      "practitioner_id": "pract-001"
     }
   ],
   "observations": [

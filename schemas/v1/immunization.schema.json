@@ -61,23 +61,6 @@
       },
       "required": ["value", "unit"],
       "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner who administered the vaccination.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        }
-      },
-      "additionalProperties": true
     }
   },
   "properties": {
@@ -151,8 +134,10 @@
     "dose_quantity": {
       "$ref": "#/$defs/dose_quantity"
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "description": "Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "is_primary_course": {
       "type": "boolean",

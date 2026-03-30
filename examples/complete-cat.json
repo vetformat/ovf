@@ -42,6 +42,15 @@
     "is_deceased": false,
     "notes": "Indoor-only cat. Calm temperament. Prefers feliway diffuser during visits."
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Ewa Majewska",
+      "license_number": "PL-VET-33333",
+      "clinic": "Felis Veterinary Clinic"
+    }
+  ],
   "encounters": [
     {
       "resource_type": "Encounter",
@@ -51,11 +60,7 @@
       "type": "consultation",
       "date": "2025-04-10T10:00:00Z",
       "reason": "Annual checkup",
-      "practitioner": {
-        "name": "Dr. Ewa Majewska",
-        "license_number": "PL-VET-33333",
-        "clinic": "Felis Veterinary Clinic"
-      },
+      "practitioner_id": "pract-001",
       "diagnoses": ["cond-cat-001"],
       "notes": "Routine exam. Weight slightly increased. Blood panel ordered — elevated creatinine."
     },
@@ -67,11 +72,7 @@
       "type": "follow-up",
       "date": "2025-05-15T10:00:00Z",
       "reason": "Renal values follow-up — repeat blood panel",
-      "practitioner": {
-        "name": "Dr. Ewa Majewska",
-        "license_number": "PL-VET-33333",
-        "clinic": "Felis Veterinary Clinic"
-      },
+      "practitioner_id": "pract-001",
       "notes": "Creatinine stable. SDMA elevated. IRIS Stage 2 CKD confirmed. Started renal diet."
     },
     {
@@ -82,11 +83,7 @@
       "type": "vaccination",
       "date": "2026-01-20T09:00:00Z",
       "reason": "Annual vaccination",
-      "practitioner": {
-        "name": "Dr. Ewa Majewska",
-        "license_number": "PL-VET-33333",
-        "clinic": "Felis Veterinary Clinic"
-      }
+      "practitioner_id": "pract-001"
     }
   ],
   "conditions": [
@@ -225,10 +222,7 @@
       "manufacturer": "Boehringer Ingelheim",
       "route": "subcutaneous",
       "site": "Right lateral thorax",
-      "practitioner": {
-        "name": "Dr. Ewa Majewska",
-        "license_number": "PL-VET-33333"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": false,
       "notes": "Annual booster — indoor-only protocol (no FeLV)"
     }
@@ -249,10 +243,7 @@
         "route": "oral"
       },
       "reason": "CKD IRIS Stage 2 — phosphorus-restricted renal diet",
-      "prescriber": {
-        "name": "Dr. Ewa Majewska",
-        "license_number": "PL-VET-33333"
-      },
+      "prescriber_id": "pract-001",
       "notes": "Long-term. Monitor weight and kidney values every 3-4 months."
     }
   ]

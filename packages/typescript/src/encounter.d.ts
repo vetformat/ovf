@@ -50,7 +50,10 @@ export interface Encounter {
    * The chief complaint or reason for the visit.
    */
   reason?: string;
-  practitioner?: Practitioner;
+  /**
+   * Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.
+   */
+  practitioner_id?: string;
   /**
    * Clinical notes or summary of the encounter.
    */
@@ -64,27 +67,6 @@ export interface Encounter {
    */
   diagnoses_display?: string[];
   cost?: Cost;
-  [k: string]: unknown;
-}
-/**
- * The veterinary practitioner involved in this encounter.
- *
- * This interface was referenced by `Encounter`'s JSON-Schema
- * via the `definition` "practitioner".
- */
-export interface Practitioner {
-  /**
-   * Full name of the practitioner.
-   */
-  name?: string;
-  /**
-   * Professional license or registration number.
-   */
-  license_number?: string;
-  /**
-   * Name of the veterinary clinic or hospital.
-   */
-  clinic?: string;
   [k: string]: unknown;
 }
 /**

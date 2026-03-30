@@ -19,19 +19,16 @@ from .document_reference import DocumentReference
 from .document_reference import Type
 from .encounter import Cost
 from .encounter import Encounter
-from .encounter import Practitioner
 from .encounter import Status
 from .encounter import Type
 from .immunization import Cost
 from .immunization import DoseQuantity
 from .immunization import Immunization
-from .immunization import Practitioner
 from .immunization import Route
 from .immunization import VaccineCode
 from .medication_statement import Dosage
 from .medication_statement import MedicationCode
 from .medication_statement import MedicationStatement
-from .medication_statement import Prescriber
 from .medication_statement import Route
 from .medication_statement import Status
 from .observation import Category
@@ -55,11 +52,12 @@ from .patient import System1
 from .patient import System2
 from .patient import Unit
 from .patient import Weight
+from .practitioner import Contact
+from .practitioner import Practitioner
 from .procedure import Anesthesia
 from .procedure import Category
 from .procedure import Code
 from .procedure import Cost
-from .procedure import Practitioner
 from .procedure import Procedure
 from .procedure import Status
 from .procedure import Type
@@ -73,6 +71,7 @@ __all__ = [
     "ClinicalStatus",
     "Code",
     "Condition",
+    "Contact",
     "Cost",
     "Criticality",
     "DocumentReference",
@@ -91,7 +90,6 @@ __all__ = [
     "Owner",
     "Patient",
     "Practitioner",
-    "Prescriber",
     "Procedure",
     "Reaction",
     "ReferenceRange",

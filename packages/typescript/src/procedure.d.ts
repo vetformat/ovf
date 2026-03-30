@@ -46,7 +46,10 @@ export interface Procedure {
    * Date and time when the procedure ended.
    */
   end_date?: string;
-  practitioner?: Practitioner;
+  /**
+   * Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.
+   */
+  practitioner_id?: string;
   anesthesia?: Anesthesia;
   /**
    * Description of the procedure outcome.
@@ -82,23 +85,6 @@ export interface Code {
    * Human-readable display text for the code.
    */
   display: string;
-  [k: string]: unknown;
-}
-/**
- * The veterinary practitioner who performed the procedure.
- *
- * This interface was referenced by `Procedure`'s JSON-Schema
- * via the `definition` "practitioner".
- */
-export interface Practitioner {
-  /**
-   * Full name of the practitioner.
-   */
-  name?: string;
-  /**
-   * Professional license or registration number.
-   */
-  license_number?: string;
   [k: string]: unknown;
 }
 /**

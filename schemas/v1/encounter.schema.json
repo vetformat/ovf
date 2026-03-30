@@ -25,28 +25,6 @@
       },
       "required": ["amount", "currency"],
       "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner involved in this encounter.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        },
-        "clinic": {
-          "type": "string",
-          "description": "Name of the veterinary clinic or hospital.",
-          "examples": ["Happy Paws Veterinary Clinic"]
-        }
-      },
-      "additionalProperties": true
     }
   },
   "properties": {
@@ -94,8 +72,10 @@
       "description": "The chief complaint or reason for the visit.",
       "examples": ["Annual wellness check and vaccination"]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "description": "Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "notes": {
       "type": "string",

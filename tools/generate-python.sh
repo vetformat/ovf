@@ -77,6 +77,7 @@ from .immunization import Immunization
 from .medication_statement import MedicationStatement
 from .observation import Observation
 from .patient import Patient
+from .practitioner import Practitioner
 from .procedure import Procedure
 
 
@@ -123,6 +124,10 @@ class OvfDocument(BaseModel):
     ]
     exporter: Optional[Exporter] = None
     patient: Patient
+    practitioners: Annotated[
+        Optional[list[Practitioner]],
+        Field(None, description="Veterinary practitioners referenced by clinical resources in this export."),
+    ]
     encounters: Annotated[
         Optional[list[Encounter]],
         Field(None, description="Clinical encounters or visits for the patient."),

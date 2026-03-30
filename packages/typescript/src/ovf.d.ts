@@ -13,6 +13,7 @@ import type { Immunization } from "./immunization.d.ts";
 import type { MedicationStatement } from "./medication-statement.d.ts";
 import type { Observation } from "./observation.d.ts";
 import type { Patient } from "./patient.d.ts";
+import type { Practitioner } from "./practitioner.d.ts";
 import type { Procedure } from "./procedure.d.ts";
 
 /**
@@ -41,6 +42,8 @@ export interface OvfDocument {
   exporter?: Exporter;
   /** The patient whose medical records are contained in this export. */
   patient: Patient;
+  /** Veterinary practitioners referenced by clinical resources in this export. */
+  practitioners?: Practitioner[];
   /** Clinical encounters or visits for the patient. */
   encounters?: Encounter[];
   /** Diagnosed conditions or health problems for the patient. */

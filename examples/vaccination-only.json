@@ -25,6 +25,20 @@
       }
     ]
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Anna Kowalska",
+      "license_number": "PL-VET-12345"
+    },
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-002",
+      "name": "Dr. Piotr Nowak",
+      "license_number": "PL-VET-67890"
+    }
+  ],
   "immunizations": [
     {
       "resource_type": "Immunization",
@@ -38,10 +52,7 @@
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
       "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true,
       "notes": "First dose of primary vaccination course"
     },
@@ -57,10 +68,7 @@
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
       "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true,
       "notes": "Second dose of primary vaccination course"
     },
@@ -76,10 +84,7 @@
       "manufacturer": "MSD Animal Health",
       "route": "intramuscular",
       "site": "Left thigh",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true,
       "notes": "Rabies vaccination — required for EU Pet Passport"
     },
@@ -95,10 +100,7 @@
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
       "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890"
-      },
+      "practitioner_id": "pract-002",
       "is_primary_course": false,
       "notes": "Annual booster with Leptospirosis"
     }

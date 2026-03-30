@@ -77,24 +77,6 @@ class DoseQuantity(BaseModel):
     """
 
 
-class Practitioner(BaseModel):
-    """
-    The veterinary practitioner who administered the vaccination.
-    """
-
-    model_config = ConfigDict(
-        extra='allow',
-    )
-    name: Annotated[str | None, Field(examples=['Dr. Anna Nowak'])] = None
-    """
-    Full name of the practitioner.
-    """
-    license_number: Annotated[str | None, Field(examples=['VET-PL-12345'])] = None
-    """
-    Professional license or registration number.
-    """
-
-
 class Immunization(BaseModel):
     """
     Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.
@@ -155,7 +137,10 @@ class Immunization(BaseModel):
     Anatomical site where the vaccine was administered.
     """
     dose_quantity: DoseQuantity | None = None
-    practitioner: Practitioner | None = None
+    practitioner_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    """
+    Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.
+    """
     is_primary_course: Annotated[bool | None, Field(examples=[True])] = None
     """
     Whether this vaccination is part of the initial primary immunization course rather than a booster.

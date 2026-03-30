@@ -45,6 +45,15 @@
       "$ref": "patient.schema.json",
       "description": "The patient whose medical records are contained in this export."
     },
+    "practitioners": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "practitioner.schema.json"
+      },
+      "description": "Veterinary practitioners referenced by clinical resources in this export.",
+      "examples": [[]]
+    },
     "encounters": {
       "type": "array",
       "default": [],

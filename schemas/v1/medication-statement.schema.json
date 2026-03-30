@@ -52,23 +52,6 @@
         }
       },
       "additionalProperties": true
-    },
-    "prescriber": {
-      "type": "object",
-      "description": "The veterinary practitioner who prescribed the medication.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the prescriber.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        }
-      },
-      "additionalProperties": true
     }
   },
   "properties": {
@@ -126,8 +109,10 @@
       "description": "Clinical reason or indication for the medication.",
       "examples": ["Bacterial skin infection"]
     },
-    "prescriber": {
-      "$ref": "#/$defs/prescriber"
+    "prescriber_id": {
+      "type": "string",
+      "description": "Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "notes": {
       "type": "string",

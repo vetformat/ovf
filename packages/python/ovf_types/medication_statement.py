@@ -78,24 +78,6 @@ class Dosage(BaseModel):
     """
 
 
-class Prescriber(BaseModel):
-    """
-    The veterinary practitioner who prescribed the medication.
-    """
-
-    model_config = ConfigDict(
-        extra='allow',
-    )
-    name: Annotated[str | None, Field(examples=['Dr. Anna Nowak'])] = None
-    """
-    Full name of the prescriber.
-    """
-    license_number: Annotated[str | None, Field(examples=['VET-PL-12345'])] = None
-    """
-    Professional license or registration number.
-    """
-
-
 class MedicationStatement(BaseModel):
     """
     Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.
@@ -146,7 +128,10 @@ class MedicationStatement(BaseModel):
     """
     Clinical reason or indication for the medication.
     """
-    prescriber: Prescriber | None = None
+    prescriber_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    """
+    Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.
+    """
     notes: Annotated[
         str | None,
         Field(

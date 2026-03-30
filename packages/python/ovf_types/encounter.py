@@ -55,30 +55,6 @@ class Cost(BaseModel):
     """
 
 
-class Practitioner(BaseModel):
-    """
-    The veterinary practitioner involved in this encounter.
-    """
-
-    model_config = ConfigDict(
-        extra='allow',
-    )
-    name: Annotated[str | None, Field(examples=['Dr. Anna Nowak'])] = None
-    """
-    Full name of the practitioner.
-    """
-    license_number: Annotated[str | None, Field(examples=['VET-PL-12345'])] = None
-    """
-    Professional license or registration number.
-    """
-    clinic: Annotated[str | None, Field(examples=['Happy Paws Veterinary Clinic'])] = (
-        None
-    )
-    """
-    Name of the veterinary clinic or hospital.
-    """
-
-
 class Encounter(BaseModel):
     """
     Represents a clinical encounter or visit between a patient and a veterinary practitioner.
@@ -123,7 +99,10 @@ class Encounter(BaseModel):
     """
     The chief complaint or reason for the visit.
     """
-    practitioner: Practitioner | None = None
+    practitioner_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    """
+    Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.
+    """
     notes: Annotated[
         str | None,
         Field(

@@ -47,7 +47,10 @@ export interface MedicationStatement {
    * Clinical reason or indication for the medication.
    */
   reason?: string;
-  prescriber?: Prescriber;
+  /**
+   * Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.
+   */
+  prescriber_id?: string;
   /**
    * Additional notes about the medication statement.
    */
@@ -94,22 +97,5 @@ export interface Dosage {
    * Route of administration.
    */
   route?: "oral" | "topical" | "injection" | "inhalation" | "other";
-  [k: string]: unknown;
-}
-/**
- * The veterinary practitioner who prescribed the medication.
- *
- * This interface was referenced by `MedicationStatement`'s JSON-Schema
- * via the `definition` "prescriber".
- */
-export interface Prescriber {
-  /**
-   * Full name of the prescriber.
-   */
-  name?: string;
-  /**
-   * Professional license or registration number.
-   */
-  license_number?: string;
   [k: string]: unknown;
 }

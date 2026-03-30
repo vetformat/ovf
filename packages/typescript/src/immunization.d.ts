@@ -59,7 +59,10 @@ export interface Immunization {
    */
   site?: string;
   dose_quantity?: DoseQuantity;
-  practitioner?: Practitioner;
+  /**
+   * Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.
+   */
+  practitioner_id?: string;
   /**
    * Whether this vaccination is part of the initial primary immunization course rather than a booster.
    */
@@ -103,23 +106,6 @@ export interface DoseQuantity {
    * Unit of the dose (e.g., mL, dose).
    */
   unit: string;
-  [k: string]: unknown;
-}
-/**
- * The veterinary practitioner who administered the vaccination.
- *
- * This interface was referenced by `Immunization`'s JSON-Schema
- * via the `definition` "practitioner".
- */
-export interface Practitioner {
-  /**
-   * Full name of the practitioner.
-   */
-  name?: string;
-  /**
-   * Professional license or registration number.
-   */
-  license_number?: string;
   [k: string]: unknown;
 }
 /**
