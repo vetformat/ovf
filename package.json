@@ -16,6 +16,9 @@
     "pet-health",
     "ovf"
   ],
+  "workspaces": [
+    "packages/typescript"
+  ],
   "type": "module",
   "main": "schemas/v1/ovf.schema.json",
   "exports": {
@@ -41,13 +44,17 @@
     "prepublishOnly": "npm run build && npm run validate && npm run test",
     "docs:generate": "npx tsx docs-site/scripts/generate-docs.ts",
     "docs:dev": "npm run docs:generate && cd docs-site && npm run dev",
-    "docs:build": "npm run docs:generate && cd docs-site && npm run build"
+    "docs:build": "npm run docs:generate && cd docs-site && npm run build",
+    "generate": "npm run generate:typescript && npm run generate:python",
+    "generate:typescript": "npx tsx tools/generate-typescript.ts",
+    "generate:python": "bash tools/generate-python.sh"
   },
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
+    "json-schema-to-typescript": "^15.0.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.7.0",

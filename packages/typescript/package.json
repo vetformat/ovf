@@ -1,0 +1,29 @@
+{
+  "name": "@vetformat/ovf-types",
+  "version": "1.0.0",
+  "description": "TypeScript type definitions for the Open Vet Format (OVF)",
+  "license": "Apache-2.0",
+  "type": "module",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts"
+    }
+  },
+  "files": [
+    "src/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vetformat/ovf.git",
+    "directory": "packages/typescript"
+  },
+  "keywords": [
+    "ovf",
+    "veterinary",
+    "types",
+    "typescript",
+    "fhir",
+    "json-schema"
+  ]
+}
