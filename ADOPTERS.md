@@ -6,7 +6,7 @@ Organizations and projects using the Open Vet Format (OVF).
 
 | Organization | Use Case | Since |
 |---|---|---|
-| [VetNote](https://vetnote.app) | Pet health record exchange between clinics and pet owners | 2026 |
+| [VetNote](https://vetnote.pl) | Pet health record exchange between clinics and pet owners | 2026 |
 
 ## Adding Your Organization
 

@@ -6,7 +6,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Docs: CC-BY-4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-DOCS)
-[![Schema Version](https://img.shields.io/badge/schema-v1.0.0-green.svg)](schemas/v1/)
+[![Schema Version](https://img.shields.io/badge/schema-v1.2.0-green.svg)](schemas/v1/)
 [![CI](https://github.com/vetformat/ovf/actions/workflows/validate.yml/badge.svg)](https://github.com/vetformat/ovf/actions/workflows/validate.yml)
 
 The veterinary market — especially in Poland and Central Europe — has no standard for exchanging medical records between clinics, pet owners, and software systems. OVF fills this gap with a pragmatic, JSON-based format designed specifically for veterinary medicine.
@@ -48,7 +48,7 @@ A minimal valid OVF document:
 
 | Concern | FHIR | OVF |
 |---------|------|-----|
-| Complexity | 150+ resource types, deep nesting | 9 resource types, flat structure |
+| Complexity | 150+ resource types, deep nesting | 10 resource types, flat structure |
 | Format | XML + JSON, heavy tooling | JSON only, any language |
 | Veterinary support | Minimal — adapted from human medicine | Purpose-built for vet clinics |
 | Adoption in vet market | Near zero | Growing (designed for it) |
@@ -65,6 +65,7 @@ OVF maps cleanly to FHIR concepts (see [FHIR Mapping](docs/fhir-mapping.md)), so
 | Resource | Description |
 |----------|-------------|
 | **Patient** | Pet with species, breed, microchip, EU passport |
+| **Practitioner** | Veterinary professional (referenced by clinical resources) |
 | **Encounter** | Veterinary visit or consultation |
 | **Condition** | Diagnosis (active, resolved, chronic) |
 | **Observation** | Lab results, vital signs, clinical notes |
@@ -76,8 +77,20 @@ OVF maps cleanly to FHIR concepts (see [FHIR Mapping](docs/fhir-mapping.md)), so
 
 ## Installation
 
+### Schemas + CLI validator
+
 ```bash
 npm install @vetformat/ovf
+```
+
+### Typed SDKs
+
+```bash
+# TypeScript
+npm install @vetformat/ovf-types
+
+# Python
+pip install ovf-types
 ```
 
 ### Validate a document
@@ -86,7 +99,37 @@ npm install @vetformat/ovf
 npx ovf-validate ./my-record.json
 ```
 
-### Programmatic usage
+### Programmatic usage (TypeScript)
+
+```typescript
+import type { OvfDocument, Patient, Practitioner } from "@vetformat/ovf-types";
+
+const doc: OvfDocument = {
+  format_version: "1.2.0",
+  exported_at: new Date().toISOString(),
+  patient: { resource_type: "Patient", id: "p-001", name: "Luna", species: "dog" },
+  practitioners: [
+    { resource_type: "Practitioner", id: "pract-001", name: "Dr. Anna Nowak" }
+  ],
+};
+```
+
+### Programmatic usage (Python)
+
+```python
+from ovf_types import OvfDocument, Patient, Practitioner
+
+doc = OvfDocument(
+    format_version="1.2.0",
+    exported_at="2026-03-30T12:00:00Z",
+    patient=Patient(resource_type="Patient", id="p-001", name="Luna", species="dog"),
+    practitioners=[
+        Practitioner(resource_type="Practitioner", id="pract-001", name="Dr. Anna Nowak")
+    ],
+)
+```
+
+### Schema validation (programmatic)
 
 ```typescript
 import Ajv from "ajv";
