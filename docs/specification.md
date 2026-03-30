@@ -29,9 +29,10 @@ An OVF document is a JSON object that represents a veterinary patient record wit
 | `observations` | Observation[] | MAY | Array of observation resources. MAY be omitted or empty. |
 | `immunizations` | Immunization[] | MAY | Array of immunization resources. MAY be omitted or empty. |
 | `procedures` | Procedure[] | MAY | Array of procedure resources. MAY be omitted or empty. |
-| `allergies` | AllergyIntolerance[] | MAY | Array of allergy/intolerance resources. MAY be omitted or empty. |
-| `medications` | MedicationStatement[] | MAY | Array of medication statement resources. MAY be omitted or empty. |
-| `documents` | DocumentReference[] | MAY | Array of document reference resources. MAY be omitted or empty. |
+| `practitioners` | Practitioner[] | MAY | Array of practitioner resources referenced by clinical resources. MAY be omitted or empty. |
+| `allergy_intolerances` | AllergyIntolerance[] | MAY | Array of allergy/intolerance resources. MAY be omitted or empty. |
+| `medication_statements` | MedicationStatement[] | MAY | Array of medication statement resources. MAY be omitted or empty. |
+| `document_references` | DocumentReference[] | MAY | Array of document reference resources. MAY be omitted or empty. |
 
 ### 1.2 Encoding
 
@@ -56,7 +57,7 @@ A conforming **OVF Core** document MUST satisfy all of the following:
 A conforming **OVF Complete** document MUST satisfy all of the following:
 
 1. Meets all OVF Core requirements.
-2. Contains all 9 resource types: `patient`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergies`, `medications`, and `documents`.
+2. Contains all 10 resource types: `patient`, `practitioners`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergy_intolerances`, `medication_statements`, and `document_references`.
 3. Each resource array contains at least one valid entry.
 
 ---
@@ -138,17 +139,11 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
 | `date` | string (date-time) | MUST | Start date/time in ISO 8601. |
 | `end_date` | string (date-time) | MAY | End date/time in ISO 8601. |
 | `reason` | string | MAY | Chief complaint or reason for the visit. |
-| `practitioner` | object | MAY | Practitioner involved. See [Practitioner](#321-practitioner). |
+| `practitioner_id` | string | MAY | Reference to a practitioner in the top-level `practitioners` array. |
 | `notes` | string | MAY | Clinical notes or summary. |
 | `diagnoses` | string[] | MAY | Array of condition IDs diagnosed during this encounter. |
-
-#### 3.2.1 Practitioner
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | string | MAY | Full name. |
-| `license_number` | string | MAY | Professional license number. |
-| `clinic` | string | MAY | Name of the clinic (Encounter practitioner only). |
+| `diagnoses_display` | string[] | MAY | Human-readable names of diagnoses, parallel to `diagnoses`. |
+| `cost` | object | MAY | Cost information (amount + currency). |
 
 ---
 
@@ -236,7 +231,7 @@ Represents a vaccination event.
 | `route` | string (enum) | MAY | Route: `intramuscular`, `subcutaneous`, `oral`, `intranasal`, `other`. |
 | `site` | string | MAY | Anatomical site of administration. |
 | `dose_quantity` | object | MAY | Dosage amount (value + unit). |
-| `practitioner` | object | MAY | Administering practitioner (name + license_number). |
+| `practitioner_id` | string | MAY | Reference to the administering practitioner in the top-level `practitioners` array. |
 | `is_primary_course` | boolean | MAY | Whether this is part of the initial immunization course. |
 | `notes` | string | MAY | Additional notes. |
 
@@ -260,7 +255,7 @@ Represents a clinical procedure performed on a patient.
 | `category` | string (enum) | MAY | See [Procedure Category](#46-procedure-category). |
 | `performed_date` | string (date-time) | MUST | Date/time the procedure was performed. |
 | `end_date` | string (date-time) | MAY | Date/time the procedure ended. |
-| `practitioner` | object | MAY | Performing practitioner (name + license_number). |
+| `practitioner_id` | string | MAY | Reference to the performing practitioner in the top-level `practitioners` array. |
 | `anesthesia` | object | MAY | Anesthesia details. See [Anesthesia](#361-anesthesia). |
 | `outcome` | string | MAY | Description of procedure outcome. |
 | `complications` | string | MAY | Complications during or after the procedure. |
@@ -324,7 +319,7 @@ Represents a medication being taken by or administered to a patient.
 | `date_ended` | string (date) | MAY | Date medication was stopped. |
 | `dosage` | object | MAY | Dosage instructions. See [Dosage](#381-dosage). |
 | `reason` | string | MAY | Clinical reason for the medication. |
-| `prescriber` | object | MAY | Prescribing practitioner (name + license_number). |
+| `prescriber_id` | string | MAY | Reference to the prescribing practitioner in the top-level `practitioners` array. |
 | `notes` | string | MAY | Additional notes. |
 
 #### 3.8.1 Dosage
@@ -360,6 +355,31 @@ Represents a reference to a clinical document or file.
 | `hash` | string | MAY | SHA-256 hash for integrity verification. |
 | `author` | object | MAY | Document author (name). |
 | `notes` | string | MAY | Additional notes. |
+
+---
+
+### 3.10 Practitioner
+
+Represents a veterinary practitioner — a licensed professional involved in patient care. Practitioners are defined once in the top-level `practitioners` array and referenced by ID from encounters, procedures, immunizations, and medication statements.
+
+**Required fields:** `resource_type`, `id`, `name`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Practitioner"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `name` | string | MUST | Full name of the practitioner. |
+| `license_number` | string | MAY | Professional license or registration number issued by the veterinary chamber. |
+| `clinic` | string | MAY | Name of the veterinary clinic or hospital. |
+| `specializations` | string[] | MAY | Areas of specialization (e.g. `"surgery"`, `"dermatology"`, `"dentistry"`). |
+| `contact` | object | MAY | Contact information. See [Practitioner Contact](#3101-practitioner-contact). |
+
+#### 3.10.1 Practitioner Contact
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `phone` | string | MAY | Phone number. |
+| `email` | string (email) | MAY | Email address. |
 
 ---
 

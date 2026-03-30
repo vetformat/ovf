@@ -1,3 +1,6 @@
 # Schema changes require maintainer review
 /schemas/ @kamilnowak
 /docs/specification.md @kamilnowak
+/.github/ @kamilnowak
+package.json @kamilnowak
+packages/*/package.json @kamilnowak

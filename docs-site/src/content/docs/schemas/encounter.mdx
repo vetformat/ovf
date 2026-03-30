@@ -21,7 +21,7 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
 | `date` | `string (date-time)` | Yes | Start date and time of the encounter in ISO 8601 format. |
 | `end_date` | `string (date-time)` | No | End date and time of the encounter in ISO 8601 format. |
 | `reason` | `string` | No | The chief complaint or reason for the visit. |
-| `practitioner` | [practitioner] | No |  |
+| `practitioner_id` | `string` | No | Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array. |
 | `notes` | `string` | No | Clinical notes or summary of the encounter. |
 | `diagnoses` | array\<string\> | No | Array of condition IDs diagnosed during this encounter. References entries in the conditions array. |
 | `diagnoses_display` | array\<string\> | No | Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array. |
@@ -59,16 +59,6 @@ Cost information for this encounter. Optional — useful for pet owners tracking
 |-------|------|----------|-------------|
 | `amount` | `number` | Yes | Total cost amount. |
 | `currency` | `string` | Yes | ISO 4217 currency code. |
-
-### `practitioner` object
-
-The veterinary practitioner involved in this encounter.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | `string` | No | Full name of the practitioner. |
-| `license_number` | `string` | No | Professional license or registration number. |
-| `clinic` | `string` | No | Name of the veterinary clinic or hospital. |
 
 ## Full Schema
 
@@ -112,34 +102,6 @@ The veterinary practitioner involved in this encounter.
         "amount",
         "currency"
       ],
-      "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner involved in this encounter.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": [
-            "Dr. Anna Nowak"
-          ]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": [
-            "VET-PL-12345"
-          ]
-        },
-        "clinic": {
-          "type": "string",
-          "description": "Name of the veterinary clinic or hospital.",
-          "examples": [
-            "Happy Paws Veterinary Clinic"
-          ]
-        }
-      },
       "additionalProperties": true
     }
   },
@@ -219,8 +181,12 @@ The veterinary practitioner involved in this encounter.
         "Annual wellness check and vaccination"
       ]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "description": "Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.",
+      "examples": [
+        "pract-001"
+      ]
     },
     "notes": {
       "type": "string",

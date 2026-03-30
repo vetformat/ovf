@@ -1,0 +1,113 @@
+---
+title: "Practitioner"
+description: "A veterinary practitioner — a licensed professional involved in patient care. Referenced by encounters, procedures, immunizations, and medication statements."
+---
+
+{/* Auto-generated from schemas/v1/practitioner.schema.json — do not edit manually */}
+
+A veterinary practitioner — a licensed professional involved in patient care. Referenced by encounters, procedures, immunizations, and medication statements.
+
+**Schema ID:** `https://vetformat.org/schemas/v1/practitioner.schema.json`
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resource_type` | `"Practitioner"` | Yes | Fixed resource type identifier for this schema. |
+| `id` | `string` | Yes | Unique identifier for the practitioner. UUID recommended. |
+| `name` | `string` | Yes | Full name of the practitioner. |
+| `license_number` | `string` | No | Professional license or registration number issued by the veterinary chamber. |
+| `clinic` | `string` | No | Name of the veterinary clinic or hospital where the practitioner works. |
+| `specializations` | array\<string\> | No | Areas of specialization (e.g., surgery, dermatology, dentistry). |
+| `contact` | `object` | No | Contact information for the practitioner. |
+
+
+## Full Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vetformat.org/schemas/v1/practitioner.schema.json",
+  "title": "Practitioner",
+  "description": "A veterinary practitioner — a licensed professional involved in patient care. Referenced by encounters, procedures, immunizations, and medication statements.",
+  "type": "object",
+  "required": [
+    "resource_type",
+    "id",
+    "name"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "resource_type": {
+      "const": "Practitioner",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": [
+        "Practitioner"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the practitioner. UUID recommended.",
+      "examples": [
+        "pract-001"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name of the practitioner.",
+      "examples": [
+        "Dr. Anna Nowak"
+      ]
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Professional license or registration number issued by the veterinary chamber.",
+      "examples": [
+        "VET-PL-12345"
+      ]
+    },
+    "clinic": {
+      "type": "string",
+      "description": "Name of the veterinary clinic or hospital where the practitioner works.",
+      "examples": [
+        "Happy Paws Veterinary Clinic"
+      ]
+    },
+    "specializations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Areas of specialization (e.g., surgery, dermatology, dentistry).",
+      "examples": [
+        [
+          "surgery",
+          "orthopedics"
+        ]
+      ]
+    },
+    "contact": {
+      "type": "object",
+      "description": "Contact information for the practitioner.",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": "Phone number.",
+          "examples": [
+            "+48 123 456 789"
+          ]
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address.",
+          "examples": [
+            "anna.nowak@happypaws.pl"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
+```

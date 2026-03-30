@@ -93,6 +93,15 @@ Extend the document with an immunization record:
       "phone": "+48 600 123 456"
     }
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Anna Nowak",
+      "license_number": "VET-PL-12345",
+      "clinic": "Happy Paws Veterinary Clinic"
+    }
+  ],
   "encounters": [
     {
       "resource_type": "Encounter",
@@ -102,11 +111,7 @@ Extend the document with an immunization record:
       "type": "vaccination",
       "date": "2026-03-30T10:00:00Z",
       "reason": "Annual vaccination",
-      "practitioner": {
-        "name": "Dr. Anna Nowak",
-        "license_number": "VET-PL-12345",
-        "clinic": "Happy Paws Veterinary Clinic"
-      }
+      "practitioner_id": "pract-001"
     }
   ],
   "immunizations": [
@@ -128,6 +133,8 @@ Extend the document with an immunization record:
   ]
 }
 ```
+
+> **Practitioner references:** Practitioners are defined once in the top-level `practitioners` array and referenced by their `id` from encounters, procedures, immunizations, and medication statements using `practitioner_id` (or `prescriber_id` for medications). This avoids duplicating practitioner data across resources.
 
 Validate again:
 
@@ -241,14 +248,15 @@ def validate_ovf_document(document: dict, schemas_dir: Path) -> list[str]:
 
     # Validate each resource array
     resource_map = {
+        "practitioners": "practitioner.schema.json",
         "encounters": "encounter.schema.json",
         "conditions": "condition.schema.json",
         "observations": "observation.schema.json",
         "immunizations": "immunization.schema.json",
         "procedures": "procedure.schema.json",
-        "allergies": "allergy-intolerance.schema.json",
-        "medications": "medication-statement.schema.json",
-        "documents": "document-reference.schema.json",
+        "allergy_intolerances": "allergy-intolerance.schema.json",
+        "medication_statements": "medication-statement.schema.json",
+        "document_references": "document-reference.schema.json",
     }
 
     for array_key, schema_file in resource_map.items():

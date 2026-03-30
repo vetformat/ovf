@@ -11,7 +11,8 @@ This document describes the mapping between Open Vet Format (OVF) resources and 
 | OVF Resource | FHIR Resource | Key Differences |
 |---|---|---|
 | Patient | Patient | OVF adds `species`, `breed`, `breed_code` as top-level fields; FHIR uses extensions. OVF has flat `owner` object; FHIR uses separate `RelatedPerson` resource. |
-| Encounter | Encounter | OVF uses simplified status values (4 vs FHIR's 9). Flat `practitioner` object instead of `participant` array with role coding. |
+| Practitioner | Practitioner | OVF stores practitioners in a top-level array and references them by ID. FHIR uses full `Reference(Practitioner)` typed references. OVF adds `clinic` and `specializations` as top-level fields. |
+| Encounter | Encounter | OVF uses simplified status values (4 vs FHIR's 9). `practitioner_id` reference instead of `participant` array with role coding. |
 | Condition | Condition | Nearly identical structure. OVF uses simpler code systems (`icd-10-vet`, `snomed-ct-vet`) instead of full CodeableConcept with multiple codings. |
 | Observation | Observation | OVF uses a flexible `value` field (number/string/boolean/object); FHIR uses typed `value[x]` (valueQuantity, valueString, valueCodeableConcept, etc.). |
 | Immunization | Immunization | OVF adds `next_dose_date` and `expiration_date` as first-class fields. FHIR handles these via `protocolApplied` and vaccine product info. |
@@ -66,11 +67,21 @@ OVF Patient maps to FHIR Patient with the following considerations:
 - **Weight**: Map to a FHIR Observation with LOINC code `29463-7` (Body weight).
 - **Gender status**: Map `neutered`/`spayed` to FHIR extensions or Procedure records.
 
+#### Practitioner
+
+- OVF Practitioner maps directly to FHIR Practitioner.
+- **name**: Maps to `Practitioner.name[].text` or a structured `HumanName`.
+- **license_number**: Maps to `Practitioner.identifier[]` with an appropriate system URI for the veterinary chamber.
+- **clinic**: No direct FHIR field on Practitioner. Map to a `PractitionerRole.organization` reference or use an extension.
+- **specializations**: Map to `PractitionerRole.specialty[]` as CodeableConcept entries.
+- **contact**: Maps to `Practitioner.telecom[]` ContactPoint entries.
+- **Reference pattern**: When converting `practitioner_id` / `prescriber_id` references in other OVF resources, create FHIR `Reference(Practitioner)` objects pointing to the corresponding FHIR Practitioner resource.
+
 #### Encounter
 
 - **Status**: OVF uses 4 status values. FHIR has additional statuses (`arrived`, `triaged`, `onleave`, `entered-in-error`, `unknown`). Map directly where values overlap.
 - **Type**: OVF uses a simple enum. Convert to FHIR `type` CodeableConcept with an appropriate coding system.
-- **Practitioner**: OVF's flat `practitioner` object maps to FHIR `Encounter.participant[]` with `individual` reference to a `Practitioner` resource.
+- **Practitioner**: OVF's `practitioner_id` references a Practitioner in the top-level `practitioners` array. Maps to FHIR `Encounter.participant[]` with `individual` reference to a `Practitioner` resource.
 - **Diagnoses**: OVF `diagnoses` (array of condition IDs) maps to `Encounter.diagnosis[].condition` as Reference(Condition).
 
 #### Condition
@@ -151,9 +162,9 @@ The following FHIR data may be lost or simplified when converting to OVF:
 
 - **Multiple codings**: FHIR CodeableConcept can have multiple codings per concept. OVF retains only one system + value + display.
 - **Complex timing**: FHIR Dosage timing with repeat patterns (e.g. "every 8 hours on Mon/Wed/Fri") simplifies to a free-text `frequency` string.
-- **Participant roles**: FHIR Encounter participants have typed roles. OVF captures only a single practitioner.
+- **Participant roles**: FHIR Encounter participants have typed roles. OVF captures only a single `practitioner_id` reference.
 - **Multiple reactions**: FHIR AllergyIntolerance supports multiple reaction entries with multiple manifestations. OVF supports a single reaction object.
-- **Resource references**: FHIR uses typed references (`Reference(Practitioner)`). OVF uses flat objects or string IDs.
+- **Resource references**: FHIR uses typed references (`Reference(Practitioner)`). OVF uses string ID references (e.g. `practitioner_id`, `prescriber_id`).
 - **Provenance and audit**: FHIR `meta.lastUpdated`, `meta.source`, provenance chains have no OVF equivalent.
 - **Narrative text**: FHIR `text` (human-readable XHTML narrative) is not preserved in OVF.
 

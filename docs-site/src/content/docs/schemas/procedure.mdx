@@ -23,7 +23,7 @@ Represents a clinical procedure performed on a patient, including surgeries, den
 | `category` | enum | No | The high-level category of the procedure. |
 | `performed_date` | `string (date-time)` | Yes | Date and time when the procedure was performed or started. |
 | `end_date` | `string (date-time)` | No | Date and time when the procedure ended. |
-| `practitioner` | [practitioner] | No |  |
+| `practitioner_id` | `string` | No | Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array. |
 | `anesthesia` | [anesthesia] | No |  |
 | `outcome` | `string` | No | Description of the procedure outcome. |
 | `complications` | `string` | No | Any complications that occurred during or after the procedure. |
@@ -69,15 +69,6 @@ Coded representation of the procedure using a standardized terminology system.
 | `system` | `string` | Yes | The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal). |
 | `value` | `string` | Yes | The procedure code within the specified system. |
 | `display` | `string` | Yes | Human-readable display text for the code. |
-
-### `practitioner` object
-
-The veterinary practitioner who performed the procedure.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | `string` | No | Full name of the practitioner. |
-| `license_number` | `string` | No | Professional license or registration number. |
 
 ### `anesthesia` object
 
@@ -172,27 +163,6 @@ Anesthesia details for the procedure.
         "value",
         "display"
       ],
-      "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner who performed the procedure.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": [
-            "Dr. Piotr Wisniewski"
-          ]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": [
-            "VET-PL-67890"
-          ]
-        }
-      },
       "additionalProperties": true
     },
     "anesthesia": {
@@ -306,8 +276,12 @@ Anesthesia details for the procedure.
         "2025-06-15T10:30:00Z"
       ]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "description": "Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.",
+      "examples": [
+        "pract-001"
+      ]
     },
     "anesthesia": {
       "$ref": "#/$defs/anesthesia"

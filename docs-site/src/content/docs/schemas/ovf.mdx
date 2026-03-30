@@ -17,6 +17,7 @@ Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical r
 | `exported_at` | `string (date-time)` | Yes | Timestamp when this export was generated in ISO 8601 format. |
 | `exporter` | [exporter] | No |  |
 | `patient` | [patient] | Yes | The patient whose medical records are contained in this export. |
+| `practitioners` | array\<practitioner\> | No | Veterinary practitioners referenced by clinical resources in this export. |
 | `encounters` | array\<encounter\> | No | Clinical encounters or visits for the patient. |
 | `conditions` | array\<condition\> | No | Diagnosed conditions or health problems for the patient. |
 | `observations` | array\<observation\> | No | Clinical observations and measurements for the patient. |
@@ -99,6 +100,17 @@ Information about the software that generated this OVF export.
     "patient": {
       "$ref": "patient.schema.json",
       "description": "The patient whose medical records are contained in this export."
+    },
+    "practitioners": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "practitioner.schema.json"
+      },
+      "description": "Veterinary practitioners referenced by clinical resources in this export.",
+      "examples": [
+        []
+      ]
     },
     "encounters": {
       "type": "array",

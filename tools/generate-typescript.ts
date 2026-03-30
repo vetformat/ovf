@@ -1,6 +1,6 @@
 import { compile } from "json-schema-to-typescript";
-import { readFileSync, writeFileSync, readdirSync } from "fs";
-import { resolve, basename } from "path";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { resolve, basename } from "node:path";
 
 const SCHEMAS_DIR = resolve(import.meta.dirname!, "../schemas/v1");
 const OUTPUT_DIR = resolve(import.meta.dirname!, "../packages/typescript/src");
@@ -31,7 +31,13 @@ async function main() {
   // Phase 1: Generate individual resource types
   for (const file of schemaFiles) {
     const schemaPath = resolve(SCHEMAS_DIR, file);
-    const schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+    let schema;
+    try {
+      schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+    } catch (err) {
+      console.error(`Failed to parse schema ${schemaPath}: ${err}`);
+      process.exit(1);
+    }
     const name = basename(file, ".schema.json");
     const typeName = schema.title
       ? schema.title.replace(/[^a-zA-Z0-9]/g, "")
@@ -53,9 +59,15 @@ async function main() {
   }
 
   // Phase 2: Generate OVF root type manually with imports
-  const ovfSchema = JSON.parse(
-    readFileSync(resolve(SCHEMAS_DIR, "ovf.schema.json"), "utf-8")
-  );
+  let ovfSchema;
+  try {
+    ovfSchema = JSON.parse(
+      readFileSync(resolve(SCHEMAS_DIR, "ovf.schema.json"), "utf-8")
+    );
+  } catch (err) {
+    console.error(`Failed to parse OVF schema: ${err}`);
+    process.exit(1);
+  }
 
   const imports: string[] = [];
   const seenTypes = new Set<string>();
@@ -135,22 +147,52 @@ export interface OvfDocument {
   const reExports = schemaFiles.flatMap((file) => {
     const name = basename(file, ".schema.json");
     const schemaPath = resolve(SCHEMAS_DIR, file);
-    const schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+    let schema;
+    try {
+      schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+    } catch (err) {
+      console.error(`Failed to parse schema ${schemaPath}: ${err}`);
+      process.exit(1);
+    }
     if (!schema.$defs) return [];
     return Object.keys(schema.$defs).map((def) => {
       const defTypeName = toTypeName(def.replace(/_/g, "-"));
-      return { module: `./${name}.d.ts`, typeName: defTypeName };
+      return { module: `./${name}.d.ts`, typeName: defTypeName, schemaName: name };
     });
   });
 
-  // Deduplicate re-exports (some $defs names overlap across schemas)
-  const seenReExports = new Set(
+  // Group by typeName to find duplicates
+  const byName = new Map<string, typeof reExports>();
+  for (const entry of reExports) {
+    const list = byName.get(entry.typeName) || [];
+    list.push(entry);
+    byName.set(entry.typeName, list);
+  }
+
+  // Generate exports with deduplication
+  const seenInExportLines = new Set(
     exportLines.map((l) => l.match(/\{ (.+?) \}/)?.[1])
   );
-  for (const { module, typeName } of reExports) {
-    if (!seenReExports.has(typeName)) {
-      exportLines.push(`export type { ${typeName} } from "${module}";`);
-      seenReExports.add(typeName);
+
+  for (const [typeName, entries] of byName) {
+    // Sort entries alphabetically by schema name for deterministic output
+    entries.sort((a, b) => a.schemaName.localeCompare(b.schemaName));
+
+    for (let i = 0; i < entries.length; i++) {
+      const { module, schemaName } = entries[i];
+      if (i === 0 && !seenInExportLines.has(typeName)) {
+        // First occurrence: export without alias
+        exportLines.push(`export type { ${typeName} } from "${module}";`);
+        seenInExportLines.add(typeName);
+      } else {
+        // Duplicate: export with qualified alias
+        const prefix = toTypeName(schemaName);
+        const alias = `${prefix}${typeName}`;
+        if (!seenInExportLines.has(alias)) {
+          exportLines.push(`export type { ${typeName} as ${alias} } from "${module}";`);
+          seenInExportLines.add(alias);
+        }
+      }
     }
   }
 

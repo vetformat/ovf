@@ -24,7 +24,7 @@ Represents a record of medication being taken by or administered to a patient, i
 | `date_ended` | `string (date)` | No | Date when the medication was stopped or completed. |
 | `dosage` | [dosage] | No |  |
 | `reason` | `string` | No | Clinical reason or indication for the medication. |
-| `prescriber` | [prescriber] | No |  |
+| `prescriber_id` | `string` | No | Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array. |
 | `notes` | `string` | No | Additional notes about the medication statement. |
 
 
@@ -66,15 +66,6 @@ Dosage instructions for the medication.
 - `inhalation`
 - `other`
 
-
-### `prescriber` object
-
-The veterinary practitioner who prescribed the medication.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | `string` | No | Full name of the prescriber. |
-| `license_number` | `string` | No | Professional license or registration number. |
 
 ## Full Schema
 
@@ -160,27 +151,6 @@ The veterinary practitioner who prescribed the medication.
         }
       },
       "additionalProperties": true
-    },
-    "prescriber": {
-      "type": "object",
-      "description": "The veterinary practitioner who prescribed the medication.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the prescriber.",
-          "examples": [
-            "Dr. Anna Nowak"
-          ]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": [
-            "VET-PL-12345"
-          ]
-        }
-      },
-      "additionalProperties": true
     }
   },
   "properties": {
@@ -261,8 +231,12 @@ The veterinary practitioner who prescribed the medication.
         "Bacterial skin infection"
       ]
     },
-    "prescriber": {
-      "$ref": "#/$defs/prescriber"
+    "prescriber_id": {
+      "type": "string",
+      "description": "Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.",
+      "examples": [
+        "pract-001"
+      ]
     },
     "notes": {
       "type": "string",

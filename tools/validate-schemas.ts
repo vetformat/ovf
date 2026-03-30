@@ -13,6 +13,8 @@ function loadSchema(filename: string): Record<string, unknown> {
 }
 
 function main(): void {
+  // strict: false is required because OVF schemas use relative file $ref
+  // references which AJV strict mode rejects as unknown format
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   addFormats(ajv);
 

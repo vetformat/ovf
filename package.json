@@ -1,6 +1,6 @@
 {
   "name": "@vetformat/ovf",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
   "license": "Apache-2.0",
   "repository": {
@@ -36,8 +36,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "validate:schemas": "node --loader ts-node/esm tools/validate-schemas.ts",
-    "validate:examples": "node --loader ts-node/esm tools/validate-examples.ts",
+    "validate:schemas": "npx tsx tools/validate-schemas.ts",
+    "validate:examples": "npx tsx tools/validate-examples.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "validate": "npm run validate:schemas && npm run validate:examples",
@@ -48,7 +48,7 @@
     "generate": "npm run generate:typescript && npm run generate:python",
     "generate:typescript": "npx tsx tools/generate-typescript.ts",
     "generate:python": "bash tools/generate-python.sh",
-    "version": "npm version $npm_package_version --no-git-tag-version --workspace=packages/typescript && sed -i '' \"s/^version = \\\".*\\\"/version = \\\"$npm_package_version\\\"/\" packages/python/pyproject.toml && git add packages/typescript/package.json packages/python/pyproject.toml"
+    "version": "npm version $npm_package_version --no-git-tag-version --workspace=packages/typescript && node -e \"const fs=require('fs');const f='packages/python/pyproject.toml';const c=fs.readFileSync(f,'utf8');fs.writeFileSync(f,c.replace(/^version = \\\".*\\\"/m,'version = \\\"'+process.env.npm_package_version+'\\\"'));\" && git add packages/typescript/package.json packages/python/pyproject.toml"
   },
   "dependencies": {
     "ajv": "^8.17.1",

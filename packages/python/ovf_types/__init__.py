@@ -62,6 +62,31 @@ from .procedure import Procedure
 from .procedure import Status
 from .procedure import Type
 
+from .allergy_intolerance import Category as AllergyIntoleranceCategory
+from .allergy_intolerance import ClinicalStatus as AllergyIntoleranceClinicalStatus
+from .allergy_intolerance import Severity as AllergyIntoleranceSeverity
+from .allergy_intolerance import Type as AllergyIntoleranceType
+from .condition import ClinicalStatus as ConditionClinicalStatus
+from .condition import Code as ConditionCode
+from .condition import Severity as ConditionSeverity
+from .condition import System as ConditionSystem
+from .document_reference import Type as DocumentReferenceType
+from .encounter import Cost as EncounterCost
+from .encounter import Status as EncounterStatus
+from .encounter import Type as EncounterType
+from .immunization import Cost as ImmunizationCost
+from .immunization import Route as ImmunizationRoute
+from .medication_statement import Route as MedicationStatementRoute
+from .medication_statement import Status as MedicationStatementStatus
+from .observation import Category as ObservationCategory
+from .observation import Code as ObservationCode
+from .patient import System as PatientSystem
+from .procedure import Category as ProcedureCategory
+from .procedure import Code as ProcedureCode
+from .procedure import Cost as ProcedureCost
+from .procedure import Status as ProcedureStatus
+from .procedure import Type as ProcedureType
+
 __all__ = [
     "AllergyIntolerance",
     "Anesthesia",
@@ -107,4 +132,28 @@ __all__ = [
     "VaccineCode",
     "ValueType",
     "Weight",
+    "AllergyIntoleranceCategory",
+    "AllergyIntoleranceClinicalStatus",
+    "AllergyIntoleranceSeverity",
+    "AllergyIntoleranceType",
+    "ConditionClinicalStatus",
+    "ConditionCode",
+    "ConditionSeverity",
+    "ConditionSystem",
+    "DocumentReferenceType",
+    "EncounterCost",
+    "EncounterStatus",
+    "EncounterType",
+    "ImmunizationCost",
+    "ImmunizationRoute",
+    "MedicationStatementRoute",
+    "MedicationStatementStatus",
+    "ObservationCategory",
+    "ObservationCode",
+    "PatientSystem",
+    "ProcedureCategory",
+    "ProcedureCode",
+    "ProcedureCost",
+    "ProcedureStatus",
+    "ProcedureType",
 ]

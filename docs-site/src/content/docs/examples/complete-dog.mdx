@@ -69,6 +69,22 @@ description: "Example OVF document: Complete Dog"
     "is_deceased": false,
     "notes": "Friendly but anxious during examinations. Prefers treats as reward."
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Anna Kowalska",
+      "license_number": "PL-VET-12345",
+      "clinic": "Klinika Weterynaryjna Łapa"
+    },
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-002",
+      "name": "Dr. Piotr Nowak",
+      "license_number": "PL-VET-67890",
+      "clinic": "Klinika Weterynaryjna Łapa"
+    }
+  ],
   "encounters": [
     {
       "resource_type": "Encounter",
@@ -78,11 +94,7 @@ description: "Example OVF document: Complete Dog"
       "type": "vaccination",
       "date": "2024-03-15T10:00:00Z",
       "reason": "Primary vaccination course — first visit",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "notes": "Puppy in good health. Weight 4.2 kg. Started primary vaccination course."
     },
     {
@@ -93,11 +105,7 @@ description: "Example OVF document: Complete Dog"
       "type": "vaccination",
       "date": "2024-04-15T10:00:00Z",
       "reason": "Primary vaccination — second dose",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      }
+      "practitioner_id": "pract-001"
     },
     {
       "resource_type": "Encounter",
@@ -108,11 +116,7 @@ description: "Example OVF document: Complete Dog"
       "date": "2024-09-20T08:00:00Z",
       "end_date": "2024-09-20T10:30:00Z",
       "reason": "Elective castration",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-002",
       "diagnoses": [
         "cond-dog-001"
       ],
@@ -133,11 +137,7 @@ description: "Example OVF document: Complete Dog"
       "type": "consultation",
       "date": "2025-02-10T14:00:00Z",
       "reason": "Skin irritation on belly — owner reports itching for 2 weeks",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "diagnoses": [
         "cond-dog-002"
       ],
@@ -153,11 +153,7 @@ description: "Example OVF document: Complete Dog"
       "type": "consultation",
       "date": "2026-01-15T09:30:00Z",
       "reason": "Annual checkup + booster vaccination",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "notes": "Healthy. Weight stable. Skin allergy well managed with diet."
     }
   ],
@@ -255,10 +251,7 @@ description: "Example OVF document: Complete Dog"
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
       "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true
     },
     {
@@ -273,10 +266,7 @@ description: "Example OVF document: Complete Dog"
       "lot_number": "DHP-2024-B2",
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true
     },
     {
@@ -292,10 +282,7 @@ description: "Example OVF document: Complete Dog"
       "manufacturer": "MSD Animal Health",
       "route": "intramuscular",
       "site": "Left thigh",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true,
       "notes": "Required for EU Pet Passport"
     },
@@ -311,10 +298,7 @@ description: "Example OVF document: Complete Dog"
       "lot_number": "DHP-2026-D4",
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": false,
       "notes": "Annual booster"
     }
@@ -330,10 +314,7 @@ description: "Example OVF document: Complete Dog"
       "category": "surgery",
       "performed_date": "2024-09-20T08:30:00Z",
       "end_date": "2024-09-20T09:45:00Z",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890"
-      },
+      "practitioner_id": "pract-002",
       "anesthesia": {
         "type": "general",
         "agent": "Isoflurane + Propofol induction"
@@ -382,10 +363,7 @@ description: "Example OVF document: Complete Dog"
         "route": "oral"
       },
       "reason": "Atopic dermatitis — symptomatic relief during elimination diet",
-      "prescriber": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      }
+      "prescriber_id": "pract-001"
     },
     {
       "resource_type": "MedicationStatement",
@@ -402,10 +380,7 @@ description: "Example OVF document: Complete Dog"
         "route": "oral"
       },
       "reason": "Hydrolyzed protein diet for food allergy management",
-      "prescriber": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "prescriber_id": "pract-001",
       "notes": "Long-term dietary management. No chicken-based treats allowed."
     }
   ]
