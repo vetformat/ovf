@@ -8,39 +8,49 @@
 - [x] CLI validator, schema meta-validator, example validator
 - [x] GitHub Actions CI/CD (validate + release + docs deploy)
 - [x] Documentation site (Starlight, auto-generated from schemas)
-- [x] TypeScript + Python package generation
 - [x] llms.txt / llms-full.txt
 - [x] Rebrand to vetformat.org / @vetformat/ovf
+
+## Completed (v1.1.0)
+
+- [x] Register `vetformat.org` domain, point DNS to GitHub Pages
+- [x] Deploy docs site to vetformat.org (custom domain + GitHub Pages workflow)
+- [x] TypeScript type generation from schemas (`json-schema-to-typescript`)
+- [x] Python Pydantic v2 model generation from schemas (`datamodel-code-generator`)
+- [x] Publish `@vetformat/ovf-types` to npm
+- [x] Publish `ovf_types` to PyPI (Trusted Publishers / OIDC)
+- [x] CI: generation freshness check in validate.yml
+- [x] CI: auto-publish npm + PyPI on release tags
+- [x] Add typed SDK docs to installation page
 
 ---
 
 ## Next: Infrastructure
 
-- [ ] Register `vetformat.org` domain, point DNS to GitHub Pages
-- [ ] Create `vetformat` GitHub organization, transfer repo as `vetformat/ovf`
-- [ ] Publish `@vetformat/ovf` to npm (schemas + validator)
-- [ ] Publish `vetformat` to PyPI (Python models)
-- [ ] Submit to JSON Schema Store (schemastore.org) — IDE autocompletion
+- [ ] Publish `@vetformat/ovf` to npm (schemas + validator CLI)
+- [ ] Submit to JSON Schema Store (schemastore.org) — IDE autocompletion for `.ovf.json` files
 - [ ] Set up GitHub Discussions for RFC process
+- [ ] Add npm provenance (`--provenance` flag) for supply chain transparency
+- [ ] Set up Trusted Publisher for npm (like PyPI) when npm supports OIDC
 
-## Next: Schema Improvements
+## Next: Schema Improvements (v1.2+)
 
-- [ ] Add `Practitioner` as standalone resource (currently inline object, duplicated across Encounter/Immunization/Procedure)
-- [ ] Add `Invoice` resource type — line items, totals, payment status (not just `cost` on individual resources)
+- [ ] Extract `Practitioner` as standalone resource (currently inline, duplicated across Encounter/Immunization/Procedure)
+- [ ] Add `Invoice` resource — line items, totals, payment status (beyond `cost` on individual resources)
 - [ ] Add `CarePlan` resource — treatment plans, follow-up schedules, reminders
-- [ ] Consider `DiagnosticReport` resource — groups related Observations into a single report (e.g., blood panel)
+- [ ] Add `DiagnosticReport` resource — groups related Observations into a report (e.g., blood panel)
 - [ ] Add `x_locale` extension convention for multi-language field values
 - [ ] Validate all enum values against real-world vet software data
+- [ ] Update `$id` URLs from `open-vet-format.vetnote.app` to `vetformat.org`
 
 ## Next: Tooling
 
-- [ ] Online playground on vetformat.org — paste JSON, validate, see errors (client-side, no backend)
-- [ ] Schema diff tool — compare two OVF versions, show added/removed/changed fields
+- [ ] Online playground on vetformat.org — paste JSON, validate in browser (no backend)
 - [ ] OVF → FHIR converter (TypeScript library)
 - [ ] FHIR → OVF converter (lossy, best-effort)
+- [ ] VS Code extension — `.ovf.json` snippets, inline validation, hover docs
+- [ ] Schema diff tool — compare two OVF versions, show added/removed/changed fields
 - [ ] OpenAPI spec for import/export REST API endpoints
-- [ ] Postman/Bruno collection with example requests
-- [ ] VS Code extension — OVF snippets, inline validation, hover docs
 
 ## Next: Adoption & Community
 
@@ -54,15 +64,14 @@
 ## Next: Documentation
 
 - [ ] Add interactive schema explorer (collapsible tree view of fields)
-- [ ] Add "Copy as..." buttons per section (not just code blocks) — copy field table as Markdown, copy example as JSON
+- [ ] Add "Copy as..." buttons per section — copy field table as Markdown, copy example as JSON (useful for feeding docs to AI agents)
 - [ ] Translate key docs to Polish (getting-started, specification)
 - [ ] Add Mermaid diagrams for resource relationships (Patient → Encounters → Conditions)
 - [ ] API reference page for the validator CLI
 
 ## Backlog / Future Versions
 
-- [ ] OVF v1.1: `Practitioner` resource, `Invoice` resource, `DiagnosticReport`
-- [ ] OVF v2.0: Consider breaking changes — stricter identifier validation, required `encounter_id` on clinical resources
+- [ ] OVF v2.0: stricter identifier validation, required `encounter_id` on clinical resources
 - [ ] MCP server for OVF — serve schemas, validate, generate examples programmatically
 - [ ] Vet clinic sandbox — demo app showing import/export with sample data
 - [ ] Certification program — "OVF Compatible" badge for vet software vendors
