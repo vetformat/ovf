@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://open-vet-format.vetnote.app/schemas/v1/ovf.schema.json",
   "title": "Open Vet Format (OVF)",
-  "description": "Root export schema for the VetNote Open Vet Format. Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
+  "description": "Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
   "type": "object",
   "required": ["format_version", "exported_at", "patient"],
   "additionalProperties": true,

@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# VetNote Open Vet Format (OVF)
+# Open Vet Format (OVF)
 
 **A FHIR-inspired JSON Schema standard for veterinary medical record exchange.**
 

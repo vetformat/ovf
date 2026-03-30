@@ -1,4 +1,4 @@
-# VetNote Open Vet Format (OVF)
+# Open Vet Format (OVF)
 
 > FHIR-inspired JSON Schema standard for veterinary medical record exchange. Designed for the Polish and Central European veterinary market. JSON-based, minimal, extensible.
 
