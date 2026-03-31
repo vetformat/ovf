@@ -53,6 +53,17 @@ for schema in "$SCHEMAS_DIR"/*.schema.json; do
 
   # Extract class names for __init__.py (BSD-compatible sed)
   classes=$(sed -n 's/^class \([A-Za-z_][A-Za-z0-9_]*\).*/\1/p' "$OUTPUT_DIR/${module_name}.py")
+
+  # Filter out centralized $defs types inlined by datamodel-codegen but not referenced by this schema
+  if ! grep -q 'ovf.schema.json#/\$defs/cost' "$SCHEMAS_DIR/$filename.schema.json"; then
+    classes=$(echo "$classes" | grep -v '^Cost$')
+  fi
+  if ! grep -q 'ovf.schema.json#/\$defs/code' "$SCHEMAS_DIR/$filename.schema.json"; then
+    classes=$(echo "$classes" | grep -v '^Code$')
+  fi
+  # Exporter is only defined in ovf.py — filter from all resource modules
+  classes=$(echo "$classes" | grep -v '^Exporter$')
+
   if [ -n "$classes" ]; then
     for cls in $classes; do
       INIT_IMPORTS="${INIT_IMPORTS}from .${module_name} import ${cls}\n"

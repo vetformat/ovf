@@ -186,6 +186,25 @@ Dosage instructions for the medication.
         "frequency",
         "route"
       ],
+      "if": {
+        "properties": {
+          "frequency": {
+            "const": "other"
+          }
+        },
+        "required": [
+          "frequency"
+        ]
+      },
+      "then": {
+        "required": [
+          "value",
+          "unit",
+          "frequency",
+          "route",
+          "frequency_text"
+        ]
+      },
       "additionalProperties": false
     }
   },

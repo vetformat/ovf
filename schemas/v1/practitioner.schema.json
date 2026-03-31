@@ -58,6 +58,10 @@
           "examples": ["anna.nowak@happypaws.pl"]
         }
       },
+      "anyOf": [
+        { "required": ["phone"] },
+        { "required": ["email"] }
+      ],
       "additionalProperties": false
     }
   }

@@ -23,6 +23,7 @@
           "examples": ["moderate"]
         }
       },
+      "required": ["manifestation"],
       "additionalProperties": false
     }
   },

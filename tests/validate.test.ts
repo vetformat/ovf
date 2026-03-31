@@ -306,6 +306,70 @@ describe("OVF Schema Validation", () => {
       };
       expect(validate(data)).toBe(false);
     });
+
+    it("should reject invalid allergy intolerance type", () => {
+      const data = {
+        ...minimalPatient(),
+        allergy_intolerances: [{
+          resource_type: "AllergyIntolerance",
+          id: "allergy-1",
+          patient_id: "test-1",
+          type: "sensitivity",
+          category: "food",
+          substance: "Chicken",
+          clinical_status: "active",
+        }],
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject invalid allergy intolerance category", () => {
+      const data = {
+        ...minimalPatient(),
+        allergy_intolerances: [{
+          resource_type: "AllergyIntolerance",
+          id: "allergy-1",
+          patient_id: "test-1",
+          type: "allergy",
+          category: "chemical",
+          substance: "Bleach",
+          clinical_status: "active",
+        }],
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject invalid allergy intolerance criticality", () => {
+      const data = {
+        ...minimalPatient(),
+        allergy_intolerances: [{
+          resource_type: "AllergyIntolerance",
+          id: "allergy-1",
+          patient_id: "test-1",
+          type: "allergy",
+          category: "food",
+          substance: "Chicken",
+          clinical_status: "active",
+          criticality: "extreme",
+        }],
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject invalid document reference type", () => {
+      const data = {
+        ...minimalPatient(),
+        document_references: [{
+          resource_type: "DocumentReference",
+          id: "doc-1",
+          patient_id: "test-1",
+          type: "medical-record",
+          date: new Date().toISOString(),
+          url: "https://example.com/report.pdf",
+        }],
+      };
+      expect(validate(data)).toBe(false);
+    });
   });
 
   describe("date format validation", () => {

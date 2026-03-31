@@ -5,6 +5,10 @@
   "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "type", "date"],
+  "anyOf": [
+    { "required": ["url"] },
+    { "required": ["data"] }
+  ],
   "additionalProperties": false,
   "$defs": {
     "author": {

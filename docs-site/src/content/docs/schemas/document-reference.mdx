@@ -66,6 +66,18 @@ The person who authored or created the document.
     "type",
     "date"
   ],
+  "anyOf": [
+    {
+      "required": [
+        "url"
+      ]
+    },
+    {
+      "required": [
+        "data"
+      ]
+    }
+  ],
   "additionalProperties": false,
   "$defs": {
     "author": {
