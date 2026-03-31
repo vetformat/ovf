@@ -2,9 +2,9 @@
 
 # Open Vet Format (OVF) Specification
 
-**Version:** 1.0.0
+**Version:** 1.3.0
 **Status:** Draft
-**Date:** 2026-03-30
+**Date:** 2026-03-31
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -95,7 +95,7 @@ Represents an animal patient in a veterinary practice.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `system` | string (enum) | MUST | Breed registry system: `fci`, `fife`, `tica`, `other`. |
+| `system` | string (enum) | MUST | Breed registry system: `fci`, `fife`, `tica`, `akc`, `the-kennel-club`, `other`. |
 | `value` | string | MUST | Breed code value within the registry. |
 
 #### 3.1.2 Weight
@@ -194,6 +194,7 @@ Represents a clinical observation or measurement.
 | `name` | string | MUST | Human-readable observation name. |
 | `effective_date` | string (date-time) | MUST | Date/time the observation was measured. |
 | `value` | number, string, boolean, or object | MAY | The observed value. |
+| `value_type` | string (enum) | MAY | Semantic type hint for the value field: `quantity`, `text`, `boolean`, `ratio`, `range`, `coded`, `attachment`. Helps parsers interpret the value correctly without type inference. |
 | `unit` | string | MAY | Unit of measurement. |
 | `reference_range` | object | MAY | Expected range. See [Reference Range](#341-reference-range). |
 | `interpretation` | string (enum) | MAY | Interpretation: `normal`, `abnormal`, `low`, `high`, `critical`. |
@@ -328,7 +329,8 @@ Represents a medication being taken by or administered to a patient.
 |---|---|---|---|
 | `value` | number | MAY | Dose amount per administration. |
 | `unit` | string | MAY | Unit of the dose. |
-| `frequency` | string | MAY | Administration frequency (e.g. "twice daily"). |
+| `frequency` | string (enum) | MAY | Administration frequency: `once-daily`, `twice-daily`, `three-times-daily`, `four-times-daily`, `every-other-day`, `once-weekly`, `twice-weekly`, `as-needed`, `other`. |
+| `frequency_text` | string | MAY | Free-text frequency description when `other` is selected or additional detail is needed. |
 | `route` | string (enum) | MAY | Route: `oral`, `topical`, `injection`, `inhalation`, `other`. |
 
 ---
@@ -395,9 +397,16 @@ Represents a veterinary practitioner — a licensed professional involved in pat
 | `rabbit` | Domestic rabbit (Oryctolagus cuniculus) |
 | `hamster` | Hamster species (Cricetinae) |
 | `guinea_pig` | Guinea pig (Cavia porcellus) |
+| `ferret` | Domestic ferret (Mustela putorius furo) |
 | `fish` | Aquatic fish species |
 | `reptile` | Reptilian species (snakes, lizards, turtles, etc.) |
+| `amphibian` | Amphibian species (frogs, salamanders, etc.) |
 | `horse` | Domestic horse (Equus ferus caballus) |
+| `cattle` | Domestic cattle (Bos taurus) |
+| `sheep` | Domestic sheep (Ovis aries) |
+| `goat` | Domestic goat (Capra aegagrus hircus) |
+| `pig` | Domestic pig (Sus scrofa domesticus) |
+| `poultry` | Domestic poultry (chickens, ducks, turkeys, etc.) |
 | `other` | Any species not listed above |
 
 ### 4.2 Encounter Status
@@ -570,6 +579,8 @@ Represents a veterinary practitioner — a licensed professional involved in pat
 | `fci` | Federation Cynologique Internationale (dogs). |
 | `fife` | Federation Internationale Feline (cats). |
 | `tica` | The International Cat Association (cats). |
+| `akc` | American Kennel Club (dogs). |
+| `the-kennel-club` | The Kennel Club, UK (dogs). |
 | `other` | Other breed registry not listed above. |
 
 ### 4.20 Condition Code System
@@ -594,27 +605,9 @@ Represents a veterinary practitioner — a licensed professional involved in pat
 
 ## 5. Extension Mechanism
 
-OVF allows custom fields to support practice-specific or regional data needs.
+All OVF schemas set `additionalProperties: false`, meaning only fields defined in the specification are accepted. Custom or practice-specific fields are NOT currently supported at the schema level. Documents containing unrecognized fields will fail validation.
 
-### 5.1 Rules
-
-- Custom fields MUST use the `x_` prefix (e.g. `x_clinic_internal_id`, `x_insurance_provider`).
-- Extensions MUST NOT change the meaning or semantics of any standard field defined in this specification.
-- All OVF objects have `additionalProperties: true` in their JSON Schema, allowing extensions on any resource.
-- Consumers that do not recognize an `x_`-prefixed field SHOULD preserve it during round-trip processing and MUST NOT reject the document.
-
-### 5.2 Example
-
-```json
-{
-  "resource_type": "Patient",
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "name": "Burek",
-  "species": "dog",
-  "x_insurance_provider": "PetPlan Poland",
-  "x_insurance_policy_number": "PP-2025-123456"
-}
-```
+Future versions of OVF may introduce a formal extension mechanism (e.g. `x_`-prefixed fields). Until then, implementers who need additional data SHOULD use the `notes` field on any resource for free-text annotations, or store extra data outside the OVF document.
 
 ---
 

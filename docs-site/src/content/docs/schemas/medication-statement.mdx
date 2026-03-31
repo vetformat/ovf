@@ -53,11 +53,11 @@ Dosage instructions for the medication.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `value` | `number` | No | Numeric dose amount per administration. |
-| `unit` | `string` | No | Unit of the dose amount. |
-| `frequency` | enum | No | How often the medication is administered. |
+| `value` | `number` | Yes | Numeric dose amount per administration. |
+| `unit` | `string` | Yes | Unit of the dose amount. |
+| `frequency` | enum | Yes | How often the medication is administered. |
 | `frequency_text` | `string` | No | Free-text frequency description when 'other' is selected or additional detail is needed. |
-| `route` | enum | No | Route of administration. |
+| `route` | enum | Yes | Route of administration. |
 
 ### `dosage.frequency` values
 
@@ -180,6 +180,12 @@ Dosage instructions for the medication.
           ]
         }
       },
+      "required": [
+        "value",
+        "unit",
+        "frequency",
+        "route"
+      ],
       "additionalProperties": false
     }
   },

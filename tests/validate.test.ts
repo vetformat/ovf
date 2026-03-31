@@ -378,6 +378,56 @@ describe("OVF Schema Validation", () => {
     });
   });
 
+  describe("additionalProperties rejection", () => {
+    it("should reject unknown root-level properties", () => {
+      const data = {
+        format_version: "1.0.0",
+        exported_at: new Date().toISOString(),
+        custom_field: "rejected",
+        patient: { resource_type: "Patient", id: "pat-1", name: "Luna", species: "dog" },
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject unknown patient properties", () => {
+      const data = {
+        format_version: "1.0.0",
+        exported_at: new Date().toISOString(),
+        patient: { resource_type: "Patient", id: "pat-1", name: "Luna", species: "dog", nickname: "Lulu" },
+      };
+      expect(validate(data)).toBe(false);
+    });
+  });
+
+  describe("ID pattern validation", () => {
+    it("should reject ID with spaces", () => {
+      const data = {
+        format_version: "1.0.0",
+        exported_at: new Date().toISOString(),
+        patient: { resource_type: "Patient", id: "pat 001", name: "Luna", species: "dog" },
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject ID with special characters", () => {
+      const data = {
+        format_version: "1.0.0",
+        exported_at: new Date().toISOString(),
+        patient: { resource_type: "Patient", id: "pat#001", name: "Luna", species: "dog" },
+      };
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject empty ID", () => {
+      const data = {
+        format_version: "1.0.0",
+        exported_at: new Date().toISOString(),
+        patient: { resource_type: "Patient", id: "", name: "Luna", species: "dog" },
+      };
+      expect(validate(data)).toBe(false);
+    });
+  });
+
   describe("boundary values", () => {
     it("should accept zero weight", () => {
       const data = {

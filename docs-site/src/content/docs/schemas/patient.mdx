@@ -149,7 +149,7 @@ Contact information for the patient's owner or guardian.
 |-------|------|----------|-------------|
 | `name` | `string` | No | Full name of the owner. |
 | `phone` | `string` | No | Phone number of the owner. |
-| `email` | `string` | No | Email address of the owner. |
+| `email` | `string (email)` | No | Email address of the owner. |
 | `address` | `string` | No | Postal address of the owner. |
 
 ## Full Schema
@@ -315,6 +315,7 @@ Contact information for the patient's owner or guardian.
         },
         "email": {
           "type": "string",
+          "format": "email",
           "description": "Email address of the owner.",
           "examples": [
             "jan.kowalski@example.com"

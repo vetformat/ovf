@@ -7,7 +7,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Literal
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, RootModel
 
 
 class Status(Enum):
@@ -35,6 +35,10 @@ class Type(Enum):
     grooming = 'grooming'
     telehealth = 'telehealth'
     other = 'other'
+
+
+class Diagnose(RootModel[str]):
+    root: Annotated[str, Field(min_length=1, pattern='^[a-zA-Z0-9._-]+$')]
 
 
 class Cost(BaseModel):
@@ -185,7 +189,7 @@ class Encounter(BaseModel):
     Clinical notes or summary of the encounter.
     """
     diagnoses: Annotated[
-        list[str] | None, Field(examples=[['cond-001', 'cond-002']])
+        list[Diagnose] | None, Field(examples=[['cond-001', 'cond-002']])
     ] = None
     """
     Array of condition IDs diagnosed during this encounter. References entries in the conditions array.

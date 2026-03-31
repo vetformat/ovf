@@ -76,15 +76,15 @@ class Dosage(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    value: Annotated[float | None, Field(examples=[250])] = None
+    value: Annotated[float, Field(examples=[250])]
     """
     Numeric dose amount per administration.
     """
-    unit: Annotated[str | None, Field(examples=['mg'])] = None
+    unit: Annotated[str, Field(examples=['mg'])]
     """
     Unit of the dose amount.
     """
-    frequency: Frequency | None = None
+    frequency: Frequency
     """
     How often the medication is administered.
     """
@@ -94,7 +94,7 @@ class Dosage(BaseModel):
     """
     Free-text frequency description when 'other' is selected or additional detail is needed.
     """
-    route: Annotated[Route | None, Field(examples=['oral'])] = None
+    route: Annotated[Route, Field(examples=['oral'])]
     """
     Route of administration.
     """

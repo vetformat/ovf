@@ -23,7 +23,7 @@ from .procedure import Procedure
 class Exporter(BaseModel):
     """Information about the software that generated this OVF export."""
 
-    model_config = ConfigDict(extra='allow')
+    model_config = ConfigDict(extra='forbid')
 
     name: Annotated[
         str | None,
@@ -42,7 +42,7 @@ class OvfDocument(BaseModel):
     into a portable, interoperable document.
     """
 
-    model_config = ConfigDict(extra='allow')
+    model_config = ConfigDict(extra='forbid')
 
     format_version: Annotated[
         str,

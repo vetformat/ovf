@@ -82,15 +82,15 @@ export interface Dosage {
   /**
    * Numeric dose amount per administration.
    */
-  value?: number;
+  value: number;
   /**
    * Unit of the dose amount.
    */
-  unit?: string;
+  unit: string;
   /**
    * How often the medication is administered.
    */
-  frequency?:
+  frequency:
     | "once-daily"
     | "twice-daily"
     | "three-times-daily"
@@ -107,5 +107,5 @@ export interface Dosage {
   /**
    * Route of administration.
    */
-  route?: "oral" | "topical" | "injection" | "inhalation" | "other";
+  route: "oral" | "topical" | "injection" | "inhalation" | "other";
 }

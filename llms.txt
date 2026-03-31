@@ -7,15 +7,16 @@
 OVF defines a JSON format for exporting and exchanging pet medical records between veterinary clinics, pet owners, and software systems. It uses JSON Schema draft 2020-12 for validation.
 
 A valid OVF document contains:
-- `format_version` — schema version (currently "1.0.0")
+- `format_version` — schema version (currently "1.3.0")
 - `exported_at` — ISO 8601 timestamp
 - `patient` — the pet (required)
-- Resource arrays: encounters, conditions, observations, immunizations, procedures, allergy_intolerances, medication_statements, document_references
+- Resource arrays: practitioners, encounters, conditions, observations, immunizations, procedures, allergy_intolerances, medication_statements, document_references
 
 ## Resource Types
 
 - **Patient** — pet identity: name, species, breed, microchip, EU passport, owner
-- **Encounter** — veterinary visit: date, type, practitioner, reason
+- **Practitioner** — veterinary professional: name, license number, clinic, specializations
+- **Encounter** — veterinary visit: date, type, practitioner_id, reason
 - **Condition** — diagnosis: name, status (active/resolved), severity
 - **Observation** — lab result or vital sign: value, unit, reference range, interpretation
 - **Immunization** — vaccination: vaccine, date, lot number, next dose, route
@@ -36,6 +37,7 @@ A valid OVF document contains:
 All schemas are in `schemas/v1/` and use JSON Schema draft 2020-12:
 - [ovf.schema.json](schemas/v1/ovf.schema.json) — root export format
 - [patient.schema.json](schemas/v1/patient.schema.json)
+- [practitioner.schema.json](schemas/v1/practitioner.schema.json)
 - [encounter.schema.json](schemas/v1/encounter.schema.json)
 - [condition.schema.json](schemas/v1/condition.schema.json)
 - [observation.schema.json](schemas/v1/observation.schema.json)
@@ -55,9 +57,9 @@ All schemas are in `schemas/v1/` and use JSON Schema draft 2020-12:
 
 ## Key Design Decisions
 
-- `additionalProperties: true` everywhere — extensibility over strictness
-- Custom fields use `x_` prefix
-- Species enum covers common companion animals + horse + other
+- `additionalProperties: false` everywhere — strictness over extensibility
+- Species enum covers common companion animals + livestock + horse + other
+- ID fields require `minLength: 1` and pattern `^[a-zA-Z0-9._-]+$`
 - Identifier system supports ISO microchip, EU passport, SAFE-ANIMAL, EUROPETNET
 - Dates are ISO 8601 (`format: "date"` or `format: "date-time"`)
 - All resource arrays are optional — export only what you have

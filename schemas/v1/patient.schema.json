@@ -100,6 +100,7 @@
         },
         "email": {
           "type": "string",
+          "format": "email",
           "description": "Email address of the owner.",
           "examples": ["jan.kowalski@example.com"]
         },

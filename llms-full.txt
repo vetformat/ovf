@@ -11,9 +11,9 @@
 
 # Open Vet Format (OVF) Specification
 
-**Version:** 1.0.0
+**Version:** 1.3.0
 **Status:** Draft
-**Date:** 2026-03-30
+**Date:** 2026-03-31
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -38,9 +38,10 @@ An OVF document is a JSON object that represents a veterinary patient record wit
 | `observations` | Observation[] | MAY | Array of observation resources. MAY be omitted or empty. |
 | `immunizations` | Immunization[] | MAY | Array of immunization resources. MAY be omitted or empty. |
 | `procedures` | Procedure[] | MAY | Array of procedure resources. MAY be omitted or empty. |
-| `allergies` | AllergyIntolerance[] | MAY | Array of allergy/intolerance resources. MAY be omitted or empty. |
-| `medications` | MedicationStatement[] | MAY | Array of medication statement resources. MAY be omitted or empty. |
-| `documents` | DocumentReference[] | MAY | Array of document reference resources. MAY be omitted or empty. |
+| `practitioners` | Practitioner[] | MAY | Array of practitioner resources referenced by clinical resources. MAY be omitted or empty. |
+| `allergy_intolerances` | AllergyIntolerance[] | MAY | Array of allergy/intolerance resources. MAY be omitted or empty. |
+| `medication_statements` | MedicationStatement[] | MAY | Array of medication statement resources. MAY be omitted or empty. |
+| `document_references` | DocumentReference[] | MAY | Array of document reference resources. MAY be omitted or empty. |
 
 ### 1.2 Encoding
 
@@ -65,7 +66,7 @@ A conforming **OVF Core** document MUST satisfy all of the following:
 A conforming **OVF Complete** document MUST satisfy all of the following:
 
 1. Meets all OVF Core requirements.
-2. Contains all 9 resource types: `patient`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergies`, `medications`, and `documents`.
+2. Contains all 10 resource types: `patient`, `practitioners`, `encounters`, `conditions`, `observations`, `immunizations`, `procedures`, `allergy_intolerances`, `medication_statements`, and `document_references`.
 3. Each resource array contains at least one valid entry.
 
 ---
@@ -103,7 +104,7 @@ Represents an animal patient in a veterinary practice.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `system` | string (enum) | MUST | Breed registry system: `fci`, `fife`, `tica`, `other`. |
+| `system` | string (enum) | MUST | Breed registry system: `fci`, `fife`, `tica`, `akc`, `the-kennel-club`, `other`. |
 | `value` | string | MUST | Breed code value within the registry. |
 
 #### 3.1.2 Weight
@@ -147,17 +148,11 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
 | `date` | string (date-time) | MUST | Start date/time in ISO 8601. |
 | `end_date` | string (date-time) | MAY | End date/time in ISO 8601. |
 | `reason` | string | MAY | Chief complaint or reason for the visit. |
-| `practitioner` | object | MAY | Practitioner involved. See [Practitioner](#321-practitioner). |
+| `practitioner_id` | string | MAY | Reference to a practitioner in the top-level `practitioners` array. |
 | `notes` | string | MAY | Clinical notes or summary. |
 | `diagnoses` | string[] | MAY | Array of condition IDs diagnosed during this encounter. |
-
-#### 3.2.1 Practitioner
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | string | MAY | Full name. |
-| `license_number` | string | MAY | Professional license number. |
-| `clinic` | string | MAY | Name of the clinic (Encounter practitioner only). |
+| `diagnoses_display` | string[] | MAY | Human-readable names of diagnoses, parallel to `diagnoses`. |
+| `cost` | object | MAY | Cost information (amount + currency). |
 
 ---
 
@@ -208,6 +203,7 @@ Represents a clinical observation or measurement.
 | `name` | string | MUST | Human-readable observation name. |
 | `effective_date` | string (date-time) | MUST | Date/time the observation was measured. |
 | `value` | number, string, boolean, or object | MAY | The observed value. |
+| `value_type` | string (enum) | MAY | Semantic type hint for the value field: `quantity`, `text`, `boolean`, `ratio`, `range`, `coded`, `attachment`. |
 | `unit` | string | MAY | Unit of measurement. |
 | `reference_range` | object | MAY | Expected range. See [Reference Range](#341-reference-range). |
 | `interpretation` | string (enum) | MAY | Interpretation: `normal`, `abnormal`, `low`, `high`, `critical`. |
@@ -245,7 +241,7 @@ Represents a vaccination event.
 | `route` | string (enum) | MAY | Route: `intramuscular`, `subcutaneous`, `oral`, `intranasal`, `other`. |
 | `site` | string | MAY | Anatomical site of administration. |
 | `dose_quantity` | object | MAY | Dosage amount (value + unit). |
-| `practitioner` | object | MAY | Administering practitioner (name + license_number). |
+| `practitioner_id` | string | MAY | Reference to the administering practitioner in the top-level `practitioners` array. |
 | `is_primary_course` | boolean | MAY | Whether this is part of the initial immunization course. |
 | `notes` | string | MAY | Additional notes. |
 
@@ -269,7 +265,7 @@ Represents a clinical procedure performed on a patient.
 | `category` | string (enum) | MAY | See [Procedure Category](#46-procedure-category). |
 | `performed_date` | string (date-time) | MUST | Date/time the procedure was performed. |
 | `end_date` | string (date-time) | MAY | Date/time the procedure ended. |
-| `practitioner` | object | MAY | Performing practitioner (name + license_number). |
+| `practitioner_id` | string | MAY | Reference to the performing practitioner in the top-level `practitioners` array. |
 | `anesthesia` | object | MAY | Anesthesia details. See [Anesthesia](#361-anesthesia). |
 | `outcome` | string | MAY | Description of procedure outcome. |
 | `complications` | string | MAY | Complications during or after the procedure. |
@@ -333,7 +329,7 @@ Represents a medication being taken by or administered to a patient.
 | `date_ended` | string (date) | MAY | Date medication was stopped. |
 | `dosage` | object | MAY | Dosage instructions. See [Dosage](#381-dosage). |
 | `reason` | string | MAY | Clinical reason for the medication. |
-| `prescriber` | object | MAY | Prescribing practitioner (name + license_number). |
+| `prescriber_id` | string | MAY | Reference to the prescribing practitioner in the top-level `practitioners` array. |
 | `notes` | string | MAY | Additional notes. |
 
 #### 3.8.1 Dosage
@@ -342,7 +338,8 @@ Represents a medication being taken by or administered to a patient.
 |---|---|---|---|
 | `value` | number | MAY | Dose amount per administration. |
 | `unit` | string | MAY | Unit of the dose. |
-| `frequency` | string | MAY | Administration frequency (e.g. "twice daily"). |
+| `frequency` | string (enum) | MAY | Administration frequency: `once-daily`, `twice-daily`, `three-times-daily`, `four-times-daily`, `every-other-day`, `once-weekly`, `twice-weekly`, `as-needed`, `other`. |
+| `frequency_text` | string | MAY | Free-text frequency description when `other` is selected or additional detail is needed. |
 | `route` | string (enum) | MAY | Route: `oral`, `topical`, `injection`, `inhalation`, `other`. |
 
 ---
@@ -372,6 +369,31 @@ Represents a reference to a clinical document or file.
 
 ---
 
+### 3.10 Practitioner
+
+Represents a veterinary practitioner -- a licensed professional involved in patient care. Practitioners are defined once in the top-level `practitioners` array and referenced by ID from encounters, procedures, immunizations, and medication statements.
+
+**Required fields:** `resource_type`, `id`, `name`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resource_type` | const `"Practitioner"` | MUST | Fixed resource type identifier. |
+| `id` | string | MUST | Unique identifier. UUID recommended. |
+| `name` | string | MUST | Full name of the practitioner. |
+| `license_number` | string | MAY | Professional license or registration number issued by the veterinary chamber. |
+| `clinic` | string | MAY | Name of the veterinary clinic or hospital. |
+| `specializations` | string[] | MAY | Areas of specialization (e.g. `"surgery"`, `"dermatology"`, `"dentistry"`). |
+| `contact` | object | MAY | Contact information. See [Practitioner Contact](#3101-practitioner-contact). |
+
+#### 3.10.1 Practitioner Contact
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `phone` | string | MAY | Phone number. |
+| `email` | string (email) | MAY | Email address. |
+
+---
+
 ## 4. Controlled Vocabularies
 
 ### 4.1 Species
@@ -384,9 +406,16 @@ Represents a reference to a clinical document or file.
 | `rabbit` | Domestic rabbit (Oryctolagus cuniculus) |
 | `hamster` | Hamster species (Cricetinae) |
 | `guinea_pig` | Guinea pig (Cavia porcellus) |
+| `ferret` | Domestic ferret (Mustela putorius furo) |
 | `fish` | Aquatic fish species |
 | `reptile` | Reptilian species (snakes, lizards, turtles, etc.) |
+| `amphibian` | Amphibian species (frogs, salamanders, etc.) |
 | `horse` | Domestic horse (Equus ferus caballus) |
+| `cattle` | Domestic cattle (Bos taurus) |
+| `sheep` | Domestic sheep (Ovis aries) |
+| `goat` | Domestic goat (Capra aegagrus hircus) |
+| `pig` | Domestic pig (Sus scrofa domesticus) |
+| `poultry` | Domestic poultry (chickens, ducks, turkeys, etc.) |
 | `other` | Any species not listed above |
 
 ### 4.2 Encounter Status
@@ -559,6 +588,8 @@ Represents a reference to a clinical document or file.
 | `fci` | Federation Cynologique Internationale (dogs). |
 | `fife` | Federation Internationale Feline (cats). |
 | `tica` | The International Cat Association (cats). |
+| `akc` | American Kennel Club (dogs). |
+| `the-kennel-club` | The Kennel Club, UK (dogs). |
 | `other` | Other breed registry not listed above. |
 
 ### 4.20 Condition Code System
@@ -583,27 +614,9 @@ Represents a reference to a clinical document or file.
 
 ## 5. Extension Mechanism
 
-OVF allows custom fields to support practice-specific or regional data needs.
+All OVF schemas set `additionalProperties: false`, meaning only fields defined in the specification are accepted. Custom or practice-specific fields are NOT currently supported at the schema level. Documents containing unrecognized fields will fail validation.
 
-### 5.1 Rules
-
-- Custom fields MUST use the `x_` prefix (e.g. `x_clinic_internal_id`, `x_insurance_provider`).
-- Extensions MUST NOT change the meaning or semantics of any standard field defined in this specification.
-- All OVF objects have `additionalProperties: true` in their JSON Schema, allowing extensions on any resource.
-- Consumers that do not recognize an `x_`-prefixed field SHOULD preserve it during round-trip processing and MUST NOT reject the document.
-
-### 5.2 Example
-
-```json
-{
-  "resource_type": "Patient",
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "name": "Burek",
-  "species": "dog",
-  "x_insurance_provider": "PetPlan Poland",
-  "x_insurance_policy_number": "PP-2025-123456"
-}
-```
+Future versions of OVF may introduce a formal extension mechanism (e.g. `x_`-prefixed fields). Until then, implementers who need additional data SHOULD use the `notes` field on any resource for free-text annotations, or store extra data outside the OVF document.
 
 ---
 
@@ -632,6 +645,8 @@ OVF follows **SchemaVer** (Semantic Versioning for schemas): `MAJOR.MINOR.PATCH`
 - Date fields use ISO 8601 date format: `YYYY-MM-DD` (e.g. `2025-06-15`).
 - DateTime fields use ISO 8601 date-time format: `YYYY-MM-DDThh:mm:ssZ` (e.g. `2025-06-15T10:30:00Z`).
 - DateTime values SHOULD include a timezone offset or use UTC (`Z`).
+
+**Date vs. DateTime convention:** Fields representing point-in-time events where clock time matters use `date-time` (ISO 8601 with timezone) -- this applies to encounters, observations, procedures, and document references. Fields representing day-level events use `date` (ISO 8601 date only, `YYYY-MM-DD`) -- this applies to birth dates, vaccination dates, medication start/end dates, condition onset/abatement, and deceased dates. This distinction is intentional and follows clinical data conventions where calendar-day precision is sufficient for long-running states, while exact timestamps matter for acute clinical events.
 
 ### 7.2 Identifiers
 
@@ -677,7 +692,23 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 
 ---
 
-## 9. References
+## 9. Privacy & Data Protection
+
+OVF documents may contain personally identifiable information (PII), including pet owner names, emails, phone numbers, and addresses, as well as practitioner names, license numbers, and contact details.
+
+Implementers SHOULD consider the following when handling OVF documents:
+
+- Encrypting OVF files at rest and in transit.
+- Providing data minimization options (e.g., export without owner contact details).
+- Compliance with local privacy regulations (GDPR in EU, CCPA in US, etc.).
+- Providing users the ability to request data deletion.
+- When sharing OVF files between systems, stripping or anonymizing PII that is not necessary for the receiving system.
+
+Owner contact fields (`owner.email`, `owner.phone`, `owner.address`) and practitioner contact fields (`contact.email`, `contact.phone`) are OPTIONAL specifically to support privacy-conscious implementations that omit sensitive data by default.
+
+---
+
+## 10. References
 
 - [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/json-schema-core)
 - [RFC 2119 — Key words for use in RFCs](https://www.rfc-editor.org/rfc/rfc2119)
@@ -698,7 +729,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents an allergy or intolerance identified for a patient, including the causative substance, reaction details, and clinical status.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "type", "category", "substance", "clinical_status"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "reaction": {
       "type": "object",
@@ -716,7 +747,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["moderate"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -727,16 +758,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the allergy/intolerance record. UUID recommended.",
       "examples": ["allergy-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient who has this allergy or intolerance.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this allergy or intolerance was identified.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -796,33 +833,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a clinical condition, diagnosis, or health problem identified for a patient.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "name", "clinical_status"],
-  "additionalProperties": true,
-  "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the condition using a standardized veterinary terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "enum": ["icd-10-vet", "snomed-ct-vet", "internal", "other"],
-          "description": "The coding system used.",
-          "examples": ["icd-10-vet"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": ["K29.0"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Acute gastritis"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Condition",
@@ -831,21 +842,27 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the condition record. UUID recommended.",
       "examples": ["cond-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this condition belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this condition was diagnosed.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",
@@ -894,7 +911,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "type", "date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "author": {
       "type": "object",
@@ -906,7 +923,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["Dr. Anna Nowak"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -917,16 +934,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the document reference record. UUID recommended.",
       "examples": ["doc-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this document is associated with.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this document was created or obtained.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -994,50 +1017,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a clinical encounter or visit between a patient and a veterinary practitioner.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "status", "date"],
-  "additionalProperties": true,
-  "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [250.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner involved in this encounter.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        },
-        "clinic": {
-          "type": "string",
-          "description": "Name of the veterinary clinic or hospital.",
-          "examples": ["Happy Paws Veterinary Clinic"]
-        }
-      },
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Encounter",
@@ -1046,11 +1026,15 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the encounter. UUID recommended.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this encounter belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
@@ -1083,8 +1067,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "description": "The chief complaint or reason for the visit.",
       "examples": ["Annual wellness check and vaccination"]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "description": "Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "notes": {
       "type": "string",
@@ -1094,7 +1082,9 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     "diagnoses": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-zA-Z0-9._-]+$"
       },
       "description": "Array of condition IDs diagnosed during this encounter. References entries in the conditions array.",
       "examples": [["cond-001", "cond-002"]]
@@ -1108,7 +1098,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "examples": [["Atopic dermatitis", "Otitis externa"]]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }
@@ -1123,27 +1113,8 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [120.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    },
     "vaccine_code": {
       "type": "object",
       "description": "Coded representation of the vaccine product.",
@@ -1160,7 +1131,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dose_quantity": {
       "type": "object",
@@ -1178,24 +1149,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["value", "unit"],
-      "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner who administered the vaccination.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        }
-      },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -1206,16 +1160,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the immunization record. UUID recommended.",
       "examples": ["imm-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient who received the vaccination.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the vaccination was administered.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -1269,8 +1229,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     "dose_quantity": {
       "$ref": "#/$defs/dose_quantity"
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "description": "Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "is_primary_course": {
       "type": "boolean",
@@ -1283,7 +1247,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }
@@ -1298,7 +1262,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "medication_name", "status"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "medication_code": {
       "type": "object",
@@ -1316,7 +1280,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dosage": {
       "type": "object",
@@ -1334,8 +1298,13 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         },
         "frequency": {
           "type": "string",
-          "description": "How often the medication is administered.",
-          "examples": ["twice daily"]
+          "enum": ["once-daily", "twice-daily", "three-times-daily", "four-times-daily", "every-other-day", "once-weekly", "twice-weekly", "as-needed", "other"],
+          "description": "How often the medication is administered."
+        },
+        "frequency_text": {
+          "type": "string",
+          "description": "Free-text frequency description when 'other' is selected or additional detail is needed.",
+          "examples": ["every 8 hours with food", "before bedtime"]
         },
         "route": {
           "type": "string",
@@ -1344,24 +1313,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["oral"]
         }
       },
-      "additionalProperties": true
-    },
-    "prescriber": {
-      "type": "object",
-      "description": "The veterinary practitioner who prescribed the medication.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the prescriber.",
-          "examples": ["Dr. Anna Nowak"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-12345"]
-        }
-      },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -1372,16 +1324,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the medication statement record. UUID recommended.",
       "examples": ["med-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient taking or receiving the medication.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the medication was prescribed or recorded.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -1419,8 +1377,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "description": "Clinical reason or indication for the medication.",
       "examples": ["Bacterial skin infection"]
     },
-    "prescriber": {
-      "$ref": "#/$defs/prescriber"
+    "prescriber_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "description": "Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "notes": {
       "type": "string",
@@ -1440,31 +1402,8 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a clinical observation or measurement for a patient, including vital signs, lab results, imaging findings, and clinical notes.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "category", "name", "effective_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the observation type using a terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., LOINC, SNOMED, internal).",
-          "examples": ["loinc"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": ["2339-0"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Blood Glucose"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    },
     "reference_range": {
       "type": "object",
       "description": "The normal or expected range for this observation value.",
@@ -1485,7 +1424,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["70-140 mg/dL"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -1496,16 +1435,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the observation record. UUID recommended.",
       "examples": ["obs-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this observation belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this observation was recorded.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -1516,7 +1461,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "examples": ["laboratory"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",
@@ -1534,7 +1479,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         { "type": "number" },
         { "type": "string" },
         { "type": "boolean" },
-        { "type": "object", "additionalProperties": true }
+        { "type": "object", "additionalProperties": false }
       ],
       "description": "The observed value. Can be a number, string, boolean, or structured object depending on the observation type.",
       "examples": [95.5, "Positive", true]
@@ -1577,7 +1522,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
   "type": "object",
   "required": ["format_version", "exported_at", "patient"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "exporter": {
       "type": "object",
@@ -1594,7 +1539,46 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["2.4.1"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
+    },
+    "code": {
+      "type": "object",
+      "description": "A coded clinical concept with system, value, and display text.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["icd-10-vet", "snomed-ct-vet", "loinc", "atc-vet", "internal", "other"],
+          "description": "Coding system identifier."
+        },
+        "value": {
+          "type": "string",
+          "description": "Code value within the system."
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code."
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "description": "Cost information with amount and ISO 4217 currency code.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount."
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN", "USD", "EUR"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -1616,6 +1600,15 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     "patient": {
       "$ref": "patient.schema.json",
       "description": "The patient whose medical records are contained in this export."
+    },
+    "practitioners": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "practitioner.schema.json"
+      },
+      "description": "Veterinary practitioners referenced by clinical resources in this export.",
+      "examples": [[]]
     },
     "encounters": {
       "type": "array",
@@ -1702,7 +1695,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
   "type": "object",
   "required": ["resource_type", "id", "name", "species"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "breed_code": {
       "type": "object",
@@ -1710,7 +1703,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "properties": {
         "system": {
           "type": "string",
-          "enum": ["fci", "fife", "tica", "other"],
+          "enum": ["fci", "fife", "tica", "akc", "the-kennel-club", "other"],
           "description": "The breed registry system used for classification.",
           "examples": ["fci"]
         },
@@ -1721,7 +1714,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "species_code": {
       "type": "object",
@@ -1740,7 +1733,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "weight": {
       "type": "object",
@@ -1760,7 +1753,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["value", "unit"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "identifier": {
       "type": "object",
@@ -1779,7 +1772,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "owner": {
       "type": "object",
@@ -1806,7 +1799,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["ul. Zwierzyniecka 10, 31-015 Krakow, Poland"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -1817,6 +1810,8 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the patient record. UUID recommended.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
@@ -1827,7 +1822,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "species": {
       "type": "string",
-      "enum": ["dog", "cat", "bird", "rabbit", "hamster", "guinea_pig", "fish", "reptile", "horse", "other"],
+      "enum": ["dog", "cat", "bird", "rabbit", "hamster", "guinea_pig", "ferret", "fish", "reptile", "amphibian", "horse", "cattle", "sheep", "goat", "pig", "poultry", "other"],
       "description": "The animal species of the patient.",
       "examples": ["dog"]
     },
@@ -1921,67 +1916,8 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
   "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this procedure. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [1500.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    },
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the procedure using a standardized terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).",
-          "examples": ["snomed-ct-vet"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The procedure code within the specified system.",
-          "examples": ["65801008"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Ovariohysterectomy"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    },
-    "practitioner": {
-      "type": "object",
-      "description": "The veterinary practitioner who performed the procedure.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Full name of the practitioner.",
-          "examples": ["Dr. Piotr Wisniewski"]
-        },
-        "license_number": {
-          "type": "string",
-          "description": "Professional license or registration number.",
-          "examples": ["VET-PL-67890"]
-        }
-      },
-      "additionalProperties": true
-    },
     "anesthesia": {
       "type": "object",
       "description": "Anesthesia details for the procedure.",
@@ -1998,7 +1934,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
           "examples": ["Isoflurane"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -2009,16 +1945,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the procedure record. UUID recommended.",
       "examples": ["proc-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient on whom the procedure was performed.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the procedure was performed.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -2028,7 +1970,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "examples": ["Ovariohysterectomy (Spay)"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "status": {
       "type": "string",
@@ -2054,8 +1996,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "description": "Date and time when the procedure ended.",
       "examples": ["2025-06-15T10:30:00Z"]
     },
-    "practitioner": {
-      "$ref": "#/$defs/practitioner"
+    "practitioner_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "description": "Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.",
+      "examples": ["pract-001"]
     },
     "anesthesia": {
       "$ref": "#/$defs/anesthesia"
@@ -2076,7 +2022,75 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
+    }
+  }
+}
+```
+
+## practitioner.schema.json
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vetformat.org/schemas/v1/practitioner.schema.json",
+  "title": "Practitioner",
+  "description": "A veterinary practitioner — a licensed professional involved in patient care. Referenced by encounters, procedures, immunizations, and medication statements.",
+  "type": "object",
+  "required": ["resource_type", "id", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "resource_type": {
+      "const": "Practitioner",
+      "description": "Fixed resource type identifier for this schema.",
+      "examples": ["Practitioner"]
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "description": "Unique identifier for the practitioner. UUID recommended.",
+      "examples": ["pract-001"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name of the practitioner.",
+      "examples": ["Dr. Anna Nowak"]
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Professional license or registration number issued by the veterinary chamber.",
+      "examples": ["VET-PL-12345"]
+    },
+    "clinic": {
+      "type": "string",
+      "description": "Name of the veterinary clinic or hospital where the practitioner works.",
+      "examples": ["Happy Paws Veterinary Clinic"]
+    },
+    "specializations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Areas of specialization (e.g., surgery, dermatology, dentistry).",
+      "examples": [["surgery", "orthopedics"]]
+    },
+    "contact": {
+      "type": "object",
+      "description": "Contact information for the practitioner.",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": "Phone number.",
+          "examples": ["+48 123 456 789"]
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address.",
+          "examples": ["anna.nowak@happypaws.pl"]
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
@@ -2155,6 +2169,22 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
     "is_deceased": false,
     "notes": "Friendly but anxious during examinations. Prefers treats as reward."
   },
+  "practitioners": [
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-001",
+      "name": "Dr. Anna Kowalska",
+      "license_number": "PL-VET-12345",
+      "clinic": "Klinika Weterynaryjna Łapa"
+    },
+    {
+      "resource_type": "Practitioner",
+      "id": "pract-002",
+      "name": "Dr. Piotr Nowak",
+      "license_number": "PL-VET-67890",
+      "clinic": "Klinika Weterynaryjna Łapa"
+    }
+  ],
   "encounters": [
     {
       "resource_type": "Encounter",
@@ -2164,11 +2194,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "vaccination",
       "date": "2024-03-15T10:00:00Z",
       "reason": "Primary vaccination course — first visit",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "notes": "Puppy in good health. Weight 4.2 kg. Started primary vaccination course."
     },
     {
@@ -2179,11 +2205,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "vaccination",
       "date": "2024-04-15T10:00:00Z",
       "reason": "Primary vaccination — second dose",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      }
+      "practitioner_id": "pract-001"
     },
     {
       "resource_type": "Encounter",
@@ -2194,11 +2216,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "date": "2024-09-20T08:00:00Z",
       "end_date": "2024-09-20T10:30:00Z",
       "reason": "Elective castration",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-002",
       "diagnoses": ["cond-dog-001"],
       "diagnoses_display": ["Cryptorchidism (unilateral)"],
       "notes": "Pre-op bloodwork normal. Smooth recovery.",
@@ -2215,11 +2233,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "consultation",
       "date": "2025-02-10T14:00:00Z",
       "reason": "Skin irritation on belly — owner reports itching for 2 weeks",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "diagnoses": ["cond-dog-002"],
       "diagnoses_display": ["Atopic dermatitis — food-related"]
     },
@@ -2231,11 +2245,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "type": "consultation",
       "date": "2026-01-15T09:30:00Z",
       "reason": "Annual checkup + booster vaccination",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345",
-        "clinic": "Klinika Weterynaryjna Łapa"
-      },
+      "practitioner_id": "pract-001",
       "notes": "Healthy. Weight stable. Skin allergy well managed with diet."
     }
   ],
@@ -2333,10 +2343,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
       "site": "Right shoulder",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true
     },
     {
@@ -2351,10 +2358,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "lot_number": "DHP-2024-B2",
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true
     },
     {
@@ -2370,10 +2374,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "manufacturer": "MSD Animal Health",
       "route": "intramuscular",
       "site": "Left thigh",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": true,
       "notes": "Required for EU Pet Passport"
     },
@@ -2389,10 +2390,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "lot_number": "DHP-2026-D4",
       "manufacturer": "MSD Animal Health",
       "route": "subcutaneous",
-      "practitioner": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "practitioner_id": "pract-001",
       "is_primary_course": false,
       "notes": "Annual booster"
     }
@@ -2408,10 +2406,7 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "category": "surgery",
       "performed_date": "2024-09-20T08:30:00Z",
       "end_date": "2024-09-20T09:45:00Z",
-      "practitioner": {
-        "name": "Dr. Piotr Nowak",
-        "license_number": "PL-VET-67890"
-      },
+      "practitioner_id": "pract-002",
       "anesthesia": {
         "type": "general",
         "agent": "Isoflurane + Propofol induction"
@@ -2456,14 +2451,12 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "dosage": {
         "value": 5.4,
         "unit": "mg",
-        "frequency": "Twice daily for 14 days, then once daily",
+        "frequency": "other",
+        "frequency_text": "Twice daily for 14 days, then once daily",
         "route": "oral"
       },
       "reason": "Atopic dermatitis — symptomatic relief during elimination diet",
-      "prescriber": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      }
+      "prescriber_id": "pract-001"
     },
     {
       "resource_type": "MedicationStatement",
@@ -2476,14 +2469,11 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
       "dosage": {
         "value": 200,
         "unit": "g",
-        "frequency": "Twice daily",
+        "frequency": "twice-daily",
         "route": "oral"
       },
       "reason": "Hydrolyzed protein diet for food allergy management",
-      "prescriber": {
-        "name": "Dr. Anna Kowalska",
-        "license_number": "PL-VET-12345"
-      },
+      "prescriber_id": "pract-001",
       "notes": "Long-term dietary management. No chicken-based treats allowed."
     }
   ]

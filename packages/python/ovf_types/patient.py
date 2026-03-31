@@ -8,7 +8,7 @@ from datetime import date
 from enum import Enum
 from typing import Annotated, Literal
 
-from pydantic import AnyUrl, BaseModel, ConfigDict, Field
+from pydantic import AnyUrl, BaseModel, ConfigDict, EmailStr, Field
 
 
 class Species(Enum):
@@ -189,7 +189,9 @@ class Owner(BaseModel):
     """
     Phone number of the owner.
     """
-    email: Annotated[str | None, Field(examples=['jan.kowalski@example.com'])] = None
+    email: Annotated[EmailStr | None, Field(examples=['jan.kowalski@example.com'])] = (
+        None
+    )
     """
     Email address of the owner.
     """

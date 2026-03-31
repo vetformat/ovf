@@ -21,6 +21,7 @@ from .document_reference import DocumentReference
 from .document_reference import Type
 from .encounter import Code
 from .encounter import Cost
+from .encounter import Diagnose
 from .encounter import Encounter
 from .encounter import Exporter
 from .encounter import Status
@@ -127,6 +128,7 @@ __all__ = [
     "Contact",
     "Cost",
     "Criticality",
+    "Diagnose",
     "DocumentReference",
     "Dosage",
     "DoseQuantity",

@@ -127,7 +127,7 @@ export interface OvfDocument {
   medication_statements?: MedicationStatement[];
   /** Documents and files associated with the patient. */
   document_references?: DocumentReference[];
-  [k: string]: unknown;
+
 }
 `;
 
@@ -160,6 +160,43 @@ export interface OvfDocument {
       return { module: `./${name}.d.ts`, typeName: defTypeName, schemaName: name };
     });
   });
+
+  // Also collect types from centralized $defs in ovf.schema.json
+  // that get inlined into resource schemas via $ref
+  const ovfSchemaPath = resolve(SCHEMAS_DIR, "ovf.schema.json");
+  let ovfSchemaForRefs;
+  try {
+    ovfSchemaForRefs = JSON.parse(readFileSync(ovfSchemaPath, "utf-8"));
+  } catch (err) {
+    console.error(`Failed to parse ${ovfSchemaPath}: ${err}`);
+    process.exit(1);
+  }
+
+  if (ovfSchemaForRefs.$defs) {
+    const centralizedTypes = ["code", "cost"]; // Types that are $ref'd by resource schemas
+    for (const defName of centralizedTypes) {
+      if (!ovfSchemaForRefs.$defs[defName]) continue;
+      const defTypeName = toTypeName(defName.replace(/_/g, "-"));
+      // Find which resource schemas reference this centralized type
+      for (const file of schemaFiles) {
+        const name = basename(file, ".schema.json");
+        const schemaPath = resolve(SCHEMAS_DIR, file);
+        let schema;
+        try {
+          schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+        } catch { continue; }
+        // Check if this schema references the centralized type
+        const schemaStr = JSON.stringify(schema);
+        if (schemaStr.includes(`ovf.schema.json#/$defs/${defName}`)) {
+          reExports.push({
+            module: `./${name}.d.ts`,
+            typeName: defTypeName,
+            schemaName: name,
+          });
+        }
+      }
+    }
+  }
 
   // Group by typeName to find duplicates
   const byName = new Map<string, typeof reExports>();

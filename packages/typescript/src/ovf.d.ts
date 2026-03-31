@@ -59,5 +59,5 @@ export interface OvfDocument {
   medication_statements?: MedicationStatement[];
   /** Documents and files associated with the patient. */
   document_references?: DocumentReference[];
-  [k: string]: unknown;
+
 }

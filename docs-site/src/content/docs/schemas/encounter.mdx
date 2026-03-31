@@ -165,7 +165,9 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
     "diagnoses": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-zA-Z0-9._-]+$"
       },
       "description": "Array of condition IDs diagnosed during this encounter. References entries in the conditions array.",
       "examples": [

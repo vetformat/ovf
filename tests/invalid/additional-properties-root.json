@@ -1,0 +1,6 @@
+{
+  "format_version": "1.0.0",
+  "exported_at": "2026-03-31T12:00:00Z",
+  "custom_field": "should be rejected",
+  "patient": { "resource_type": "Patient", "id": "pat-1", "name": "Luna", "species": "dog" }
+}
