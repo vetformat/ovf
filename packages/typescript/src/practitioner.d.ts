@@ -37,13 +37,6 @@ export interface Practitioner {
    * Contact information for the practitioner.
    */
   contact?: {
-    /**
-     * Phone number.
-     */
-    phone?: string;
-    /**
-     * Email address.
-     */
-    email?: string;
+    [k: string]: unknown;
   };
 }

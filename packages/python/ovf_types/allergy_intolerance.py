@@ -69,9 +69,7 @@ class Reaction(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    manifestation: Annotated[
-        str | None, Field(examples=['Urticaria and facial swelling'])
-    ] = None
+    manifestation: Annotated[str, Field(examples=['Urticaria and facial swelling'])]
     """
     Clinical manifestation or symptom of the reaction.
     """

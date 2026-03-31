@@ -17,13 +17,31 @@ class Contact(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    phone: Annotated[str | None, Field(examples=['+48 123 456 789'])] = None
+    phone: Annotated[str, Field(examples=['+48 123 456 789'])]
     """
     Phone number.
     """
     email: Annotated[EmailStr | None, Field(examples=['anna.nowak@happypaws.pl'])] = (
         None
     )
+    """
+    Email address.
+    """
+
+
+class Contact1(BaseModel):
+    """
+    Contact information for the practitioner.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    phone: Annotated[str | None, Field(examples=['+48 123 456 789'])] = None
+    """
+    Phone number.
+    """
+    email: Annotated[EmailStr, Field(examples=['anna.nowak@happypaws.pl'])]
     """
     Email address.
     """
@@ -67,7 +85,7 @@ class Practitioner(BaseModel):
     """
     Areas of specialization (e.g., surgery, dermatology, dentistry).
     """
-    contact: Contact | None = None
+    contact: Contact | Contact1 | None = None
     """
     Contact information for the practitioner.
     """

@@ -8,7 +8,9 @@
 /**
  * Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.
  */
-export interface DocumentReference {
+export type DocumentReference = {
+  [k: string]: unknown;
+} & {
   /**
    * Fixed resource type identifier for this schema.
    */
@@ -62,11 +64,12 @@ export interface DocumentReference {
    * Additional notes about the document.
    */
   notes?: string;
-}
+};
+
 /**
  * The person who authored or created the document.
  *
- * This interface was referenced by `DocumentReference`'s JSON-Schema
+ * This interface was referenced by `undefined`'s JSON-Schema
  * via the `definition` "author".
  */
 export interface Author {

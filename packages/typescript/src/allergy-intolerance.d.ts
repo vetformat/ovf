@@ -65,7 +65,7 @@ export interface Reaction {
   /**
    * Clinical manifestation or symptom of the reaction.
    */
-  manifestation?: string;
+  manifestation: string;
   /**
    * Severity of the reaction.
    */
