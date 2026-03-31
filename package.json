@@ -1,6 +1,6 @@
 {
   "name": "@vetformat/ovf",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "FHIR-inspired JSON Schema standard for veterinary medical record exchange",
   "license": "Apache-2.0",
   "repository": {
