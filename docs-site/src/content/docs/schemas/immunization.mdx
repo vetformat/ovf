@@ -30,7 +30,7 @@ Represents a vaccination event for an animal patient, including vaccine details,
 | `practitioner_id` | `string` | No | Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array. |
 | `is_primary_course` | `boolean` | No | Whether this vaccination is part of the initial primary immunization course rather than a booster. |
 | `notes` | `string` | No | Additional notes about the vaccination event. |
-| `cost` | [cost] | No |  |
+| `cost` | [ovfcost] | No |  |
 
 
 ### `route` values
@@ -43,15 +43,6 @@ Represents a vaccination event for an animal patient, including vaccine details,
 
 ## Sub-objects
 
-
-### `cost` object
-
-Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `amount` | `number` | Yes | Total cost amount. |
-| `currency` | `string` | Yes | ISO 4217 currency code. |
 
 ### `vaccine_code` object
 
@@ -87,34 +78,8 @@ The dosage amount administered.
     "vaccine_name",
     "occurrence_date"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [
-            120
-          ]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": [
-            "PLN"
-          ]
-        }
-      },
-      "required": [
-        "amount",
-        "currency"
-      ],
-      "additionalProperties": true
-    },
     "vaccine_code": {
       "type": "object",
       "description": "Coded representation of the vaccine product.",
@@ -138,7 +103,7 @@ The dosage amount administered.
         "system",
         "value"
       ],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dose_quantity": {
       "type": "object",
@@ -163,7 +128,7 @@ The dosage amount administered.
         "value",
         "unit"
       ],
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -176,6 +141,8 @@ The dosage amount administered.
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the immunization record. UUID recommended.",
       "examples": [
         "imm-550e8400-e29b-41d4-a716-446655440000"
@@ -183,6 +150,8 @@ The dosage amount administered.
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient who received the vaccination.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -190,6 +159,8 @@ The dosage amount administered.
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the vaccination was administered.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -269,6 +240,8 @@ The dosage amount administered.
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.",
       "examples": [
         "pract-001"
@@ -289,7 +262,7 @@ The dosage amount administered.
       ]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

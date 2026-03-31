@@ -67,13 +67,9 @@ export interface Encounter {
    */
   diagnoses_display?: string[];
   cost?: Cost;
-  [k: string]: unknown;
 }
 /**
- * Cost information for this encounter. Optional — useful for pet owners tracking health expenses.
- *
- * This interface was referenced by `Encounter`'s JSON-Schema
- * via the `definition` "cost".
+ * Cost information with amount and ISO 4217 currency code.
  */
 export interface Cost {
   /**
@@ -84,5 +80,4 @@ export interface Cost {
    * ISO 4217 currency code.
    */
   currency: string;
-  [k: string]: unknown;
 }

@@ -5,7 +5,7 @@
   "description": "Root export schema for the Open Vet Format (OVF). Wraps all veterinary medical record resources for a single patient into a portable, interoperable document.",
   "type": "object",
   "required": ["format_version", "exported_at", "patient"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "exporter": {
       "type": "object",
@@ -22,7 +22,46 @@
           "examples": ["2.4.1"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
+    },
+    "code": {
+      "type": "object",
+      "description": "A coded clinical concept with system, value, and display text.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": ["icd-10-vet", "snomed-ct-vet", "loinc", "atc-vet", "internal", "other"],
+          "description": "Coding system identifier."
+        },
+        "value": {
+          "type": "string",
+          "description": "Code value within the system."
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code."
+        }
+      },
+      "required": ["system", "value"],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "description": "Cost information with amount and ISO 4217 currency code.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount."
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": ["PLN", "USD", "EUR"]
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": false
     }
   },
   "properties": {

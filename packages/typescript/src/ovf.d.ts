@@ -28,7 +28,6 @@ export interface Exporter {
    * Version of the exporting software.
    */
   version?: string;
-  [k: string]: unknown;
 }
 
 /**

@@ -24,7 +24,24 @@ export interface Patient {
   /**
    * The animal species of the patient.
    */
-  species: "dog" | "cat" | "bird" | "rabbit" | "hamster" | "guinea_pig" | "fish" | "reptile" | "horse" | "other";
+  species:
+    | "dog"
+    | "cat"
+    | "bird"
+    | "rabbit"
+    | "hamster"
+    | "guinea_pig"
+    | "ferret"
+    | "fish"
+    | "reptile"
+    | "amphibian"
+    | "horse"
+    | "cattle"
+    | "sheep"
+    | "goat"
+    | "pig"
+    | "poultry"
+    | "other";
   /**
    * Breed or breed mix of the patient in free-text form.
    */
@@ -73,7 +90,6 @@ export interface Patient {
    * URL to a photo of the patient.
    */
   photo_url?: string;
-  [k: string]: unknown;
 }
 /**
  * Standardized breed classification code from a recognized registry.
@@ -85,12 +101,11 @@ export interface BreedCode {
   /**
    * The breed registry system used for classification.
    */
-  system: "fci" | "fife" | "tica" | "other";
+  system: "fci" | "fife" | "tica" | "akc" | "the-kennel-club" | "other";
   /**
    * The breed code value within the specified registry system.
    */
   value: string;
-  [k: string]: unknown;
 }
 /**
  * Standardized species classification code from a recognized taxonomy.
@@ -107,7 +122,6 @@ export interface SpeciesCode {
    * The species code within the specified taxonomy system.
    */
   value: string;
-  [k: string]: unknown;
 }
 /**
  * The patient's body weight measurement.
@@ -124,7 +138,6 @@ export interface Weight {
    * Unit of weight measurement.
    */
   unit: "kg" | "lbs";
-  [k: string]: unknown;
 }
 /**
  * An external identifier for the patient, such as a microchip or passport number.
@@ -141,7 +154,6 @@ export interface Identifier {
    * The identifier value within the specified system.
    */
   value: string;
-  [k: string]: unknown;
 }
 /**
  * Contact information for the patient's owner or guardian.
@@ -166,5 +178,4 @@ export interface Owner {
    * Postal address of the owner.
    */
   address?: string;
-  [k: string]: unknown;
 }

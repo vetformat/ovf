@@ -39,6 +39,35 @@ Information about the software that generated this OVF export.
 | `name` | `string` | No | Name of the exporting software or system. |
 | `version` | `string` | No | Version of the exporting software. |
 
+### `code` object
+
+A coded clinical concept with system, value, and display text.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `system` | enum | Yes | Coding system identifier. |
+| `value` | `string` | Yes | Code value within the system. |
+| `display` | `string` | No | Human-readable display text for the code. |
+
+### `code.system` values
+
+- `icd-10-vet`
+- `snomed-ct-vet`
+- `loinc`
+- `atc-vet`
+- `internal`
+- `other`
+
+
+### `cost` object
+
+Cost information with amount and ISO 4217 currency code.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `amount` | `number` | Yes | Total cost amount. |
+| `currency` | `string` | Yes | ISO 4217 currency code. |
+
 ## Full Schema
 
 ```json
@@ -53,7 +82,7 @@ Information about the software that generated this OVF export.
     "exported_at",
     "patient"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "exporter": {
       "type": "object",
@@ -74,7 +103,63 @@ Information about the software that generated this OVF export.
           ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
+    },
+    "code": {
+      "type": "object",
+      "description": "A coded clinical concept with system, value, and display text.",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "icd-10-vet",
+            "snomed-ct-vet",
+            "loinc",
+            "atc-vet",
+            "internal",
+            "other"
+          ],
+          "description": "Coding system identifier."
+        },
+        "value": {
+          "type": "string",
+          "description": "Code value within the system."
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable display text for the code."
+        }
+      },
+      "required": [
+        "system",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "description": "Cost information with amount and ISO 4217 currency code.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total cost amount."
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code.",
+          "examples": [
+            "PLN",
+            "USD",
+            "EUR"
+          ]
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "additionalProperties": false
     }
   },
   "properties": {

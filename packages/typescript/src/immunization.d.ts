@@ -72,7 +72,6 @@ export interface Immunization {
    */
   notes?: string;
   cost?: Cost;
-  [k: string]: unknown;
 }
 /**
  * Coded representation of the vaccine product.
@@ -89,7 +88,6 @@ export interface VaccineCode {
    * The vaccine code within the specified system.
    */
   value: string;
-  [k: string]: unknown;
 }
 /**
  * The dosage amount administered.
@@ -106,13 +104,9 @@ export interface DoseQuantity {
    * Unit of the dose (e.g., mL, dose).
    */
   unit: string;
-  [k: string]: unknown;
 }
 /**
- * Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.
- *
- * This interface was referenced by `Immunization`'s JSON-Schema
- * via the `definition` "cost".
+ * Cost information with amount and ISO 4217 currency code.
  */
 export interface Cost {
   /**
@@ -123,5 +117,4 @@ export interface Cost {
    * ISO 4217 currency code.
    */
   currency: string;
-  [k: string]: unknown;
 }

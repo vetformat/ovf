@@ -22,9 +22,16 @@ class Species(Enum):
     rabbit = 'rabbit'
     hamster = 'hamster'
     guinea_pig = 'guinea_pig'
+    ferret = 'ferret'
     fish = 'fish'
     reptile = 'reptile'
+    amphibian = 'amphibian'
     horse = 'horse'
+    cattle = 'cattle'
+    sheep = 'sheep'
+    goat = 'goat'
+    pig = 'pig'
+    poultry = 'poultry'
     other = 'other'
 
 
@@ -57,6 +64,8 @@ class System(Enum):
     fci = 'fci'
     fife = 'fife'
     tica = 'tica'
+    akc = 'akc'
+    the_kennel_club = 'the-kennel-club'
     other = 'other'
 
 
@@ -66,7 +75,7 @@ class BreedCode(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     system: Annotated[System, Field(examples=['fci'])]
     """
@@ -94,7 +103,7 @@ class SpeciesCode(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     system: Annotated[System1, Field(examples=['itis'])]
     """
@@ -121,7 +130,7 @@ class Weight(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     value: Annotated[float, Field(examples=[12.5], ge=0.0)]
     """
@@ -152,7 +161,7 @@ class Identifier(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     system: Annotated[System2, Field(examples=['iso-microchip-11784'])]
     """
@@ -170,7 +179,7 @@ class Owner(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     name: Annotated[str | None, Field(examples=['Jan Kowalski'])] = None
     """
@@ -198,13 +207,20 @@ class Patient(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[Literal['Patient'], Field(examples=['Patient'])]
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the patient record. UUID recommended.
     """

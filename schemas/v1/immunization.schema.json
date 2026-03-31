@@ -5,27 +5,8 @@
   "description": "Represents a vaccination event for an animal patient, including vaccine details, dosage, and scheduling information.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "vaccine_name", "occurrence_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [120.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    },
     "vaccine_code": {
       "type": "object",
       "description": "Coded representation of the vaccine product.",
@@ -42,7 +23,7 @@
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dose_quantity": {
       "type": "object",
@@ -60,7 +41,7 @@
         }
       },
       "required": ["value", "unit"],
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -71,16 +52,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the immunization record. UUID recommended.",
       "examples": ["imm-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient who received the vaccination.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the vaccination was administered.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -136,6 +123,8 @@
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.",
       "examples": ["pract-001"]
     },
@@ -150,7 +139,7 @@
       "examples": ["No adverse reactions observed during 15-minute post-vaccination monitoring."]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

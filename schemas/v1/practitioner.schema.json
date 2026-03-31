@@ -5,7 +5,7 @@
   "description": "A veterinary practitioner — a licensed professional involved in patient care. Referenced by encounters, procedures, immunizations, and medication statements.",
   "type": "object",
   "required": ["resource_type", "id", "name"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Practitioner",
@@ -14,6 +14,8 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the practitioner. UUID recommended.",
       "examples": ["pract-001"]
     },
@@ -56,7 +58,7 @@
           "examples": ["anna.nowak@happypaws.pl"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   }
 }

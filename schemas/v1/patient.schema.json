@@ -5,7 +5,7 @@
   "description": "Represents an animal patient in a veterinary practice. Contains demographic, identification, and owner information.",
   "type": "object",
   "required": ["resource_type", "id", "name", "species"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "breed_code": {
       "type": "object",
@@ -13,7 +13,7 @@
       "properties": {
         "system": {
           "type": "string",
-          "enum": ["fci", "fife", "tica", "other"],
+          "enum": ["fci", "fife", "tica", "akc", "the-kennel-club", "other"],
           "description": "The breed registry system used for classification.",
           "examples": ["fci"]
         },
@@ -24,7 +24,7 @@
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "species_code": {
       "type": "object",
@@ -43,7 +43,7 @@
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "weight": {
       "type": "object",
@@ -63,7 +63,7 @@
         }
       },
       "required": ["value", "unit"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "identifier": {
       "type": "object",
@@ -82,7 +82,7 @@
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "owner": {
       "type": "object",
@@ -109,7 +109,7 @@
           "examples": ["ul. Zwierzyniecka 10, 31-015 Krakow, Poland"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -120,6 +120,8 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the patient record. UUID recommended.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
@@ -130,7 +132,7 @@
     },
     "species": {
       "type": "string",
-      "enum": ["dog", "cat", "bird", "rabbit", "hamster", "guinea_pig", "fish", "reptile", "horse", "other"],
+      "enum": ["dog", "cat", "bird", "rabbit", "hamster", "guinea_pig", "ferret", "fish", "reptile", "amphibian", "horse", "cattle", "sheep", "goat", "pig", "poultry", "other"],
       "description": "The animal species of the patient.",
       "examples": ["dog"]
     },

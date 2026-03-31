@@ -65,28 +65,23 @@ export interface Observation {
    * Additional notes or context about the observation.
    */
   notes?: string;
-  [k: string]: unknown;
 }
 /**
- * Coded representation of the observation type using a terminology system.
- *
- * This interface was referenced by `Observation`'s JSON-Schema
- * via the `definition` "code".
+ * A coded clinical concept with system, value, and display text.
  */
 export interface Code {
   /**
-   * The coding system used (e.g., LOINC, SNOMED, internal).
+   * Coding system identifier.
    */
-  system: string;
+  system: "icd-10-vet" | "snomed-ct-vet" | "loinc" | "atc-vet" | "internal" | "other";
   /**
-   * The code value within the specified system.
+   * Code value within the system.
    */
   value: string;
   /**
    * Human-readable display text for the code.
    */
-  display: string;
-  [k: string]: unknown;
+  display?: string;
 }
 /**
  * The normal or expected range for this observation value.
@@ -107,5 +102,4 @@ export interface ReferenceRange {
    * Human-readable description of the reference range.
    */
   text?: string;
-  [k: string]: unknown;
 }

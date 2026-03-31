@@ -5,50 +5,8 @@
   "description": "Represents a clinical procedure performed on a patient, including surgeries, dental work, diagnostics, and therapeutic interventions.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "name", "status", "performed_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this procedure. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [1500.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    },
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the procedure using a standardized terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).",
-          "examples": ["snomed-ct-vet"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The procedure code within the specified system.",
-          "examples": ["65801008"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Ovariohysterectomy"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    },
     "anesthesia": {
       "type": "object",
       "description": "Anesthesia details for the procedure.",
@@ -65,7 +23,7 @@
           "examples": ["Isoflurane"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -76,16 +34,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the procedure record. UUID recommended.",
       "examples": ["proc-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient on whom the procedure was performed.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the procedure was performed.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -95,7 +59,7 @@
       "examples": ["Ovariohysterectomy (Spay)"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "status": {
       "type": "string",
@@ -123,6 +87,8 @@
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.",
       "examples": ["pract-001"]
     },
@@ -145,7 +111,7 @@
       "examples": ["E-collar to be worn for 10 days. Suture removal in 14 days."]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

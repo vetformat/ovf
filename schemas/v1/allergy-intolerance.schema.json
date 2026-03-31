@@ -5,7 +5,7 @@
   "description": "Represents an allergy or intolerance identified for a patient, including the causative substance, reaction details, and clinical status.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "type", "category", "substance", "clinical_status"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "reaction": {
       "type": "object",
@@ -23,7 +23,7 @@
           "examples": ["moderate"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -34,16 +34,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the allergy/intolerance record. UUID recommended.",
       "examples": ["allergy-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient who has this allergy or intolerance.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this allergy or intolerance was identified.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },

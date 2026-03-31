@@ -5,31 +5,8 @@
   "description": "Represents a clinical observation or measurement for a patient, including vital signs, lab results, imaging findings, and clinical notes.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "category", "name", "effective_date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the observation type using a terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., LOINC, SNOMED, internal).",
-          "examples": ["loinc"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": ["2339-0"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Blood Glucose"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    },
     "reference_range": {
       "type": "object",
       "description": "The normal or expected range for this observation value.",
@@ -50,7 +27,7 @@
           "examples": ["70-140 mg/dL"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -61,16 +38,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the observation record. UUID recommended.",
       "examples": ["obs-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this observation belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this observation was recorded.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -81,7 +64,7 @@
       "examples": ["laboratory"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",

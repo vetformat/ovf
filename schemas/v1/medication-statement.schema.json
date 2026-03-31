@@ -5,7 +5,7 @@
   "description": "Represents a record of medication being taken by or administered to a patient, including dosage, frequency, and prescriber information.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "medication_name", "status"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "medication_code": {
       "type": "object",
@@ -23,7 +23,7 @@
         }
       },
       "required": ["system", "value"],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dosage": {
       "type": "object",
@@ -41,8 +41,13 @@
         },
         "frequency": {
           "type": "string",
-          "description": "How often the medication is administered.",
-          "examples": ["twice daily"]
+          "enum": ["once-daily", "twice-daily", "three-times-daily", "four-times-daily", "every-other-day", "once-weekly", "twice-weekly", "as-needed", "other"],
+          "description": "How often the medication is administered."
+        },
+        "frequency_text": {
+          "type": "string",
+          "description": "Free-text frequency description when 'other' is selected or additional detail is needed.",
+          "examples": ["every 8 hours with food", "before bedtime"]
         },
         "route": {
           "type": "string",
@@ -51,7 +56,7 @@
           "examples": ["oral"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -62,16 +67,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the medication statement record. UUID recommended.",
       "examples": ["med-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient taking or receiving the medication.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the medication was prescribed or recorded.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
@@ -111,6 +122,8 @@
     },
     "prescriber_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.",
       "examples": ["pract-001"]
     },

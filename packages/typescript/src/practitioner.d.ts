@@ -45,7 +45,5 @@ export interface Practitioner {
      * Email address.
      */
     email?: string;
-    [k: string]: unknown;
   };
-  [k: string]: unknown;
 }

@@ -5,28 +5,7 @@
   "description": "Represents a clinical encounter or visit between a patient and a veterinary practitioner.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "status", "date"],
-  "additionalProperties": true,
-  "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [250.00]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": ["PLN"]
-        }
-      },
-      "required": ["amount", "currency"],
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Encounter",
@@ -35,11 +14,15 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the encounter. UUID recommended.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this encounter belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
@@ -74,6 +57,8 @@
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.",
       "examples": ["pract-001"]
     },
@@ -99,7 +84,7 @@
       "examples": [["Atopic dermatitis", "Otitis externa"]]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

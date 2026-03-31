@@ -28,7 +28,7 @@ class MedicationCode(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     system: Annotated[str, Field(examples=['atc-vet'])]
     """
@@ -38,6 +38,22 @@ class MedicationCode(BaseModel):
     """
     The medication code within the specified system.
     """
+
+
+class Frequency(Enum):
+    """
+    How often the medication is administered.
+    """
+
+    once_daily = 'once-daily'
+    twice_daily = 'twice-daily'
+    three_times_daily = 'three-times-daily'
+    four_times_daily = 'four-times-daily'
+    every_other_day = 'every-other-day'
+    once_weekly = 'once-weekly'
+    twice_weekly = 'twice-weekly'
+    as_needed = 'as-needed'
+    other = 'other'
 
 
 class Route(Enum):
@@ -58,7 +74,7 @@ class Dosage(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     value: Annotated[float | None, Field(examples=[250])] = None
     """
@@ -68,9 +84,15 @@ class Dosage(BaseModel):
     """
     Unit of the dose amount.
     """
-    frequency: Annotated[str | None, Field(examples=['twice daily'])] = None
+    frequency: Frequency | None = None
     """
     How often the medication is administered.
+    """
+    frequency_text: Annotated[
+        str | None, Field(examples=['every 8 hours with food', 'before bedtime'])
+    ] = None
+    """
+    Free-text frequency description when 'other' is selected or additional detail is needed.
     """
     route: Annotated[Route | None, Field(examples=['oral'])] = None
     """
@@ -84,7 +106,7 @@ class MedicationStatement(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[
         Literal['MedicationStatement'], Field(examples=['MedicationStatement'])
@@ -92,16 +114,35 @@ class MedicationStatement(BaseModel):
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['med-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['med-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the medication statement record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient taking or receiving the medication.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which the medication was prescribed or recorded.
@@ -128,7 +169,10 @@ class MedicationStatement(BaseModel):
     """
     Clinical reason or indication for the medication.
     """
-    prescriber_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    prescriber_id: Annotated[
+        str | None,
+        Field(examples=['pract-001'], min_length=1, pattern='^[a-zA-Z0-9._-]+$'),
+    ] = None
     """
     Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.
     """

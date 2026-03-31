@@ -15,7 +15,7 @@ class Contact(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     phone: Annotated[str | None, Field(examples=['+48 123 456 789'])] = None
     """
@@ -35,13 +35,15 @@ class Practitioner(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[Literal['Practitioner'], Field(examples=['Practitioner'])]
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['pract-001'])]
+    id: Annotated[
+        str, Field(examples=['pract-001'], min_length=1, pattern='^[a-zA-Z0-9._-]+$')
+    ]
     """
     Unique identifier for the practitioner. UUID recommended.
     """

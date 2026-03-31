@@ -5,33 +5,7 @@
   "description": "Represents a clinical condition, diagnosis, or health problem identified for a patient.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "name", "clinical_status"],
-  "additionalProperties": true,
-  "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the condition using a standardized veterinary terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "enum": ["icd-10-vet", "snomed-ct-vet", "internal", "other"],
-          "description": "The coding system used.",
-          "examples": ["icd-10-vet"]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": ["K29.0"]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": ["Acute gastritis"]
-        }
-      },
-      "required": ["system", "value", "display"],
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Condition",
@@ -40,21 +14,27 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the condition record. UUID recommended.",
       "examples": ["cond-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this condition belongs to.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this condition was diagnosed.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",

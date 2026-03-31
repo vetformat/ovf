@@ -64,28 +64,23 @@ export interface Procedure {
    */
   notes?: string;
   cost?: Cost;
-  [k: string]: unknown;
 }
 /**
- * Coded representation of the procedure using a standardized terminology system.
- *
- * This interface was referenced by `Procedure`'s JSON-Schema
- * via the `definition` "code".
+ * A coded clinical concept with system, value, and display text.
  */
 export interface Code {
   /**
-   * The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).
+   * Coding system identifier.
    */
-  system: string;
+  system: "icd-10-vet" | "snomed-ct-vet" | "loinc" | "atc-vet" | "internal" | "other";
   /**
-   * The procedure code within the specified system.
+   * Code value within the system.
    */
   value: string;
   /**
    * Human-readable display text for the code.
    */
-  display: string;
-  [k: string]: unknown;
+  display?: string;
 }
 /**
  * Anesthesia details for the procedure.
@@ -102,13 +97,9 @@ export interface Anesthesia {
    * Name of the anesthetic agent used.
    */
   agent?: string;
-  [k: string]: unknown;
 }
 /**
- * Cost information for this procedure. Optional — useful for pet owners tracking health expenses.
- *
- * This interface was referenced by `Procedure`'s JSON-Schema
- * via the `definition` "cost".
+ * Cost information with amount and ISO 4217 currency code.
  */
 export interface Cost {
   /**
@@ -119,5 +110,4 @@ export interface Cost {
    * ISO 4217 currency code.
    */
   currency: string;
-  [k: string]: unknown;
 }

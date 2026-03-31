@@ -30,7 +30,7 @@ class Author(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     name: Annotated[str | None, Field(examples=['Dr. Anna Nowak'])] = None
     """
@@ -44,7 +44,7 @@ class DocumentReference(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[
         Literal['DocumentReference'], Field(examples=['DocumentReference'])
@@ -52,16 +52,35 @@ class DocumentReference(BaseModel):
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['doc-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['doc-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the document reference record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient this document is associated with.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which this document was created or obtained.

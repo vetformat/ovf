@@ -18,7 +18,7 @@ Represents a clinical observation or measurement for a patient, including vital 
 | `patient_id` | `string` | Yes | Reference to the patient this observation belongs to. |
 | `encounter_id` | `string` | No | Reference to the encounter during which this observation was recorded. |
 | `category` | enum | Yes | The high-level category of the observation. |
-| `code` | [code] | No |  |
+| `code` | [ovfcode] | No |  |
 | `name` | `string` | Yes | Human-readable name of the observation. |
 | `effective_date` | `string (date-time)` | Yes | Date and time when the observation was clinically effective or measured. |
 | `value` | `number` \| `string` \| `boolean` \| `object` | No | The observed value. Can be a number, string, boolean, or structured object depending on the observation type. |
@@ -60,16 +60,6 @@ Represents a clinical observation or measurement for a patient, including vital 
 ## Sub-objects
 
 
-### `code` object
-
-Coded representation of the observation type using a terminology system.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `system` | `string` | Yes | The coding system used (e.g., LOINC, SNOMED, internal). |
-| `value` | `string` | Yes | The code value within the specified system. |
-| `display` | `string` | Yes | Human-readable display text for the code. |
-
 ### `reference_range` object
 
 The normal or expected range for this observation value.
@@ -97,41 +87,8 @@ The normal or expected range for this observation value.
     "name",
     "effective_date"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the observation type using a terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., LOINC, SNOMED, internal).",
-          "examples": [
-            "loinc"
-          ]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": [
-            "2339-0"
-          ]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": [
-            "Blood Glucose"
-          ]
-        }
-      },
-      "required": [
-        "system",
-        "value",
-        "display"
-      ],
-      "additionalProperties": true
-    },
     "reference_range": {
       "type": "object",
       "description": "The normal or expected range for this observation value.",
@@ -158,7 +115,7 @@ The normal or expected range for this observation value.
           ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -171,6 +128,8 @@ The normal or expected range for this observation value.
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the observation record. UUID recommended.",
       "examples": [
         "obs-550e8400-e29b-41d4-a716-446655440000"
@@ -178,6 +137,8 @@ The normal or expected range for this observation value.
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this observation belongs to.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -185,6 +146,8 @@ The normal or expected range for this observation value.
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this observation was recorded.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -205,7 +168,7 @@ The normal or expected range for this observation value.
       ]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",

@@ -67,7 +67,7 @@ class Reaction(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     manifestation: Annotated[
         str | None, Field(examples=['Urticaria and facial swelling'])
@@ -87,7 +87,7 @@ class AllergyIntolerance(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[
         Literal['AllergyIntolerance'], Field(examples=['AllergyIntolerance'])
@@ -95,16 +95,35 @@ class AllergyIntolerance(BaseModel):
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['allergy-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['allergy-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the allergy/intolerance record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient who has this allergy or intolerance.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which this allergy or intolerance was identified.

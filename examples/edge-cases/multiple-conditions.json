@@ -82,7 +82,7 @@
       "dosage": {
         "value": 2.5,
         "unit": "mg",
-        "frequency": "Twice daily",
+        "frequency": "twice-daily",
         "route": "oral"
       },
       "reason": "Hyperthyroidism management"
@@ -97,7 +97,7 @@
       "dosage": {
         "value": 1.0,
         "unit": "mg/kg",
-        "frequency": "Once daily",
+        "frequency": "once-daily",
         "route": "oral"
       },
       "reason": "CKD — proteinuria management and renoprotection"

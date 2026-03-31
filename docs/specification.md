@@ -644,6 +644,8 @@ OVF follows **SchemaVer** (Semantic Versioning for schemas): `MAJOR.MINOR.PATCH`
 - DateTime fields use ISO 8601 date-time format: `YYYY-MM-DDThh:mm:ssZ` (e.g. `2025-06-15T10:30:00Z`).
 - DateTime values SHOULD include a timezone offset or use UTC (`Z`).
 
+**Date vs. DateTime convention:** Fields representing point-in-time events where clock time matters use `date-time` (ISO 8601 with timezone) — this applies to encounters, observations, procedures, and document references. Fields representing day-level events use `date` (ISO 8601 date only, `YYYY-MM-DD`) — this applies to birth dates, vaccination dates, medication start/end dates, condition onset/abatement, and deceased dates. This distinction is intentional and follows clinical data conventions where calendar-day precision is sufficient for long-running states, while exact timestamps matter for acute clinical events.
+
 ### 7.2 Identifiers
 
 All identifiers (`id` fields) SHOULD be UUIDs (RFC 4122) but MAY be any unique string. Producers MUST ensure uniqueness within a document.
@@ -688,7 +690,23 @@ OVF uses a `system` + `value` pair pattern for external identifiers on the Patie
 
 ---
 
-## 9. References
+## 9. Privacy & Data Protection
+
+OVF documents may contain personally identifiable information (PII), including pet owner names, emails, phone numbers, and addresses, as well as practitioner names, license numbers, and contact details.
+
+Implementers SHOULD consider the following when handling OVF documents:
+
+- Encrypting OVF files at rest and in transit.
+- Providing data minimization options (e.g., export without owner contact details).
+- Compliance with local privacy regulations (GDPR in EU, CCPA in US, etc.).
+- Providing users the ability to request data deletion.
+- When sharing OVF files between systems, stripping or anonymizing PII that is not necessary for the receiving system.
+
+Owner contact fields (`owner.email`, `owner.phone`, `owner.address`) and practitioner contact fields (`contact.email`, `contact.phone`) are OPTIONAL specifically to support privacy-conscious implementations that omit sensitive data by default.
+
+---
+
+## 10. References
 
 - [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/json-schema-core)
 - [RFC 2119 — Key words for use in RFCs](https://www.rfc-editor.org/rfc/rfc2119)

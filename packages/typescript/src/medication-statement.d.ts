@@ -55,7 +55,6 @@ export interface MedicationStatement {
    * Additional notes about the medication statement.
    */
   notes?: string;
-  [k: string]: unknown;
 }
 /**
  * Coded representation of the medication product.
@@ -72,7 +71,6 @@ export interface MedicationCode {
    * The medication code within the specified system.
    */
   value: string;
-  [k: string]: unknown;
 }
 /**
  * Dosage instructions for the medication.
@@ -92,10 +90,22 @@ export interface Dosage {
   /**
    * How often the medication is administered.
    */
-  frequency?: string;
+  frequency?:
+    | "once-daily"
+    | "twice-daily"
+    | "three-times-daily"
+    | "four-times-daily"
+    | "every-other-day"
+    | "once-weekly"
+    | "twice-weekly"
+    | "as-needed"
+    | "other";
+  /**
+   * Free-text frequency description when 'other' is selected or additional detail is needed.
+   */
+  frequency_text?: string;
   /**
    * Route of administration.
    */
   route?: "oral" | "topical" | "injection" | "inhalation" | "other";
-  [k: string]: unknown;
 }

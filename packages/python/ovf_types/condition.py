@@ -36,34 +36,72 @@ class Severity(Enum):
 
 class System(Enum):
     """
-    The coding system used.
+    Coding system identifier.
     """
 
     icd_10_vet = 'icd-10-vet'
     snomed_ct_vet = 'snomed-ct-vet'
+    loinc = 'loinc'
+    atc_vet = 'atc-vet'
     internal = 'internal'
     other = 'other'
 
 
 class Code(BaseModel):
     """
-    Coded representation of the condition using a standardized veterinary terminology system.
+    A coded clinical concept with system, value, and display text.
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
-    system: Annotated[System, Field(examples=['icd-10-vet'])]
+    system: System
     """
-    The coding system used.
+    Coding system identifier.
     """
-    value: Annotated[str, Field(examples=['K29.0'])]
+    value: str
     """
-    The code value within the specified system.
+    Code value within the system.
     """
-    display: Annotated[str, Field(examples=['Acute gastritis'])]
+    display: str | None = None
     """
     Human-readable display text for the code.
+    """
+
+
+class Exporter(BaseModel):
+    """
+    Information about the software that generated this OVF export.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    name: Annotated[str | None, Field(examples=['VetNote'])] = None
+    """
+    Name of the exporting software or system.
+    """
+    version: Annotated[str | None, Field(examples=['2.4.1'])] = None
+    """
+    Version of the exporting software.
+    """
+
+
+class Cost(BaseModel):
+    """
+    Cost information with amount and ISO 4217 currency code.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    amount: Annotated[float, Field(ge=0.0)]
+    """
+    Total cost amount.
+    """
+    currency: Annotated[str, Field(examples=['PLN', 'USD', 'EUR'])]
+    """
+    ISO 4217 currency code.
     """
 
 
@@ -73,22 +111,41 @@ class Condition(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[Literal['Condition'], Field(examples=['Condition'])]
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['cond-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['cond-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the condition record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient this condition belongs to.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which this condition was diagnosed.

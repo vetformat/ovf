@@ -50,26 +50,21 @@ export interface Condition {
    * Additional clinical notes about the condition.
    */
   notes?: string;
-  [k: string]: unknown;
 }
 /**
- * Coded representation of the condition using a standardized veterinary terminology system.
- *
- * This interface was referenced by `Condition`'s JSON-Schema
- * via the `definition` "code".
+ * A coded clinical concept with system, value, and display text.
  */
 export interface Code {
   /**
-   * The coding system used.
+   * Coding system identifier.
    */
-  system: "icd-10-vet" | "snomed-ct-vet" | "internal" | "other";
+  system: "icd-10-vet" | "snomed-ct-vet" | "loinc" | "atc-vet" | "internal" | "other";
   /**
-   * The code value within the specified system.
+   * Code value within the system.
    */
   value: string;
   /**
    * Human-readable display text for the code.
    */
-  display: string;
-  [k: string]: unknown;
+  display?: string;
 }

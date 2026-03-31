@@ -54,7 +54,6 @@ export interface AllergyIntolerance {
    * Additional notes about the allergy or intolerance.
    */
   notes?: string;
-  [k: string]: unknown;
 }
 /**
  * Details of the adverse reaction caused by the substance.
@@ -71,5 +70,4 @@ export interface Reaction {
    * Severity of the reaction.
    */
   severity?: "mild" | "moderate" | "severe";
-  [k: string]: unknown;
 }

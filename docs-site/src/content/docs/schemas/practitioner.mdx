@@ -36,7 +36,7 @@ A veterinary practitioner — a licensed professional involved in patient care. 
     "id",
     "name"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Practitioner",
@@ -47,6 +47,8 @@ A veterinary practitioner — a licensed professional involved in patient care. 
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the practitioner. UUID recommended.",
       "examples": [
         "pract-001"
@@ -106,7 +108,7 @@ A veterinary practitioner — a licensed professional involved in patient care. 
           ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   }
 }

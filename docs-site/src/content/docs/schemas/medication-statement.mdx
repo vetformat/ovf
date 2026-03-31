@@ -55,8 +55,22 @@ Dosage instructions for the medication.
 |-------|------|----------|-------------|
 | `value` | `number` | No | Numeric dose amount per administration. |
 | `unit` | `string` | No | Unit of the dose amount. |
-| `frequency` | `string` | No | How often the medication is administered. |
+| `frequency` | enum | No | How often the medication is administered. |
+| `frequency_text` | `string` | No | Free-text frequency description when 'other' is selected or additional detail is needed. |
 | `route` | enum | No | Route of administration. |
+
+### `dosage.frequency` values
+
+- `once-daily`
+- `twice-daily`
+- `three-times-daily`
+- `four-times-daily`
+- `every-other-day`
+- `once-weekly`
+- `twice-weekly`
+- `as-needed`
+- `other`
+
 
 ### `dosage.route` values
 
@@ -83,7 +97,7 @@ Dosage instructions for the medication.
     "medication_name",
     "status"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "medication_code": {
       "type": "object",
@@ -108,7 +122,7 @@ Dosage instructions for the medication.
         "system",
         "value"
       ],
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "dosage": {
       "type": "object",
@@ -130,9 +144,25 @@ Dosage instructions for the medication.
         },
         "frequency": {
           "type": "string",
-          "description": "How often the medication is administered.",
+          "enum": [
+            "once-daily",
+            "twice-daily",
+            "three-times-daily",
+            "four-times-daily",
+            "every-other-day",
+            "once-weekly",
+            "twice-weekly",
+            "as-needed",
+            "other"
+          ],
+          "description": "How often the medication is administered."
+        },
+        "frequency_text": {
+          "type": "string",
+          "description": "Free-text frequency description when 'other' is selected or additional detail is needed.",
           "examples": [
-            "twice daily"
+            "every 8 hours with food",
+            "before bedtime"
           ]
         },
         "route": {
@@ -150,7 +180,7 @@ Dosage instructions for the medication.
           ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -163,6 +193,8 @@ Dosage instructions for the medication.
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the medication statement record. UUID recommended.",
       "examples": [
         "med-550e8400-e29b-41d4-a716-446655440000"
@@ -170,6 +202,8 @@ Dosage instructions for the medication.
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient taking or receiving the medication.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -177,6 +211,8 @@ Dosage instructions for the medication.
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the medication was prescribed or recorded.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -233,6 +269,8 @@ Dosage instructions for the medication.
     },
     "prescriber_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who prescribed the medication. Must match an id in the top-level practitioners array.",
       "examples": [
         "pract-001"

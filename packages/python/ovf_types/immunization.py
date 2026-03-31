@@ -25,19 +25,72 @@ class Route(Enum):
 
 class Cost(BaseModel):
     """
-    Cost information for this vaccination. Optional — useful for pet owners tracking health expenses.
+    Cost information with amount and ISO 4217 currency code.
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
-    amount: Annotated[float, Field(examples=[120.0], ge=0.0)]
+    amount: Annotated[float, Field(ge=0.0)]
     """
     Total cost amount.
     """
-    currency: Annotated[str, Field(examples=['PLN'])]
+    currency: Annotated[str, Field(examples=['PLN', 'USD', 'EUR'])]
     """
     ISO 4217 currency code.
+    """
+
+
+class Exporter(BaseModel):
+    """
+    Information about the software that generated this OVF export.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    name: Annotated[str | None, Field(examples=['VetNote'])] = None
+    """
+    Name of the exporting software or system.
+    """
+    version: Annotated[str | None, Field(examples=['2.4.1'])] = None
+    """
+    Version of the exporting software.
+    """
+
+
+class System(Enum):
+    """
+    Coding system identifier.
+    """
+
+    icd_10_vet = 'icd-10-vet'
+    snomed_ct_vet = 'snomed-ct-vet'
+    loinc = 'loinc'
+    atc_vet = 'atc-vet'
+    internal = 'internal'
+    other = 'other'
+
+
+class Code(BaseModel):
+    """
+    A coded clinical concept with system, value, and display text.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    system: System
+    """
+    Coding system identifier.
+    """
+    value: str
+    """
+    Code value within the system.
+    """
+    display: str | None = None
+    """
+    Human-readable display text for the code.
     """
 
 
@@ -47,7 +100,7 @@ class VaccineCode(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     system: Annotated[str, Field(examples=['atc-vet'])]
     """
@@ -65,7 +118,7 @@ class DoseQuantity(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     value: Annotated[float, Field(examples=[1.0])]
     """
@@ -83,22 +136,41 @@ class Immunization(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[Literal['Immunization'], Field(examples=['Immunization'])]
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['imm-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['imm-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the immunization record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient who received the vaccination.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which the vaccination was administered.
@@ -137,7 +209,10 @@ class Immunization(BaseModel):
     Anatomical site where the vaccine was administered.
     """
     dose_quantity: DoseQuantity | None = None
-    practitioner_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    practitioner_id: Annotated[
+        str | None,
+        Field(examples=['pract-001'], min_length=1, pattern='^[a-zA-Z0-9._-]+$'),
+    ] = None
     """
     Reference to the practitioner who administered the vaccination. Must match an id in the top-level practitioners array.
     """

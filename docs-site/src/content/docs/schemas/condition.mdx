@@ -17,7 +17,7 @@ Represents a clinical condition, diagnosis, or health problem identified for a p
 | `id` | `string` | Yes | Unique identifier for the condition record. UUID recommended. |
 | `patient_id` | `string` | Yes | Reference to the patient this condition belongs to. |
 | `encounter_id` | `string` | No | Reference to the encounter during which this condition was diagnosed. |
-| `code` | [code] | No |  |
+| `code` | [ovfcode] | No |  |
 | `name` | `string` | Yes | Human-readable name of the diagnosis or condition. |
 | `clinical_status` | enum | Yes | The clinical status of the condition. |
 | `severity` | enum | No | Subjective assessment of the condition severity. |
@@ -42,26 +42,6 @@ Represents a clinical condition, diagnosis, or health problem identified for a p
 - `moderate`
 - `severe`
 
-## Sub-objects
-
-
-### `code` object
-
-Coded representation of the condition using a standardized veterinary terminology system.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `system` | enum | Yes | The coding system used. |
-| `value` | `string` | Yes | The code value within the specified system. |
-| `display` | `string` | Yes | Human-readable display text for the code. |
-
-### `code.system` values
-
-- `icd-10-vet`
-- `snomed-ct-vet`
-- `internal`
-- `other`
-
 
 ## Full Schema
 
@@ -79,48 +59,7 @@ Coded representation of the condition using a standardized veterinary terminolog
     "name",
     "clinical_status"
   ],
-  "additionalProperties": true,
-  "$defs": {
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the condition using a standardized veterinary terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "enum": [
-            "icd-10-vet",
-            "snomed-ct-vet",
-            "internal",
-            "other"
-          ],
-          "description": "The coding system used.",
-          "examples": [
-            "icd-10-vet"
-          ]
-        },
-        "value": {
-          "type": "string",
-          "description": "The code value within the specified system.",
-          "examples": [
-            "K29.0"
-          ]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": [
-            "Acute gastritis"
-          ]
-        }
-      },
-      "required": [
-        "system",
-        "value",
-        "display"
-      ],
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Condition",
@@ -131,6 +70,8 @@ Coded representation of the condition using a standardized veterinary terminolog
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the condition record. UUID recommended.",
       "examples": [
         "cond-550e8400-e29b-41d4-a716-446655440000"
@@ -138,6 +79,8 @@ Coded representation of the condition using a standardized veterinary terminolog
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this condition belongs to.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -145,13 +88,15 @@ Coded representation of the condition using a standardized veterinary terminolog
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this condition was diagnosed.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
       ]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "name": {
       "type": "string",

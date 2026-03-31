@@ -18,7 +18,7 @@ Represents a clinical procedure performed on a patient, including surgeries, den
 | `patient_id` | `string` | Yes | Reference to the patient on whom the procedure was performed. |
 | `encounter_id` | `string` | No | Reference to the encounter during which the procedure was performed. |
 | `name` | `string` | Yes | Human-readable name of the procedure. |
-| `code` | [code] | No |  |
+| `code` | [ovfcode] | No |  |
 | `status` | enum | Yes | Current status of the procedure. |
 | `category` | enum | No | The high-level category of the procedure. |
 | `performed_date` | `string (date-time)` | Yes | Date and time when the procedure was performed or started. |
@@ -28,7 +28,7 @@ Represents a clinical procedure performed on a patient, including surgeries, den
 | `outcome` | `string` | No | Description of the procedure outcome. |
 | `complications` | `string` | No | Any complications that occurred during or after the procedure. |
 | `notes` | `string` | No | Additional notes about the procedure. |
-| `cost` | [cost] | No |  |
+| `cost` | [ovfcost] | No |  |
 
 
 ### `status` values
@@ -50,25 +50,6 @@ Represents a clinical procedure performed on a patient, including surgeries, den
 
 ## Sub-objects
 
-
-### `cost` object
-
-Cost information for this procedure. Optional — useful for pet owners tracking health expenses.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `amount` | `number` | Yes | Total cost amount. |
-| `currency` | `string` | Yes | ISO 4217 currency code. |
-
-### `code` object
-
-Coded representation of the procedure using a standardized terminology system.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `system` | `string` | Yes | The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal). |
-| `value` | `string` | Yes | The procedure code within the specified system. |
-| `display` | `string` | Yes | Human-readable display text for the code. |
 
 ### `anesthesia` object
 
@@ -104,67 +85,8 @@ Anesthesia details for the procedure.
     "status",
     "performed_date"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this procedure. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [
-            1500
-          ]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": [
-            "PLN"
-          ]
-        }
-      },
-      "required": [
-        "amount",
-        "currency"
-      ],
-      "additionalProperties": true
-    },
-    "code": {
-      "type": "object",
-      "description": "Coded representation of the procedure using a standardized terminology system.",
-      "properties": {
-        "system": {
-          "type": "string",
-          "description": "The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).",
-          "examples": [
-            "snomed-ct-vet"
-          ]
-        },
-        "value": {
-          "type": "string",
-          "description": "The procedure code within the specified system.",
-          "examples": [
-            "65801008"
-          ]
-        },
-        "display": {
-          "type": "string",
-          "description": "Human-readable display text for the code.",
-          "examples": [
-            "Ovariohysterectomy"
-          ]
-        }
-      },
-      "required": [
-        "system",
-        "value",
-        "display"
-      ],
-      "additionalProperties": true
-    },
     "anesthesia": {
       "type": "object",
       "description": "Anesthesia details for the procedure.",
@@ -190,7 +112,7 @@ Anesthesia details for the procedure.
           ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -203,6 +125,8 @@ Anesthesia details for the procedure.
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the procedure record. UUID recommended.",
       "examples": [
         "proc-550e8400-e29b-41d4-a716-446655440000"
@@ -210,6 +134,8 @@ Anesthesia details for the procedure.
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient on whom the procedure was performed.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -217,6 +143,8 @@ Anesthesia details for the procedure.
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which the procedure was performed.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -230,7 +158,7 @@ Anesthesia details for the procedure.
       ]
     },
     "code": {
-      "$ref": "#/$defs/code"
+      "$ref": "ovf.schema.json#/$defs/code"
     },
     "status": {
       "type": "string",
@@ -278,6 +206,8 @@ Anesthesia details for the procedure.
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.",
       "examples": [
         "pract-001"
@@ -308,7 +238,7 @@ Anesthesia details for the procedure.
       ]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

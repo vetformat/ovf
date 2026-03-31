@@ -5,7 +5,7 @@
   "description": "Represents a reference to a clinical document or file associated with a patient, such as lab reports, imaging studies, discharge summaries, or invoices.",
   "type": "object",
   "required": ["resource_type", "id", "patient_id", "type", "date"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
     "author": {
       "type": "object",
@@ -17,7 +17,7 @@
           "examples": ["Dr. Anna Nowak"]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -28,16 +28,22 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the document reference record. UUID recommended.",
       "examples": ["doc-550e8400-e29b-41d4-a716-446655440000"]
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this document is associated with.",
       "examples": ["550e8400-e29b-41d4-a716-446655440000"]
     },
     "encounter_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the encounter during which this document was created or obtained.",
       "examples": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
     },

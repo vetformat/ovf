@@ -34,43 +34,74 @@ class Category(Enum):
     other = 'other'
 
 
-class Cost(BaseModel):
+class System(Enum):
     """
-    Cost information for this procedure. Optional — useful for pet owners tracking health expenses.
+    Coding system identifier.
     """
 
-    model_config = ConfigDict(
-        extra='allow',
-    )
-    amount: Annotated[float, Field(examples=[1500.0], ge=0.0)]
-    """
-    Total cost amount.
-    """
-    currency: Annotated[str, Field(examples=['PLN'])]
-    """
-    ISO 4217 currency code.
-    """
+    icd_10_vet = 'icd-10-vet'
+    snomed_ct_vet = 'snomed-ct-vet'
+    loinc = 'loinc'
+    atc_vet = 'atc-vet'
+    internal = 'internal'
+    other = 'other'
 
 
 class Code(BaseModel):
     """
-    Coded representation of the procedure using a standardized terminology system.
+    A coded clinical concept with system, value, and display text.
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
-    system: Annotated[str, Field(examples=['snomed-ct-vet'])]
+    system: System
     """
-    The coding system used (e.g., SNOMED-CT-vet, CPT-vet, internal).
+    Coding system identifier.
     """
-    value: Annotated[str, Field(examples=['65801008'])]
+    value: str
     """
-    The procedure code within the specified system.
+    Code value within the system.
     """
-    display: Annotated[str, Field(examples=['Ovariohysterectomy'])]
+    display: str | None = None
     """
     Human-readable display text for the code.
+    """
+
+
+class Exporter(BaseModel):
+    """
+    Information about the software that generated this OVF export.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    name: Annotated[str | None, Field(examples=['VetNote'])] = None
+    """
+    Name of the exporting software or system.
+    """
+    version: Annotated[str | None, Field(examples=['2.4.1'])] = None
+    """
+    Version of the exporting software.
+    """
+
+
+class Cost(BaseModel):
+    """
+    Cost information with amount and ISO 4217 currency code.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    amount: Annotated[float, Field(ge=0.0)]
+    """
+    Total cost amount.
+    """
+    currency: Annotated[str, Field(examples=['PLN', 'USD', 'EUR'])]
+    """
+    ISO 4217 currency code.
     """
 
 
@@ -91,7 +122,7 @@ class Anesthesia(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     type: Annotated[Type | None, Field(examples=['general'])] = None
     """
@@ -109,22 +140,41 @@ class Procedure(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra='allow',
+        extra='forbid',
     )
     resource_type: Annotated[Literal['Procedure'], Field(examples=['Procedure'])]
     """
     Fixed resource type identifier for this schema.
     """
-    id: Annotated[str, Field(examples=['proc-550e8400-e29b-41d4-a716-446655440000'])]
+    id: Annotated[
+        str,
+        Field(
+            examples=['proc-550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Unique identifier for the procedure record. UUID recommended.
     """
-    patient_id: Annotated[str, Field(examples=['550e8400-e29b-41d4-a716-446655440000'])]
+    patient_id: Annotated[
+        str,
+        Field(
+            examples=['550e8400-e29b-41d4-a716-446655440000'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
+    ]
     """
     Reference to the patient on whom the procedure was performed.
     """
     encounter_id: Annotated[
-        str | None, Field(examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'])
+        str | None,
+        Field(
+            examples=['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+            min_length=1,
+            pattern='^[a-zA-Z0-9._-]+$',
+        ),
     ] = None
     """
     Reference to the encounter during which the procedure was performed.
@@ -152,7 +202,10 @@ class Procedure(BaseModel):
     """
     Date and time when the procedure ended.
     """
-    practitioner_id: Annotated[str | None, Field(examples=['pract-001'])] = None
+    practitioner_id: Annotated[
+        str | None,
+        Field(examples=['pract-001'], min_length=1, pattern='^[a-zA-Z0-9._-]+$'),
+    ] = None
     """
     Reference to the practitioner who performed the procedure. Must match an id in the top-level practitioners array.
     """

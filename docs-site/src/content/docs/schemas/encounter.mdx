@@ -25,7 +25,7 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
 | `notes` | `string` | No | Clinical notes or summary of the encounter. |
 | `diagnoses` | array\<string\> | No | Array of condition IDs diagnosed during this encounter. References entries in the conditions array. |
 | `diagnoses_display` | array\<string\> | No | Human-readable names of diagnoses for this encounter. Parallel array to diagnoses — same order, same length. Enables standalone readability without cross-referencing the conditions array. |
-| `cost` | [cost] | No |  |
+| `cost` | [ovfcost] | No |  |
 
 
 ### `status` values
@@ -48,17 +48,6 @@ Represents a clinical encounter or visit between a patient and a veterinary prac
 - `telehealth`
 - `other`
 
-## Sub-objects
-
-
-### `cost` object
-
-Cost information for this encounter. Optional — useful for pet owners tracking health expenses.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `amount` | `number` | Yes | Total cost amount. |
-| `currency` | `string` | Yes | ISO 4217 currency code. |
 
 ## Full Schema
 
@@ -76,35 +65,7 @@ Cost information for this encounter. Optional — useful for pet owners tracking
     "status",
     "date"
   ],
-  "additionalProperties": true,
-  "$defs": {
-    "cost": {
-      "type": "object",
-      "description": "Cost information for this encounter. Optional — useful for pet owners tracking health expenses.",
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Total cost amount.",
-          "examples": [
-            250
-          ]
-        },
-        "currency": {
-          "type": "string",
-          "description": "ISO 4217 currency code.",
-          "examples": [
-            "PLN"
-          ]
-        }
-      },
-      "required": [
-        "amount",
-        "currency"
-      ],
-      "additionalProperties": true
-    }
-  },
+  "additionalProperties": false,
   "properties": {
     "resource_type": {
       "const": "Encounter",
@@ -115,6 +76,8 @@ Cost information for this encounter. Optional — useful for pet owners tracking
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Unique identifier for the encounter. UUID recommended.",
       "examples": [
         "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -122,6 +85,8 @@ Cost information for this encounter. Optional — useful for pet owners tracking
     },
     "patient_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the patient this encounter belongs to.",
       "examples": [
         "550e8400-e29b-41d4-a716-446655440000"
@@ -183,6 +148,8 @@ Cost information for this encounter. Optional — useful for pet owners tracking
     },
     "practitioner_id": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9._-]+$",
       "description": "Reference to the practitioner involved in this encounter. Must match an id in the top-level practitioners array.",
       "examples": [
         "pract-001"
@@ -222,7 +189,7 @@ Cost information for this encounter. Optional — useful for pet owners tracking
       ]
     },
     "cost": {
-      "$ref": "#/$defs/cost"
+      "$ref": "ovf.schema.json#/$defs/cost"
     }
   }
 }

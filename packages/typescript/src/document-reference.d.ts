@@ -62,7 +62,6 @@ export interface DocumentReference {
    * Additional notes about the document.
    */
   notes?: string;
-  [k: string]: unknown;
 }
 /**
  * The person who authored or created the document.
@@ -75,5 +74,4 @@ export interface Author {
    * Full name of the document author.
    */
   name?: string;
-  [k: string]: unknown;
 }
