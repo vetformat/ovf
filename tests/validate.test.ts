@@ -487,4 +487,94 @@ describe("OVF Schema Validation", () => {
       expect(validate(data)).toBe(false);
     });
   });
+
+  describe("procedure validation", () => {
+    const withProcedure = (proc: Record<string, unknown>) => ({
+      format_version: "1.0.0",
+      exported_at: new Date().toISOString(),
+      patient: {
+        resource_type: "Patient",
+        id: "pat-1",
+        name: "Luna",
+        species: "dog",
+      },
+      procedures: [proc],
+    });
+
+    it("should accept valid procedure", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        name: "Ovariohysterectomy",
+        status: "completed",
+        performed_date: "2026-03-30T09:00:00Z",
+        category: "surgery",
+        anesthesia: { type: "general", agent: "Isoflurane" },
+        outcome: "Successful",
+      });
+      expect(validate(data)).toBe(true);
+    });
+
+    it("should reject procedure with invalid status", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        name: "Dental cleaning",
+        status: "done",
+        performed_date: "2026-03-30T09:00:00Z",
+      });
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject procedure with invalid category", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        name: "Blood draw",
+        status: "completed",
+        performed_date: "2026-03-30T09:00:00Z",
+        category: "lab-work",
+      });
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject procedure with invalid anesthesia type", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        name: "Spay",
+        status: "completed",
+        performed_date: "2026-03-30T09:00:00Z",
+        anesthesia: { type: "epidural" },
+      });
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject procedure with additional properties", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        name: "Spay",
+        status: "completed",
+        performed_date: "2026-03-30T09:00:00Z",
+        surgeon_name: "Dr. Nowak",
+      });
+      expect(validate(data)).toBe(false);
+    });
+
+    it("should reject procedure missing required fields", () => {
+      const data = withProcedure({
+        resource_type: "Procedure",
+        id: "proc-1",
+        patient_id: "pat-1",
+        // missing name, status, performed_date
+      });
+      expect(validate(data)).toBe(false);
+    });
+  });
 });

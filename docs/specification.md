@@ -171,7 +171,7 @@ Represents a clinical condition, diagnosis, or health problem.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `system` | string (enum) | MUST | Coding system: `icd-10-vet`, `snomed-ct-vet`, `internal`, `other`. |
+| `system` | string (enum) | MUST | Coding system: `icd-10-vet`, `snomed-ct-vet`, `loinc`, `atc-vet`, `internal`, `other`. |
 | `value` | string | MUST | Code value. |
 | `display` | string | MUST | Human-readable display text. |
 
@@ -583,12 +583,14 @@ Represents a veterinary practitioner — a licensed professional involved in pat
 | `the-kennel-club` | The Kennel Club, UK (dogs). |
 | `other` | Other breed registry not listed above. |
 
-### 4.20 Condition Code System
+### 4.20 Code System
 
 | Value | Description |
 |---|---|
 | `icd-10-vet` | ICD-10 adapted for veterinary use. |
 | `snomed-ct-vet` | SNOMED CT adapted for veterinary use. |
+| `loinc` | Logical Observation Identifiers Names and Codes — used for laboratory and clinical observations. |
+| `atc-vet` | Anatomical Therapeutic Chemical Classification System for veterinary medicines. |
 | `internal` | Practice-internal coding system. |
 | `other` | Other coding system. |
 

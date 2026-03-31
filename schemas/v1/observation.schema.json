@@ -82,7 +82,7 @@
         { "type": "number" },
         { "type": "string" },
         { "type": "boolean" },
-        { "type": "object", "additionalProperties": true }
+        { "type": "object", "description": "Structured value (e.g. ratio, range). Use value_type to hint interpretation.", "additionalProperties": true }
       ],
       "description": "The observed value. Can be a number, string, boolean, or structured object depending on the observation type.",
       "examples": [95.5, "Positive", true]
