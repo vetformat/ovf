@@ -6,7 +6,7 @@
 
 The Open Vet Format (OVF) project is currently maintained by a single maintainer:
 
-- **Kamil Nowak** ([@kamilnowak](https://github.com/kamilnowak)) — Project Lead
+- **Kamil Nowak** ([@kamilnowak05](https://github.com/kamilnowak05)) — Project Lead
 
 All final decisions on schema changes, releases, and project direction rest with the project lead.
 
